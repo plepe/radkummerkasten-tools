@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/plepe/radkummerkasten-tools/issues"
   },
-  "homepage": "https://github.com/plepe/radkummerkasten-tools#readme"
+  "homepage": "https://github.com/plepe/radkummerkasten-tools#readme",
+  "dependencies": {
+    "request": "^2.79.0"
+  }
 }
