@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "standard ; exit 0"
+    "lint": "standard ; exit 0",
+    "doc": "jsdoc -d doc/ src/*.js"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,7 @@
     "request": "^2.79.0"
   },
   "devDependencies": {
+    "jsdoc": "^3.4.3",
     "standard": "^8.6.0"
   }
 }
