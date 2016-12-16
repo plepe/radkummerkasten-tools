@@ -1,0 +1,19 @@
+{
+  "name": "radkummerkasten-tools",
+  "version": "0.0.0",
+  "description": "Tools um Abfragen an den radkummerkasten.at zu stellen",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/plepe/radkummerkasten-tools.git"
+  },
+  "author": "Stephan Bösch-Plepelits <skunk@xover.mud.at>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/plepe/radkummerkasten-tools/issues"
+  },
+  "homepage": "https://github.com/plepe/radkummerkasten-tools#readme"
+}
