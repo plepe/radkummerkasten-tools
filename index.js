@@ -3,11 +3,11 @@ var Radkummerkasten = require('./src/Radkummerkasten')
 Radkummerkasten.getEntries(
   {
   },
-  function (err, data) {
+  function (err, entry) {
     if (err) {
       throw (err)
     }
-    console.log(data)
+    console.log(JSON.stringify(entry))
   },
   function (err) {
     if (err) {

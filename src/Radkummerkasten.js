@@ -10,7 +10,8 @@ Radkummerkasten.getEntries = function (filter, featureCallback, finalCallback) {
         var data = JSON.parse(body)
 
         data.markers.forEach(function (entry) {
-          featureCallback(null, entry)
+          var ob = new RadkummerkastenEntry(entry)
+          featureCallback(null, ob)
         })
 
         if (finalCallback) {
@@ -23,6 +24,14 @@ Radkummerkasten.getEntries = function (filter, featureCallback, finalCallback) {
       finalCallback(error, null)
     }
   )
+}
+
+RadkummerkastenEntry = function (data) {
+  this.data = data
+}
+
+RadkummerkastenEntry.prototype.toJSON = function () {
+  return this.data
 }
 
 module.exports = Radkummerkasten
