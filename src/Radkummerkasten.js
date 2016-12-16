@@ -52,16 +52,25 @@ Radkummerkasten.getEntries = function (filter, featureCallback, finalCallback) {
  * A Radkummerkasten Entry
  * @constructor RadkummerkastenEntry
  * @param {object} data - Data of the entry
+ * @property {number} id - Id of the entry
+ * @property {number} lat - Latitude of the entry
+ * @property {number} lon - Longitude of the entry
+ * @property {number} status - ???
+ * @property {number} category - Category of the entry
  */
 function RadkummerkastenEntry (data) {
-  this.data = data
+  this.id = data.id
+  this.lat = data.loc[0]
+  this.lon = data.loc[1]
+  this.status = data.options.status
+  this.category = data.options.survey
 }
 
 /**
  * return the entry as JSON object
  */
 RadkummerkastenEntry.prototype.toJSON = function () {
-  return this.data
+  return this
 }
 
 module.exports = Radkummerkasten
