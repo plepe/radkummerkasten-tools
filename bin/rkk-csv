@@ -1,0 +1,27 @@
+#!/usr/bin/node
+var Radkummerkasten = require('../src/Radkummerkasten')
+var csvWriter = require('csv-write-stream')
+
+var writer = csvWriter({
+  headers: [ 'id', 'category', 'status', 'lat', 'lon' ]
+})
+writer.pipe(process.stdout)
+
+Radkummerkasten.getEntries(
+  {
+  },
+  function (err, entry) {
+    if (err) {
+      throw (err)
+    }
+
+    writer.write(entry)
+  },
+  function (err) {
+    if (err) {
+      throw (err)
+    }
+
+    writer.end()
+  }
+)
