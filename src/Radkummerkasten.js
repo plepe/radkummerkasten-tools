@@ -114,6 +114,36 @@ RadkummerkastenEntry.prototype.toJSON = function () {
 }
 
 /**
+ * return the entry as GeoJSON object
+ */
+RadkummerkastenEntry.prototype.toGeoJSON = function () {
+  var ret = {
+    type: 'Feature',
+    geometry: {
+      type: 'Point',
+      coordinates: [ this.lon, this.lat ]
+    },
+    properties: {
+      id: this.id,
+      status: this.status,
+      category: this.category
+    }
+  }
+
+  if (this.title) {
+    ret.properties.title = this.title
+    ret.properties.bezirk = this.bezirk
+    ret.properties.user = this.user
+    ret.properties.date = this.date
+    ret.properties.text = this.text
+    ret.properties.likes = this.likes
+    ret.properties.comments = this.comments
+  }
+
+  return ret
+}
+
+/**
  * load details for the given RadkummerkastenEntry and call the callbackfunction, with error code and the entry as object.
  * @param {function} callback - Callback function
  */
