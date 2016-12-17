@@ -79,4 +79,26 @@ RadkummerkastenEntry.prototype.toJSON = function () {
   return this
 }
 
+/**
+ * load details for the given RadkummerkastenEntry and call the callbackfunction, with error code and the entry as object.
+ * @param {function} callback - Callback function
+ */
+RadkummerkastenEntry.prototype.getDetails = function (callback) {
+  request.get('http://www.radkummerkasten.at/ajax/?map&action=getMapEntry&marker=' + encodeURI(this.id),
+    function (error, response, body) {
+      if (!error && response.statusCode === 200) {
+        var data = JSON.parse(body)
+
+        this.title = data.title
+        this.bezirk = data.bezirk
+
+        callback(null, this)
+        return
+      }
+
+      callback(error, null)
+    }.bind(this)
+  )
+}
+
 module.exports = Radkummerkasten
