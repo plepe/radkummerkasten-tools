@@ -8,16 +8,32 @@ var parser = new ArgumentParser({
   addHelp: true
 })
 
+parser.addArgument(
+  [ 'id' ],
+  {
+    help: 'You can limit the list on the specified ids (the number in the URL of an entry, e.g.: "#marker-1234" => "1234").',
+    nargs: '*'
+  }
+)
+
 var args = parser.parseArgs()
+if (args.id.length === 0) {
+  delete args.id
+}
 
 var writer = csvWriter({
   headers: [ 'id', 'category', 'status', 'lat', 'lon' ]
 })
 writer.pipe(process.stdout)
 
+var filter = {}
+
+if (args.id) {
+  filter.id = args.id
+}
+
 Radkummerkasten.getEntries(
-  {
-  },
+  filter,
   function (err, entry) {
     if (err) {
       throw (err)
