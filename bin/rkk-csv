@@ -3,9 +3,9 @@ var Radkummerkasten = require('../src/Radkummerkasten')
 var csvWriter = require('csv-write-stream')
 var args = require('../src/cliHandleArguments')
 
-var headers = [ 'id', 'category', 'status', 'lat', 'lon' ]
+var headers = [ 'id', 'category', 'categoryName', 'status', 'lat', 'lon' ]
 if (args.details) {
-  headers = [ 'id', 'title', 'bezirk', 'user', 'date', 'category', 'status', 'likes', 'lat', 'lon', 'text', 'commentsCount' ]
+  headers = [ 'id', 'title', 'bezirk', 'user', 'date', 'category', 'categoryName', 'status', 'likes', 'lat', 'lon', 'text', 'commentsCount' ]
 }
 
 var writer = csvWriter({

@@ -3,6 +3,8 @@ var async = require('async')
 var entities = require('entities')
 var parseDate = require('./parseDate')
 
+var categoryNames = null
+
 /**
  * The interface to Radkummerkasten
  * @constructor
@@ -37,6 +39,11 @@ Radkummerkasten.getEntries = function (filter, featureCallback, finalCallback) {
 
       if (!error && response.statusCode === 200) {
         var data = JSON.parse(body)
+
+        categoryNames = {}
+        for (var k in data.categories) {
+          categoryNames[k] = data.categories[k].name
+        }
 
         data.markers.forEach(function (entry) {
           var ob = new RadkummerkastenEntry(entry)
@@ -90,6 +97,7 @@ Radkummerkasten.getEntries = function (filter, featureCallback, finalCallback) {
  * @property {number} lon - Longitude of the entry
  * @property {number} status - ???
  * @property {number} category - Category of the entry
+ * @property {string} categoryName - Category as string
  * @property {string} title - Title (load details first)
  * @property {number} bezirk - Bezirk (load details first)
  * @property {string} user - User, e.g. 'Max M.' (load details first)
@@ -104,6 +112,7 @@ function RadkummerkastenEntry (data) {
   this.lon = data.loc[1]
   this.status = data.options.status
   this.category = data.options.survey
+  this.categoryName = categoryNames[data.options.survey]
 }
 
 /**
@@ -126,7 +135,8 @@ RadkummerkastenEntry.prototype.toGeoJSON = function () {
     properties: {
       id: this.id,
       status: this.status,
-      category: this.category
+      category: this.category,
+      categoryName: this.categoryName
     }
   }
 
