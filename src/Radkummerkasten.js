@@ -117,8 +117,24 @@ RadkummerkastenEntry.prototype.getDetails = function (callback) {
         this.text = entities.decodeHTML(data.htmlData.substr(m[0].length, p - m[0].length).replace(/<br \/>/g, '\n'))
 
         var remainingHtmlData = data.htmlData.substr(p + 4)
-        var m = remainingHtmlData.match(/<\/div><p class="text-center"><button type="button" class="btn btn-zustimmen btn-nodecoration btn-default" >Finde ich auch <i class="glyphicon glyphicon-thumbs-up"><\/i> <span class="badge">([0-9]+)<\/span><\/button><\/p>/m)
+        var m = remainingHtmlData.match(/^[^]*<\/div><p class="text-center"><button type="button" class="btn btn-zustimmen btn-nodecoration btn-default" >Finde ich auch <i class="glyphicon glyphicon-thumbs-up"><\/i> <span class="badge">([0-9]+)<\/span><\/button><\/p>/m)
         this.likes = parseInt(m[1])
+
+        remainingHtmlData = remainingHtmlData.substr(m[0].length)
+        this.comments = []
+        var commentsHtmlData = remainingHtmlData.split(/<\/p>/g)
+
+        for (var i = 0; i < commentsHtmlData.length; i++) {
+          var m = commentsHtmlData[i].match(/<div class=""><p><span class="author"><i>(.*) schrieb am (.*), (.*):<\/i><\/span><br \/>([^]*)$/m)
+          if (m) {
+            this.comments.push({
+              user: m[1],
+              date: m[3],
+              text: entities.decodeHTML(m[4].replace(/\r\n/g, '').replace(/<br \/>/g, '\n'))
+            })
+          }
+        }
+        this.commentsCount = this.comments.length
 
         callback(null, this)
         return
