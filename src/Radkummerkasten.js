@@ -1,6 +1,7 @@
 var request = require('request')
 var async = require('async')
 var entities = require('entities')
+var parseDate = require('./parseDate')
 
 /**
  * The interface to Radkummerkasten
@@ -112,7 +113,7 @@ RadkummerkastenEntry.prototype.getDetails = function (callback) {
         this.title = data.title
         this.bezirk = data.bezirk
         this.user = m[3]
-        this.date = m[5]
+        this.date = parseDate(m[5])
         var p = data.htmlData.indexOf('</p>')
         this.text = entities.decodeHTML(data.htmlData.substr(m[0].length, p - m[0].length).replace(/<br \/>/g, '\n'))
 
@@ -129,7 +130,7 @@ RadkummerkastenEntry.prototype.getDetails = function (callback) {
           if (m) {
             this.comments.push({
               user: m[1],
-              date: m[3],
+              date: parseDate(m[3]),
               text: entities.decodeHTML(m[4].replace(/\r\n/g, '').replace(/<br \/>/g, '\n'))
             })
           }
