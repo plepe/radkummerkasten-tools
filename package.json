@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/plepe/radkummerkasten-tools#readme",
   "dependencies": {
+    "argparse": "^1.0.9",
     "csv-write-stream": "^2.0.0",
     "request": "^2.79.0"
   },

@@ -1,6 +1,14 @@
 #!/usr/bin/node
 var Radkummerkasten = require('../src/Radkummerkasten')
 var csvWriter = require('csv-write-stream')
+var ArgumentParser = require('argparse').ArgumentParser
+
+var parser = new ArgumentParser({
+  description: 'Load entries from Radkummerkasten and print as CSV file',
+  addHelp: true
+})
+
+var args = parser.parseArgs()
 
 var writer = csvWriter({
   headers: [ 'id', 'category', 'status', 'lat', 'lon' ]
