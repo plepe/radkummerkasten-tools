@@ -116,6 +116,10 @@ RadkummerkastenEntry.prototype.getDetails = function (callback) {
         var p = data.htmlData.indexOf('</p>')
         this.text = entities.decodeHTML(data.htmlData.substr(m[0].length, p - m[0].length).replace(/<br \/>/g, '\n'))
 
+        var remainingHtmlData = data.htmlData.substr(p + 4)
+        var m = remainingHtmlData.match(/<\/div><p class="text-center"><button type="button" class="btn btn-zustimmen btn-nodecoration btn-default" >Finde ich auch <i class="glyphicon glyphicon-thumbs-up"><\/i> <span class="badge">([0-9]+)<\/span><\/button><\/p>/m)
+        this.likes = parseInt(m[1])
+
         callback(null, this)
         return
       }
