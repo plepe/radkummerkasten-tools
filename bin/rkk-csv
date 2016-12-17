@@ -9,6 +9,14 @@ var parser = new ArgumentParser({
 })
 
 parser.addArgument(
+  [ '-d', '--details' ],
+  {
+    help: 'When loading entries, also load details for each entry (needs to do a request per entry, please filter data).',
+    nargs: 0
+  }
+)
+
+parser.addArgument(
   [ 'id' ],
   {
     help: 'You can limit the list on the specified ids (the number in the URL of an entry, e.g.: "#marker-1234" => "1234").',
@@ -21,8 +29,13 @@ if (args.id.length === 0) {
   delete args.id
 }
 
+var headers = [ 'id', 'category', 'status', 'lat', 'lon' ]
+if (args.details) {
+  headers = [ 'id', 'title', 'bezirk', 'user', 'date', 'category', 'status', 'likes', 'lat', 'lon', 'text', 'commentsCount' ]
+}
+
 var writer = csvWriter({
-  headers: [ 'id', 'category', 'status', 'lat', 'lon' ]
+  headers: headers
 })
 writer.pipe(process.stdout)
 
@@ -31,6 +44,7 @@ var filter = {}
 if (args.id) {
   filter.id = args.id
 }
+filter.includeDetails = !!args.details
 
 Radkummerkasten.getEntries(
   filter,
