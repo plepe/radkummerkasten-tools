@@ -25,6 +25,7 @@
     "argparse": "^1.0.9",
     "async": "^2.1.4",
     "csv-write-stream": "^2.0.0",
+    "entities": "^1.1.1",
     "request": "^2.79.0"
   },
   "devDependencies": {

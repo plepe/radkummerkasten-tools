@@ -1,5 +1,6 @@
 var request = require('request')
 var async = require('async')
+var entities = require('entities')
 
 /**
  * The interface to Radkummerkasten
@@ -106,8 +107,14 @@ RadkummerkastenEntry.prototype.getDetails = function (callback) {
       if (!error && response.statusCode === 200) {
         var data = JSON.parse(body)
 
+        var m = data.htmlData.match(/^<div class="marker-entry"><h3><span class="survey">([^<]*):<\/span> ([^<]*)<\/h3><div class=""><p><span class="author"><i>(.*) schrieb am (.*), (.*):<\/i><\/span><br \/>/)
+
         this.title = data.title
         this.bezirk = data.bezirk
+        this.user = m[3]
+        this.date = m[5]
+        var p = data.htmlData.indexOf('</p>')
+        this.text = entities.decodeHTML(data.htmlData.substr(m[0].length, p - m[0].length).replace(/<br \/>/g, '\n'))
 
         callback(null, this)
         return
