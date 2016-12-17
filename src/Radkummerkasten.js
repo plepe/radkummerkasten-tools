@@ -74,6 +74,14 @@ Radkummerkasten.getEntries = function (filter, featureCallback, finalCallback) {
 }
 
 /**
+ * A comment entry
+ * @typedef {Object} RadkummerkastenEntry.comments
+ * @property {string} text - Kommentartext
+ * @property {user} string - User Name
+ * @property {date} date - ISO8601 date
+ */
+
+/**
  * A Radkummerkasten Entry
  * @constructor RadkummerkastenEntry
  * @param {object} data - Data of the entry
@@ -82,6 +90,13 @@ Radkummerkasten.getEntries = function (filter, featureCallback, finalCallback) {
  * @property {number} lon - Longitude of the entry
  * @property {number} status - ???
  * @property {number} category - Category of the entry
+ * @property {string} title - Title (load details first)
+ * @property {number} bezirk - Bezirk (load details first)
+ * @property {string} user - User, e.g. 'Max M.' (load details first)
+ * @property {string} date - Date, ISO8601 (e.g. '2016-12-24') (load details first)
+ * @property {string} text - Beschreibung (load details first)
+ * @property {RadkummerkastenEntry.comments[]} comments - Comments (load details first)
+ * @property {number} commentsCount - Count of comments (load details first)
  */
 function RadkummerkastenEntry (data) {
   this.id = data.id
