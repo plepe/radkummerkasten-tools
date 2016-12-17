@@ -1,0 +1,43 @@
+#!/usr/bin/node
+var Radkummerkasten = require('../src/Radkummerkasten')
+var args = require('../src/cliHandleArguments')
+
+var headers = [ 'id', 'category', 'status', 'lat', 'lon' ]
+if (args.details) {
+  headers = [ 'id', 'title', 'bezirk', 'user', 'date', 'category', 'status', 'likes', 'lat', 'lon', 'text', 'commentsCount' ]
+}
+
+process.stdout.write('{ "type": "FeatureCollection", "features": [\n')
+
+var filter = {}
+
+if (args.id) {
+  filter.id = args.id
+}
+filter.includeDetails = !!args.details
+
+var first = true
+
+Radkummerkasten.getEntries(
+  filter,
+  function (err, entry) {
+    if (err) {
+      throw (err)
+    }
+
+    if (first) {
+      first = false
+    } else {
+      process.stdout.write(',\n')
+    }
+
+    process.stdout.write(JSON.stringify(entry.toGeoJSON(), null, '  '))
+  },
+  function (err) {
+    if (err) {
+      throw (err)
+    }
+
+    process.stdout.write(']}')
+  }
+)

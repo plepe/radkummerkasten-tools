@@ -4,7 +4,8 @@
   "description": "Tools um Abfragen an den radkummerkasten.at zu stellen",
   "main": "index.js",
   "bin": {
-    "rkk-csv": "bin/rkk-csv"
+    "rkk-csv": "bin/rkk-csv",
+    "rkk-geojson": "bin/rkk-geojson"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
