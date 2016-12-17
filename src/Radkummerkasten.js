@@ -1,4 +1,5 @@
 var request = require('request')
+var async = require('async')
 
 /**
  * The interface to Radkummerkasten
@@ -23,12 +24,15 @@ function Radkummerkasten (config) {
  * load all entries from Radkummerkasten and call the callbacks.
  * @param {object} filter - Filter the results by certain criteria
  * @param {number[]} [filter.id] - Only include entries with the specified ids (list might be filtered further by other filters)
+ * @param {boolean} includeDetails=false - If true, for each entry the details will be loaded. Requires a separate http request for each entry.
  * @param {Radkummerkasten~featureCallback} featureCallback - The featureCallback function will be called for each received entry.
  * @param {Radkummerkasten~finalCallback} [finalCallback] - The finalCallback will be called after the last entry.
  */
 Radkummerkasten.getEntries = function (filter, featureCallback, finalCallback) {
   request.get('http://www.radkummerkasten.at/ajax/?map&action=getMapMarkers',
     function (error, response, body) {
+      var detailsFunctions = []
+
       if (!error && response.statusCode === 200) {
         var data = JSON.parse(body)
 
@@ -39,10 +43,23 @@ Radkummerkasten.getEntries = function (filter, featureCallback, finalCallback) {
             return
           }
 
-          featureCallback(null, ob)
+          if (filter.includeDetails) {
+            detailsFunctions.push(function (ob, callback) {
+              ob.getDetails(function () {
+                featureCallback(null, ob)
+                callback()
+              })
+            }.bind(this, ob))
+          } else {
+            featureCallback(null, ob)
+          }
         })
 
-        if (finalCallback) {
+        if (filter.includeDetails) {
+          async.parallelLimit(detailsFunctions, 4, function () {
+            finalCallback(null)
+          })
+        } else {
           finalCallback(null)
         }
 
