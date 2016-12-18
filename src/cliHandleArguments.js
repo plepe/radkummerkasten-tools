@@ -21,6 +21,14 @@ parser.addArgument(
   }
 )
 
+parser.addArgument(
+  [ '-b', '--bezirk' ],
+  {
+    help: 'Limit list to entries within the specified Bezirk(e).',
+    nargs: '*'
+  }
+)
+
 var args = parser.parseArgs()
 if (args.id.length === 0) {
   delete args.id

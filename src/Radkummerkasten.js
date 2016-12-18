@@ -32,6 +32,7 @@ function Radkummerkasten (config) {
  * @param {object} filter - Filter the results by certain criteria
  * @param {number[]} [filter.id] - Only include entries with the specified ids (list might be filtered further by other filters)
  * @param {boolean} filter.includeDetails=false - If true, for each entry the details will be loaded. Requires a separate http request for each entry.
+ * @param {number[]} filter.bezirk - Only include entries within the specified Bezirk or Bezirke.
  * @param {Radkummerkasten~featureCallback} featureCallback - The featureCallback function will be called for each received entry.
  * @param {Radkummerkasten~finalCallback} [finalCallback] - The finalCallback will be called after the last entry.
  */
@@ -61,6 +62,10 @@ Radkummerkasten._getEntries = function (filter, featureCallback, finalCallback, 
           var ob = new RadkummerkastenEntry(entry)
 
           if ('id' in filter && filter.id.indexOf('' + ob.id) === -1) {
+            return
+          }
+
+          if ('bezirk' in filter && filter.bezirk.indexOf('' + ob.bezirk) === -1) {
             return
           }
 

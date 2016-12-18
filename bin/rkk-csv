@@ -18,6 +18,9 @@ var filter = {}
 if (args.id) {
   filter.id = args.id
 }
+if (args.bezirk) {
+  filter.bezirk = args.bezirk
+}
 filter.includeDetails = !!args.details
 
 Radkummerkasten.getEntries(
