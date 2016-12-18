@@ -2,6 +2,9 @@ var request = require('request')
 var async = require('async')
 var entities = require('entities')
 var parseDate = require('./parseDate')
+var turf = {
+  within: require('@turf/within')
+}
 
 var categoryNames = null
 
@@ -123,6 +126,23 @@ Radkummerkasten.loadBezirksgrenzen = function (callback) {
       }
     }.bind(this)
   )
+}
+
+/**
+ * for the given lat/lon return the bezirk in Vienna
+ * @param {number} lat - Latitude
+ * @param {number} lon - Longitude
+ * @return {number} - The resulting bezirk (or 0 if it is not in Vienna)
+ */
+Radkummerkasten.getBezirk = function(lat, lon) {
+  for (var i = 0; i < this.bezirksgrenzen.length; i++) {
+    var r = turf.within({ type: 'FeatureCollection', features: [ { type: 'Feature', geometry: { type: 'Point', coordinates: [ lon, lat ] }} ] }, { type: 'FeatureCollection', features: [ this.bezirksgrenzen[i] ] })
+    if (r.features.length) {
+      return this.bezirksgrenzen[i].properties.BEZNR
+    }
+  }
+
+  return 0
 }
 
 /**
