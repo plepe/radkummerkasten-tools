@@ -14,6 +14,7 @@ Um `radkummerkasten-tools` zu installieren, muss [Node.js](https://nodejs.org/) 
 ```sh
 git clone https://github.com/plepe/radkummerkasten-tools.git
 cd radkummerkasten-tools
+npm install
 sudo npm link
 ```
 
