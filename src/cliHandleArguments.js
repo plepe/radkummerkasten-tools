@@ -1,14 +1,14 @@
 var ArgumentParser = require('argparse').ArgumentParser
 
 var parser = new ArgumentParser({
-  description: 'Load entries from Radkummerkasten and print as CSV file',
+  description: 'Lade Einträge aus dem Radkummerkasten und generiere eine CSV Datei daraus.',
   addHelp: true
 })
 
 parser.addArgument(
   [ '-d', '--details' ],
   {
-    help: 'When loading entries, also load details for each entry (needs to do a request per entry, please filter data).',
+    help: 'Lade außerdem die detailierten Daten für alle (passenden) Einträge (Achtung: Für jeden Eintrag muss eine Anfrage an den Server gestellt werden - das dauert).',
     nargs: 0
   }
 )
@@ -16,7 +16,7 @@ parser.addArgument(
 parser.addArgument(
   [ 'id' ],
   {
-    help: 'You can limit the list on the specified ids (the number in the URL of an entry, e.g.: "#marker-1234" => "1234").',
+    help: 'Lade nur Einträge mit den angegebenen IDs (siehe Nummer in der URL eines Eintrages: z.B.: "#marker-1234" => "1234").',
     nargs: '*'
   }
 )
@@ -24,7 +24,7 @@ parser.addArgument(
 parser.addArgument(
   [ '-b', '--bezirk' ],
   {
-    help: 'Limit list to entries within the specified Bezirk(e).',
+    help: 'Lade nur Einträge im angegebenen Bezirk, bzw. in den angegebenen Bezirken.',
     nargs: '*'
   }
 )
