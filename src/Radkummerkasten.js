@@ -3,7 +3,7 @@ var async = require('async')
 var entities = require('entities')
 var parseDate = require('./parseDate')
 var turf = {
-  within: require('@turf/within')
+  inside: require('@turf/inside')
 }
 
 var categoryNames = null
@@ -140,21 +140,15 @@ Radkummerkasten.loadBezirksgrenzen = function (callback) {
  */
 Radkummerkasten.getBezirk = function (lat, lon) {
   for (var i = 0; i < this.bezirksgrenzen.length; i++) {
-    var r = turf.within({
-      type: 'FeatureCollection',
-      features: [ {
-        type: 'Feature',
-        geometry: {
-          type: 'Point',
-          coordinates: [ lon, lat ]
-        }
-      } ]
-    }, {
-      type: 'FeatureCollection',
-      features: [ this.bezirksgrenzen[i] ]
-    })
+    var r = turf.inside({
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [ lon, lat ]
+      }
+    }, this.bezirksgrenzen[i])
 
-    if (r.features.length) {
+    if (r) {
       return this.bezirksgrenzen[i].properties.BEZNR
     }
   }
