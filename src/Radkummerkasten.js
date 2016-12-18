@@ -115,7 +115,6 @@ Radkummerkasten.loadBezirksgrenzen = function (callback) {
 
   request.get('https://www.radkummerkasten.at/wp-content/plugins/radkummerkasten/js/data.wien.gv.at_bezirksgrenzen.json',
     function (error, response, body) {
-
       if (!error && response.statusCode === 200) {
         var data = JSON.parse(body)
 
@@ -139,9 +138,22 @@ Radkummerkasten.loadBezirksgrenzen = function (callback) {
  * @param {number} lon - Longitude
  * @return {number} - The resulting bezirk (or 0 if it is not in Vienna)
  */
-Radkummerkasten.getBezirk = function(lat, lon) {
+Radkummerkasten.getBezirk = function (lat, lon) {
   for (var i = 0; i < this.bezirksgrenzen.length; i++) {
-    var r = turf.within({ type: 'FeatureCollection', features: [ { type: 'Feature', geometry: { type: 'Point', coordinates: [ lon, lat ] }} ] }, { type: 'FeatureCollection', features: [ this.bezirksgrenzen[i] ] })
+    var r = turf.within({
+      type: 'FeatureCollection',
+      features: [ {
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [ lon, lat ]
+        }
+      } ]
+    }, {
+      type: 'FeatureCollection',
+      features: [ this.bezirksgrenzen[i] ]
+    })
+
     if (r.features.length) {
       return this.bezirksgrenzen[i].properties.BEZNR
     }
@@ -244,10 +256,12 @@ RadkummerkastenEntry.prototype.toGeoJSON = function () {
 RadkummerkastenEntry.prototype.getDetails = function (callback) {
   request.get('http://www.radkummerkasten.at/ajax/?map&action=getMapEntry&marker=' + encodeURI(this.id),
     function (error, response, body) {
+      var m
+
       if (!error && response.statusCode === 200) {
         var data = JSON.parse(body)
 
-        var m = data.htmlData.match(/^<div class="marker-entry"><h3><span class="survey">([^<]*):<\/span> ([^<]*)<\/h3>(.*)<div class=""><p><span class="author"><i>(.*) schrieb am (.*), (.*):<\/i><\/span><br \/>/)
+        m = data.htmlData.match(/^<div class="marker-entry"><h3><span class="survey">([^<]*):<\/span> ([^<]*)<\/h3>(.*)<div class=""><p><span class="author"><i>(.*) schrieb am (.*), (.*):<\/i><\/span><br \/>/)
 
         if (m[3]) {
           var m1 = m[3].match(/<a href="(.*)" class="swipebox" title="(.*)"><img src/)
@@ -267,7 +281,7 @@ RadkummerkastenEntry.prototype.getDetails = function (callback) {
         this.text = entities.decodeHTML(data.htmlData.substr(m[0].length, p - m[0].length).replace(/<br \/>/g, '\n'))
 
         var remainingHtmlData = data.htmlData.substr(p + 4)
-        var m = remainingHtmlData.match(/^[^]*<\/div><p class="text-center"><button type="button" class="btn btn-zustimmen btn-nodecoration btn-default" >Finde ich auch <i class="glyphicon glyphicon-thumbs-up"><\/i> <span class="badge">([0-9]+)<\/span><\/button><\/p>/m)
+        m = remainingHtmlData.match(/^[^]*<\/div><p class="text-center"><button type="button" class="btn btn-zustimmen btn-nodecoration btn-default" >Finde ich auch <i class="glyphicon glyphicon-thumbs-up"><\/i> <span class="badge">([0-9]+)<\/span><\/button><\/p>/m)
         this.likes = parseInt(m[1])
 
         remainingHtmlData = remainingHtmlData.substr(m[0].length)
@@ -275,7 +289,7 @@ RadkummerkastenEntry.prototype.getDetails = function (callback) {
         var commentsHtmlData = remainingHtmlData.split(/<\/p>/g)
 
         for (var i = 0; i < commentsHtmlData.length; i++) {
-          var m = commentsHtmlData[i].match(/<div class=""><p><span class="author"><i>(.*) schrieb am (.*), (.*):<\/i><\/span><br \/>([^]*)$/m)
+          m = commentsHtmlData[i].match(/<div class=""><p><span class="author"><i>(.*) schrieb am (.*), (.*):<\/i><\/span><br \/>([^]*)$/m)
           if (m) {
             this.comments.push({
               user: m[1],
