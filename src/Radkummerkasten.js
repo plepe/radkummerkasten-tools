@@ -31,7 +31,7 @@ function Radkummerkasten (config) {
  * load all entries from Radkummerkasten and call the callbacks.
  * @param {object} filter - Filter the results by certain criteria
  * @param {number[]} [filter.id] - Only include entries with the specified ids (list might be filtered further by other filters)
- * @param {boolean} includeDetails=false - If true, for each entry the details will be loaded. Requires a separate http request for each entry.
+ * @param {boolean} filter.includeDetails=false - If true, for each entry the details will be loaded. Requires a separate http request for each entry.
  * @param {Radkummerkasten~featureCallback} featureCallback - The featureCallback function will be called for each received entry.
  * @param {Radkummerkasten~finalCallback} [finalCallback] - The finalCallback will be called after the last entry.
  */
