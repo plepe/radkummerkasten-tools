@@ -5,7 +5,7 @@ var args = require('../src/cliHandleArguments')
 
 var headers = [ 'id', 'category', 'categoryName', 'status', 'lat', 'lon' ]
 if (args.details) {
-  headers = [ 'id', 'title', 'bezirk', 'user', 'date', 'category', 'categoryName', 'status', 'likes', 'lat', 'lon', 'text', 'commentsCount' ]
+  headers = [ 'id', 'title', 'bezirk', 'user', 'date', 'category', 'categoryName', 'status', 'likes', 'lat', 'lon', 'text', 'commentsCount', 'attachmentsCount' ]
 }
 
 var writer = csvWriter({

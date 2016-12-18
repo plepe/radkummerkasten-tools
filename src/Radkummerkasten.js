@@ -89,6 +89,13 @@ Radkummerkasten.getEntries = function (filter, featureCallback, finalCallback) {
  */
 
 /**
+ * An attachment
+ * @typedef {Object} RadkummerkastenEntry.attachment
+ * @property {string} title - Title of the attachment
+ * @property {string} url - absolute URL of the attachment
+ */
+
+/**
  * A Radkummerkasten Entry
  * @constructor RadkummerkastenEntry
  * @param {object} data - Data of the entry
@@ -105,6 +112,8 @@ Radkummerkasten.getEntries = function (filter, featureCallback, finalCallback) {
  * @property {string} text - Beschreibung (load details first)
  * @property {RadkummerkastenEntry.comments[]} comments - Comments (load details first)
  * @property {number} commentsCount - Count of comments (load details first)
+ * @property {RadkummerkastenEntry.attachment[]} attachments - Attachments (load details first)
+ * @property {number} attachmentsCount - Count of attachments (load details first)
  */
 function RadkummerkastenEntry (data) {
   this.id = data.id
@@ -148,6 +157,10 @@ RadkummerkastenEntry.prototype.toGeoJSON = function () {
     ret.properties.text = this.text
     ret.properties.likes = this.likes
     ret.properties.comments = this.comments
+
+    if (this.attachments) {
+      ret.properties.attachments = this.attachments
+    }
   }
 
   return ret
@@ -163,12 +176,22 @@ RadkummerkastenEntry.prototype.getDetails = function (callback) {
       if (!error && response.statusCode === 200) {
         var data = JSON.parse(body)
 
-        var m = data.htmlData.match(/^<div class="marker-entry"><h3><span class="survey">([^<]*):<\/span> ([^<]*)<\/h3><div class=""><p><span class="author"><i>(.*) schrieb am (.*), (.*):<\/i><\/span><br \/>/)
+        var m = data.htmlData.match(/^<div class="marker-entry"><h3><span class="survey">([^<]*):<\/span> ([^<]*)<\/h3>(.*)<div class=""><p><span class="author"><i>(.*) schrieb am (.*), (.*):<\/i><\/span><br \/>/)
+
+        if (m[3]) {
+          var m1 = m[3].match(/<a href="(.*)" class="swipebox" title="(.*)"><img src/)
+          this.attachments = [
+            {
+              url: 'http://www.radkummerkasten.at' + m1[1],
+              title: m1[2]
+            }
+          ]
+        }
 
         this.title = data.title
         this.bezirk = data.bezirk
-        this.user = m[3]
-        this.date = parseDate(m[5])
+        this.user = m[4]
+        this.date = parseDate(m[6])
         var p = data.htmlData.indexOf('</p>')
         this.text = entities.decodeHTML(data.htmlData.substr(m[0].length, p - m[0].length).replace(/<br \/>/g, '\n'))
 
@@ -191,6 +214,7 @@ RadkummerkastenEntry.prototype.getDetails = function (callback) {
           }
         }
         this.commentsCount = this.comments.length
+        this.attachmentsCount = this.attachments ? this.attachments.length : 0
 
         callback(null, this)
         return
