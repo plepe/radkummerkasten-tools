@@ -170,8 +170,8 @@ Radkummerkasten.getBezirk = function(lat, lon) {
  * @property {number} status - ???
  * @property {number} category - Category of the entry
  * @property {string} categoryName - Category as string
+ * @property {number} bezirk - Bezirk
  * @property {string} title - Title (load details first)
- * @property {number} bezirk - Bezirk (load details first)
  * @property {string} user - User, e.g. 'Max M.' (load details first)
  * @property {string} date - Date, ISO8601 (e.g. '2016-12-24') (load details first)
  * @property {string} text - Beschreibung (load details first)
@@ -187,6 +187,7 @@ function RadkummerkastenEntry (data) {
   this.status = data.options.status
   this.category = data.options.survey
   this.categoryName = categoryNames[data.options.survey]
+  this.bezirk = Radkummerkasten.getBezirk(this.lat, this.lon)
 }
 
 /**
@@ -208,6 +209,7 @@ RadkummerkastenEntry.prototype.toGeoJSON = function () {
     },
     properties: {
       id: this.id,
+      bezirk: this.bezirk,
       status: this.status,
       category: this.category,
       categoryName: this.categoryName
@@ -216,7 +218,6 @@ RadkummerkastenEntry.prototype.toGeoJSON = function () {
 
   if (this.title) {
     ret.properties.title = this.title
-    ret.properties.bezirk = this.bezirk
     ret.properties.user = this.user
     ret.properties.date = this.date
     ret.properties.text = this.text
