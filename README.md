@@ -19,3 +19,7 @@ sudo npm link
 ```
 
 Danach sollten die command line tools verfügbar sein.
+
+CONTRIBUTING
+============
+Die radkummerkasten-tools werden von Stephan Bösch-Plepelits entwickelt. Diese sind Open Source und werden auf Github entwickelt. Kommentare, Bug Reports und Erweiterungen sind herzlich willkommen: https://github.com/plepe/radkummerkasten-tools
