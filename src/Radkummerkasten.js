@@ -33,6 +33,15 @@ function Radkummerkasten (config) {
  * @param {Radkummerkasten~finalCallback} [finalCallback] - The finalCallback will be called after the last entry.
  */
 Radkummerkasten.getEntries = function (filter, featureCallback, finalCallback) {
+  this.loadBezirksgrenzen(this._getEntries.bind(this, filter, featureCallback, finalCallback))
+}
+
+Radkummerkasten._getEntries = function (filter, featureCallback, finalCallback, error) {
+  if (error) {
+    finalCallback(error)
+    return
+  }
+
   request.get('http://www.radkummerkasten.at/ajax/?map&action=getMapMarkers',
     function (error, response, body) {
       var detailsFunctions = []
@@ -77,6 +86,42 @@ Radkummerkasten.getEntries = function (filter, featureCallback, finalCallback) {
 
       finalCallback(error, null)
     }
+  )
+}
+
+/**
+ * load the this.bezirksgrenzen (district borders) from the server
+ * @param {function} callback - Callback which should be called after loading. will be passed an error or null
+ */
+Radkummerkasten.loadBezirksgrenzen = function (callback) {
+  // already cached
+  if (this.bezirksgrenzen) {
+    async.setImmediate(function () {
+      callback(null)
+    })
+
+    return
+  }
+
+  this.bezirksgrenzen = []
+
+  request.get('https://www.radkummerkasten.at/wp-content/plugins/radkummerkasten/js/data.wien.gv.at_bezirksgrenzen.json',
+    function (error, response, body) {
+
+      if (!error && response.statusCode === 200) {
+        var data = JSON.parse(body)
+
+        for (var i = 0; i < data.features.length; i++) {
+          var feature = data.features[i]
+
+          this.bezirksgrenzen.push(feature)
+        }
+
+        callback(null)
+      } else {
+        callback(error)
+      }
+    }.bind(this)
   )
 }
 
