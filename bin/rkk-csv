@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 var Radkummerkasten = require('../src/Radkummerkasten')
 var csvWriter = require('csv-write-stream')
-var args = require('../src/cliHandleArguments')
+var ArgHandler = require('../src/cliHandleArguments')
+
+var parser = ArgHandler.init()
+var args = ArgHandler.parseArgs()
 
 var headers = [ 'id', 'bezirk', 'category', 'categoryName', 'status', 'lat', 'lon' ]
 if (args.details) {
