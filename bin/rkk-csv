@@ -4,6 +4,8 @@ var csvWriter = require('csv-write-stream')
 var ArgHandler = require('../src/cliHandleArguments')
 
 var parser = ArgHandler.init()
+parser.description = 'Lade Einträge aus dem Radkummerkasten und generiere eine CSV Datei daraus. Die Datei verwendet \',\' als Separator und UTF-8 als Encoding.'
+
 var args = ArgHandler.parseArgs()
 
 var headers = [ 'id', 'bezirk', 'category', 'categoryName', 'status', 'lat', 'lon' ]

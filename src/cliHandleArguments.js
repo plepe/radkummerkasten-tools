@@ -4,7 +4,6 @@ function init () {
   var ArgumentParser = require('argparse').ArgumentParser
 
   parser = new ArgumentParser({
-    description: 'Lade Einträge aus dem Radkummerkasten und generiere eine CSV Datei daraus.',
     addHelp: true,
     epilog: 'Die radkummerkasten-tools werden von Stephan Bösch-Plepelits entwickelt. Diese sind Open Source und werden auf Github entwickelt. Kommentare, Bug Reports und Erweiterungen sind herzlich willkommen: https://github.com/plepe/radkummerkasten-tools'
   })
