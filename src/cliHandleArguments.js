@@ -54,7 +54,25 @@ function parseArgs () {
   return args
 }
 
+function compileFilter (args) {
+  var filter = {}
+
+  if (args.id) {
+    filter.id = args.id
+  }
+  if (args.bezirk) {
+    filter.bezirk = args.bezirk
+  }
+  if (args.category) {
+    filter.category = args.category
+  }
+  filter.includeDetails = !!args.details
+
+  return filter
+}
+
 module.exports = {
   init: init,
-  parseArgs: parseArgs
+  parseArgs: parseArgs,
+  compileFilter: compileFilter
 }
