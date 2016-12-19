@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-var Radkummerkasten = require('../src/Radkummerkasten')
+var createGeoJson = require('../src/createGeoJson')
 var ArgHandler = require('../src/cliHandleArguments')
 
 var parser = ArgHandler.init()
@@ -12,34 +12,8 @@ if (args.details) {
   headers = [ 'id', 'title', 'bezirk', 'user', 'date', 'category', 'status', 'likes', 'lat', 'lon', 'text', 'commentsCount' ]
 }
 
-process.stdout.write('{ "type": "FeatureCollection", "features": [\n')
-
 var filter = {}
 
 var filter = ArgHandler.compileFilter(args)
 
-var first = true
-
-Radkummerkasten.getEntries(
-  filter,
-  function (err, entry) {
-    if (err) {
-      throw (err)
-    }
-
-    if (first) {
-      first = false
-    } else {
-      process.stdout.write(',\n')
-    }
-
-    process.stdout.write(JSON.stringify(entry.toGeoJSON(), null, '  '))
-  },
-  function (err) {
-    if (err) {
-      throw (err)
-    }
-
-    process.stdout.write(']}')
-  }
-)
+createGeoJson(filter, process.stdout, function () {})
