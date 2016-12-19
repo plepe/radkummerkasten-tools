@@ -11,7 +11,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "standard ; exit 0",
     "doc": "jsdoc -d doc/ src/*.js",
-    "build": "mkdir -p dist && browserify index.js -o dist/radkummerkasten-tools.js"
+    "build": "mkdir -p dist && browserify index.js -o dist/radkummerkasten-tools.js && browserify src/page.js -o dist/page.js"
   },
   "repository": {
     "type": "git",
@@ -27,6 +27,7 @@
     "@turf/inside": "^3.7.0",
     "argparse": "^1.0.9",
     "async": "^2.1.4",
+    "concat-stream": "^1.5.2",
     "csv-write-stream": "^2.0.0",
     "entities": "^1.1.1",
     "request": "^2.79.0"

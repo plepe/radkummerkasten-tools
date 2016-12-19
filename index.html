@@ -1,0 +1,24 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>radkummerkasten-tools</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css" />
+  <style>
+.leaflet-popup-content {
+  max-height: 250px;
+  overflow: auto;
+}
+.leaflet-popup-content pre {
+  font-size: 8px;
+}
+  </style>
+  <script src="dist/page.js"></script>
+</head>
+<body>
+<form id='form' onSubmit='return submitRequest()'>
+  <input type='submit' value='Abschicken' />
+  <span id='download'></span>
+</form>
+</body>
+</html>
