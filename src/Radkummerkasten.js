@@ -33,6 +33,7 @@ function Radkummerkasten (config) {
  * @param {number[]} [filter.id] - Only include entries with the specified ids (list might be filtered further by other filters)
  * @param {boolean} filter.includeDetails=false - If true, for each entry the details will be loaded. Requires a separate http request for each entry.
  * @param {number[]} filter.bezirk - Only include entries within the specified Bezirk or Bezirke.
+ * @param {number[]|string[]} filter.category - Only include entries of the specified categories (either numeric or string representation).
  * @param {Radkummerkasten~featureCallback} featureCallback - The featureCallback function will be called for each received entry.
  * @param {Radkummerkasten~finalCallback} [finalCallback] - The finalCallback will be called after the last entry.
  */
@@ -58,6 +59,26 @@ Radkummerkasten._getEntries = function (filter, featureCallback, finalCallback, 
           categoryNames[k] = data.categories[k].name
         }
 
+        if ('category' in filter) {
+          for (var i = 0; i < filter.category.length; i++) {
+            // convert string categories to numeric value
+            var found = false
+            if (isNaN(parseInt(filter.category[i]))) {
+              for (k in categoryNames) {
+                if (categoryNames[k].toLowerCase() === filter.category[i].toLowerCase()) {
+                  filter.category[i] = k
+                  found = true
+                }
+              }
+
+              if (!found) {
+                finalCallback('Can\'t parse Category name: ' + filter.category[i])
+                return
+              }
+            }
+          }
+        }
+
         data.markers.forEach(function (entry) {
           var ob = new RadkummerkastenEntry(entry)
 
@@ -66,6 +87,10 @@ Radkummerkasten._getEntries = function (filter, featureCallback, finalCallback, 
           }
 
           if ('bezirk' in filter && filter.bezirk.indexOf('' + ob.bezirk) === -1) {
+            return
+          }
+
+          if ('category' in filter && filter.category.indexOf('' + ob.category) === -1) {
             return
           }
 

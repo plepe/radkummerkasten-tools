@@ -30,6 +30,15 @@ parser.addArgument(
   }
 )
 
+parser.addArgument(
+  [ '-k', '--kategorie' ],
+  {
+    help: 'Lade nur Einträge der angegeben Kategorie(n). Diese können als nummerischer Wert oder Text angegeben werden.',
+    nargs: '*',
+    dest: 'category'
+  }
+)
+
 var args = parser.parseArgs()
 if (args.id.length === 0) {
   delete args.id

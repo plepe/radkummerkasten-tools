@@ -17,6 +17,9 @@ if (args.id) {
 if (args.bezirk) {
   filter.bezirk = args.bezirk
 }
+if (args.category) {
+  filter.category = args.category
+}
 filter.includeDetails = !!args.details
 
 var first = true
