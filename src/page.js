@@ -5,8 +5,16 @@ window.createCsv = require('../src/createCsv')
 
 window.submitRequest = function () {
   var form = document.getElementById('form')
-  var filter = {
-    bezirk: [ '15' ]
+  var filter = {}
+
+  if (form.elements.bezirk.value !== '*') {
+    filter.bezirk = [ form.elements.bezirk.value ]
+  }
+  if (form.elements.category.value !== '*') {
+    filter.category = [ form.elements.category.value ]
+  }
+  if (form.elements.includeDetails.checked) {
+    filter.includeDetails = true
   }
 
   var pipe = concat(function (data) {
