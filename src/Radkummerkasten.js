@@ -290,7 +290,7 @@ RadkummerkastenEntry.prototype.toGeoJSON = function () {
  * @param {function} callback - Callback function
  */
 RadkummerkastenEntry.prototype.getDetails = function (callback) {
-  request.get(this.options.baseUrl + '/ajax/?map&action=getMapEntry&marker=' + encodeURI(this.id),
+  request.get(Radkummerkasten.options.baseUrl + '/ajax/?map&action=getMapEntry&marker=' + encodeURI(this.id),
     function (error, response, body) {
       var m
 
@@ -303,7 +303,7 @@ RadkummerkastenEntry.prototype.getDetails = function (callback) {
           var m1 = m[3].match(/<a href="(.*)" class="swipebox" title="(.*)"><img src/)
           this.attachments = [
             {
-              url: this.options.baseUrl + m1[1],
+              url: Radkummerkasten.options.baseUrl + m1[1],
               title: m1[2]
             }
           ]
