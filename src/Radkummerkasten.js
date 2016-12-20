@@ -1,7 +1,7 @@
 var request = require('request')
 var async = require('async')
-var entities = require('entities')
 var parseDate = require('./parseDate')
+var fromHTML = require('./fromHTML')
 var turf = {
   inside: require('@turf/inside')
 }
@@ -314,7 +314,7 @@ RadkummerkastenEntry.prototype.getDetails = function (callback) {
         this.user = m[4]
         this.date = parseDate(m[6])
         var p = data.htmlData.indexOf('</p>')
-        this.text = entities.decodeHTML(data.htmlData.substr(m[0].length, p - m[0].length).replace(/<br \/>/g, '\n'))
+        this.text = fromHTML(data.htmlData.substr(m[0].length, p - m[0].length))
 
         var remainingHtmlData = data.htmlData.substr(p + 4)
         m = remainingHtmlData.match(/^[^]*<\/div><p class="text-center"><button type="button" class="btn btn-zustimmen btn-nodecoration btn-default" >Finde ich auch <i class="glyphicon glyphicon-thumbs-up"><\/i> <span class="badge">([0-9]+)<\/span><\/button><\/p>/m)
@@ -330,7 +330,7 @@ RadkummerkastenEntry.prototype.getDetails = function (callback) {
             this.comments.push({
               user: m[1],
               date: parseDate(m[3]),
-              text: entities.decodeHTML(m[4].replace(/\r\n/g, '').replace(/<br \/>/g, '\n'))
+              text: fromHTML(m[4])
             })
           }
         }
