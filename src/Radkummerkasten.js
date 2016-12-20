@@ -11,9 +11,16 @@ var categoryNames = null
 /**
  * The interface to Radkummerkasten
  * @constructor
- * @param {object} config - Optional settings (currently none)
  */
-function Radkummerkasten (config) {
+function Radkummerkasten () {
+}
+
+Radkummerkasten.init = function () {
+  if (typeof this.options !== 'undefined') {
+    return
+  }
+
+  this.options = {}
 }
 
 /**
@@ -38,6 +45,8 @@ function Radkummerkasten (config) {
  * @param {Radkummerkasten~finalCallback} [finalCallback] - The finalCallback will be called after the last entry.
  */
 Radkummerkasten.getEntries = function (filter, featureCallback, finalCallback) {
+  this.init()
+
   this.loadBezirksgrenzen(this._getEntries.bind(this, filter, featureCallback, finalCallback))
 }
 
@@ -127,6 +136,8 @@ Radkummerkasten._getEntries = function (filter, featureCallback, finalCallback, 
  * @param {function} callback - Callback which should be called after loading. will be passed an error or null
  */
 Radkummerkasten.loadBezirksgrenzen = function (callback) {
+  this.init()
+
   // already cached
   if (this.bezirksgrenzen) {
     async.setImmediate(function () {
