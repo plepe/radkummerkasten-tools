@@ -21,6 +21,12 @@ Radkummerkasten.init = function () {
   }
 
   this.options = {}
+
+  if (typeof location === 'undefined') {
+    this.options.baseUrl = 'https://www.radkummerkasten.at'
+  } else {
+    this.options.baseUrl = location.protocol + '//www.radkummerkasten.at'
+  }
 }
 
 /**
@@ -56,7 +62,7 @@ Radkummerkasten._getEntries = function (filter, featureCallback, finalCallback, 
     return
   }
 
-  request.get('http://www.radkummerkasten.at/ajax/?map&action=getMapMarkers',
+  request.get(this.options.baseUrl + '/ajax/?map&action=getMapMarkers',
     function (error, response, body) {
       var detailsFunctions = []
 
@@ -149,7 +155,7 @@ Radkummerkasten.loadBezirksgrenzen = function (callback) {
 
   this.bezirksgrenzen = []
 
-  request.get('https://www.radkummerkasten.at/wp-content/plugins/radkummerkasten/js/data.wien.gv.at_bezirksgrenzen.json',
+  request.get(this.options.baseUrl + '/wp-content/plugins/radkummerkasten/js/data.wien.gv.at_bezirksgrenzen.json',
     function (error, response, body) {
       if (!error && response.statusCode === 200) {
         var data = JSON.parse(body)
@@ -284,7 +290,7 @@ RadkummerkastenEntry.prototype.toGeoJSON = function () {
  * @param {function} callback - Callback function
  */
 RadkummerkastenEntry.prototype.getDetails = function (callback) {
-  request.get('http://www.radkummerkasten.at/ajax/?map&action=getMapEntry&marker=' + encodeURI(this.id),
+  request.get(this.options.baseUrl + '/ajax/?map&action=getMapEntry&marker=' + encodeURI(this.id),
     function (error, response, body) {
       var m
 
@@ -297,7 +303,7 @@ RadkummerkastenEntry.prototype.getDetails = function (callback) {
           var m1 = m[3].match(/<a href="(.*)" class="swipebox" title="(.*)"><img src/)
           this.attachments = [
             {
-              url: 'http://www.radkummerkasten.at' + m1[1],
+              url: this.options.baseUrl + m1[1],
               title: m1[2]
             }
           ]
