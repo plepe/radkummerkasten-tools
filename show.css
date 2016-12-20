@@ -1,0 +1,8 @@
+div.entry img {
+  max-width: 200px;
+  max-height: 200px;
+  float: right;
+}
+div.entry {
+  clear: right;
+}
