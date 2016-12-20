@@ -16,8 +16,8 @@
   <script src="dist/page.js"></script>
 </head>
 <body>
-Lade Einträge aus dem Radkummerkasten und generiere eine CSV Datei daraus.
-Die Datei verwendet ',' als Separator und UTF-8 als Encoding.
+Lade Einträge aus dem Radkummerkasten und generiere eine CSV oder eine GeoJSON Datei daraus.
+Die CSV Datei verwendet ',' als Separator und UTF-8 als Encoding.
 
 <form id='form' onSubmit='return submitRequest()'>
   Bezirk: <select name='bezirk'>
@@ -69,6 +69,7 @@ Die Datei verwendet ',' als Separator und UTF-8 als Encoding.
   <span id='download'></span>
 </form>
 
+<hr>
 Die <a href='https://github.com/plepe/radkummerkasten-tools'>radkummerkasten-tools</a> werden von Stephan Bösch-Plepelits entwickelt.
 Diese sind Open Source und werden auf Github entwickelt. Kommentare, Bug
 Reports und Erweiterungen sind herzlich willkommen.
