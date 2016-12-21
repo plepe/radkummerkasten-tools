@@ -10,15 +10,30 @@ function showEntry(entry, div) {
 }
 
 window.onload = function () {
+  update()
+}
+
+window.update = function () {
   var entries = []
   var content = document.getElementById('content')
+  var form = document.getElementById('form')
+
+  var filter = {}
+  if (form.elements.bezirk.value !== '*') {
+    filter.bezirk = [ form.elements.bezirk.value ]
+  }
+  if (form.elements.category.value !== '*') {
+    filter.category = [ form.elements.category.value ]
+  }
 
   Radkummerkasten.getEntries(
-    {},
+    filter,
     function (err, entry) {
       entries.push(entry)
     },
     function (err) {
+      content.innerHTML = ''
+
       for (var i = Math.max(entries.length - 50, 0); i < entries.length; i++) {
         var div = document.createElement('div')
         div.className = 'entry'
