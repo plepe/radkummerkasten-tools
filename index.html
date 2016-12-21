@@ -13,15 +13,17 @@
   font-size: 8px;
 }
   </style>
-  <script src="dist/page.js"></script>
+  <script src="dist/index.js"></script>
 </head>
 <body>
-Lade Einträge aus dem Radkummerkasten und generiere eine CSV oder eine GeoJSON Datei daraus.
-Die CSV Datei verwendet ',' als Separator und UTF-8 als Encoding.
 
-<form id='form' onSubmit='return submitRequest()'>
-  Bezirk: <select name='bezirk'>
-    <option value='*'>* Alle *</option>
+<div id='menu'>
+  <a href='javascript:openDownload()'>Download</a>
+</div>
+
+<form id='form' onChange='return update()'>
+  <select name='bezirk'>
+    <option value='*'>* Bezirk *</option>
     <option>1</option>
     <option>2</option>
     <option>3</option>
@@ -46,9 +48,9 @@ Die CSV Datei verwendet ',' als Separator und UTF-8 als Encoding.
     <option>22</option>
     <option>23</option>
     <option value='0'>außerhalb Wien</option>
-  </select><br/>
-  Kategorie: <select name='category'>
-    <option value='*'>* Alle *</option>
+  </select>
+  <select name='category'>
+    <option value='*'>* Kategorie *</option>
     <option value='1'>Gefahrenstelle</option>
     <option value='2'>Lückenschluss</option>
     <option value='3'>Einbahn öffnen</option>
@@ -59,17 +61,25 @@ Die CSV Datei verwendet ',' als Separator und UTF-8 als Encoding.
     <option value='8'>Beschilderung</option>
     <option value='9'>Hindernisse</option>
     <option value='10'>Anderes</option>
-  </select><br/>
+  </select>
+</form>
+
+<form id='downloadOptions' onSubmit='return submitDownloadForm()'>
   <input name='includeDetails' type='checkbox'/>Lade Details für Einträge</input><br/>
   Dateityp: <select name='fileType'>
     <option value='csv'>CSV (Comma Separated Value, e.g. Excel)</option>
     <option value='geojson'>GeoJSON (GIS-Applications, e.g. qGIS)</option>
   </select><br/>
-  <input type='submit' value='Abschicken' />
+  <input type='submit' value='Generiere Ergebnis' />
   <span id='download'></span>
 </form>
 
-<hr>
+<hr/>
+
+<div id='content'>
+</div>
+
+<hr/>
 Die <a href='https://github.com/plepe/radkummerkasten-tools'>radkummerkasten-tools</a> werden von Stephan Bösch-Plepelits entwickelt.
 Diese sind Open Source und werden auf Github entwickelt. Kommentare, Bug
 Reports und Erweiterungen sind herzlich willkommen.

@@ -1,4 +1,9 @@
 window.Radkummerkasten = require('../src/Radkummerkasten')
+window.csvWriter = require('csv-write-stream')
+window.concat = require('concat-stream')
+window.createCsv = require('../src/createCsv')
+window.createGeoJson = require('../src/createGeoJson')
+window.stream = require('stream')
 
 const step = 20
 
@@ -57,6 +62,7 @@ window.update = function () {
       a.appendChild(document.createTextNode('lade mehr Einträge'))
       a.href = '#'
       a.onclick = function () {
+        location.href = 'data:text/csv;charset=utf-8,foo,bar'
         for (var i = entries.length - done - 1; i >= Math.max(entries.length - done - step, 0); i--) {
           var div = document.createElement('div')
           div.className = 'entry'
@@ -78,4 +84,65 @@ window.update = function () {
       content.appendChild(divLoadMore)
     }
   )
+}
+
+window.openDownload = function () {
+  var formDownload = document.getElementById('downloadOptions')
+  formDownload.style.display = 'block'
+}
+
+function createDownload (fileType, data) {
+  var download = document.getElementById('download')
+  download.innerHTML = ''
+
+  var contentType
+  var extension
+
+  if (fileType === 'csv') {
+    contentType = 'text/csv'
+    extension = 'csv'
+  } else if (fileType === 'geojson') {
+    contentType = 'application/vnd.geo+json'
+    extension = 'geojson'
+  }
+
+  var a = document.createElement('a')
+  a.href= 'data:' + contentType + ';charset=utf-8,' + encodeURI(data)
+  a.download = 'radkummerkasten.' + extension
+  a.appendChild(document.createTextNode('Download'))
+
+  download.appendChild(a)
+}
+
+window.submitDownloadForm = function () {
+  var form = document.getElementById('form')
+  var formDownload = document.getElementById('downloadOptions')
+  var filter = {}
+
+  if (form.elements.bezirk.value !== '*') {
+    filter.bezirk = [ form.elements.bezirk.value ]
+  }
+  if (form.elements.category.value !== '*') {
+    filter.category = [ form.elements.category.value ]
+  }
+
+  if (formDownload.elements.includeDetails.checked) {
+    filter.includeDetails = true
+  }
+
+  var download = document.getElementById('download')
+  download.innerHTML = 'Daten werden geladen, bitte warten ...'
+
+  var fileType = formDownload.elements.fileType.value
+  if (fileType === 'csv') {
+    createCsv(filter, concat(createDownload.bind(this, fileType)))
+  } else if (fileType === 'geojson') {
+    var downloadStream = concat(createDownload.bind(this, fileType))
+
+    createGeoJson(filter, downloadStream, function () {
+      downloadStream.end()
+    })
+  }
+
+  return false
 }
