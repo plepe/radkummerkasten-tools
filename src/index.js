@@ -5,18 +5,27 @@ window.createCsv = require('../src/createCsv')
 window.createGeoJson = require('../src/createGeoJson')
 window.stream = require('stream')
 
+var twig = require('twig').twig
+var teaserTemplate
+
 const step = 20
 
 function showEntry(entry, div) {
   entry.getDetails(function () {
-    div.innerHTML = '<h3>#' + entry.id + ' ' + entry.categoryName + ': ' + entry.title + '</h3>' +
-      (entry.attachments && entry.attachments.length ? '<img src="' + entry.attachments[0].url + '">' : '') +
-      (entry.text.length > 200 ? entry.text.substr(0, 200) + '...' : entry.text) +
-      '<br><a href="https://www.radkummerkasten.at/#marker-' + entry.id + '">' + entry.date + ' von ' + entry.user + '</a>'
+    div.innerHTML = teaserTemplate.render(entry)
   })
 }
 
 window.onload = function () {
+  teaserTemplate = twig({
+    data: '<h3>#{{ id }} {{ categoryName }}: {{ title }}</h3>\n' +
+      '{% if attachments and attachments|length > 0 %}\n' +
+      '<img src="{{ attachments[0].url }}">\n' +
+      '{% endif %}\n' +
+      '{% if text|length > 200 %}{{ text|slice(0, 200) }}...{% else %}{{ text }}{% endif %}\n' +
+      '<br><a href="https://www.radkummerkasten.at/#marker-{{ id }}">{{ date }} von {{ user }}</a>'
+  })
+
   update()
 }
 
@@ -62,7 +71,6 @@ window.update = function () {
       a.appendChild(document.createTextNode('lade mehr Einträge'))
       a.href = '#'
       a.onclick = function () {
-        location.href = 'data:text/csv;charset=utf-8,foo,bar'
         for (var i = entries.length - done - 1; i >= Math.max(entries.length - done - step, 0); i--) {
           var div = document.createElement('div')
           div.className = 'entry'
