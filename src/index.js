@@ -1,13 +1,13 @@
 window.Radkummerkasten = require('../src/Radkummerkasten')
-window.csvWriter = require('csv-write-stream')
-window.concat = require('concat-stream')
-window.createCsv = require('../src/createCsv')
-window.createGeoJson = require('../src/createGeoJson')
-window.stream = require('stream')
+var createCsv = require('../src/createCsv')
+var createGeoJson = require('../src/createGeoJson')
 
+var csvWriter = require('csv-write-stream')
+var concat = require('concat-stream')
+var stream = require('stream')
 var twig = require('twig').twig
-var teaserTemplate
 
+var teaserTemplate
 const step = 20
 
 function showEntry(entry, div) {
