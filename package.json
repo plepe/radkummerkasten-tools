@@ -11,7 +11,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "standard ; exit 0",
     "doc": "jsdoc -d doc/ src/*.js",
-    "build": "mkdir -p dist && browserify index.js -o dist/radkummerkasten-tools.js && browserify src/page.js -o dist/page.js"
+    "build": "mkdir -p dist && browserify index.js -o dist/radkummerkasten-tools.js && browserify src/page.js -o dist/page.js",
+    "build-show": "browserify src/show.js -o dist/show.js"
   },
   "repository": {
     "type": "git",
