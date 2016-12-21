@@ -29,6 +29,8 @@ Radkummerkasten.init = function () {
   } else {
     this.options.baseUrl = 'https://www.radkummerkasten.at'
   }
+
+  this.cacheEntries = {}
 }
 
 /**
@@ -97,7 +99,10 @@ Radkummerkasten._getEntries = function (filter, featureCallback, finalCallback, 
         }
 
         data.markers.forEach(function (entry) {
-          var ob = new RadkummerkastenEntry(entry)
+          if (!(entry.id in this.cacheEntries)) {
+            this.cacheEntries[entry.id] = new RadkummerkastenEntry(entry)
+          }
+          var ob = this.cacheEntries[entry.id]
 
           if ('id' in filter && filter.id.indexOf('' + ob.id) === -1) {
             return
@@ -111,7 +116,7 @@ Radkummerkasten._getEntries = function (filter, featureCallback, finalCallback, 
             return
           }
 
-          if (filter.includeDetails) {
+          if (filter.includeDetails && !ob.hasDetails) {
             detailsFunctions.push(function (ob, callback) {
               ob.getDetails(function () {
                 featureCallback(null, ob)
@@ -121,7 +126,7 @@ Radkummerkasten._getEntries = function (filter, featureCallback, finalCallback, 
           } else {
             featureCallback(null, ob)
           }
-        })
+        }.bind(this))
 
         if (filter.includeDetails) {
           async.parallelLimit(detailsFunctions, 4, function () {
@@ -135,7 +140,7 @@ Radkummerkasten._getEntries = function (filter, featureCallback, finalCallback, 
       }
 
       finalCallback(error, null)
-    }
+    }.bind(this)
   )
 }
 
@@ -243,6 +248,7 @@ function RadkummerkastenEntry (data) {
   this.category = data.options.survey
   this.categoryName = categoryNames[data.options.survey]
   this.bezirk = Radkummerkasten.getBezirk(this.lat, this.lon)
+  this.hasDetails = false
 }
 
 /**
@@ -292,6 +298,8 @@ RadkummerkastenEntry.prototype.toGeoJSON = function () {
  * @param {function} callback - Callback function
  */
 RadkummerkastenEntry.prototype.getDetails = function (callback) {
+  this.hasDetails = true
+
   request.get(Radkummerkasten.options.baseUrl + '/ajax/?map&action=getMapEntry&marker=' + encodeURI(this.id),
     function (error, response, body) {
       var m
