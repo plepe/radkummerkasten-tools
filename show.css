@@ -6,3 +6,12 @@ div.entry img {
 div.entry {
   clear: right;
 }
+div.loadMore a {
+  display: block;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border: 1px solid #afafaf;
+  text-align: center;
+  text-decoration: none;
+  color: black;
+}
