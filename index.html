@@ -110,7 +110,19 @@ Reports und Erweiterungen sind herzlich willkommen.
 <div class='attachments'>
 <div id='map'></div>
 {% for attachment in attachments %}
-<img class='attachment' src="{{ attachment.url }}">
+  <div class='image'>
+    <img class='attachment' src="{{ attachment.url }}">
+    Bereitgestellt von {{ user }} am {{ date }}
+  </div>
+{% endfor %}
+
+{% for comment in comments %}
+  {% for attachment in comment.attachments %}
+    <div class='image'>
+      <img class='attachment' src="{{ attachment.url }}"><br/>
+      Bereitgestellt von {{ comment.user }} am {{ comment.date }}
+    </div>
+  {% endfor %}
 {% endfor %}
 </div>
 <a target="radkummerkasten" href="https://www.radkummerkasten.at/#marker-{{ id }}">Öffne im Radkummerkasten</a><br/>
