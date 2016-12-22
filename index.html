@@ -21,10 +21,6 @@
 <h1><a href='#'>Radkummerkasten</a></h1>
 
 <div id='pageOverview'>
-<div id='menu'>
-  <a href='javascript:openDownload()'>Download</a>
-</div>
-
 <form id='form' onChange='return update()'>
   <select name='bezirk'>
     <option value='*'>* Bezirk *</option>
@@ -66,6 +62,7 @@
     <option value='9'>Hindernisse</option>
     <option value='10'>Anderes</option>
   </select>
+  <a href='javascript:openDownload()'>Download</a>
 </form>
 
 <form id='downloadOptions' onSubmit='return submitDownloadForm()'>
@@ -74,7 +71,7 @@
     <option value='csv'>CSV (Comma Separated Value, e.g. Excel)</option>
     <option value='geojson'>GeoJSON (GIS-Applications, e.g. qGIS)</option>
   </select><br/>
-  <input type='submit' value='Generiere Ergebnis' />
+  <input type='submit' value='Generiere Download' />
   <span id='download'></span>
 </form>
 
