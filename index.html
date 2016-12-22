@@ -17,6 +17,9 @@
 </head>
 <body>
 
+<h1><a href='#'>Radkummerkasten</a></h1>
+
+<div id='pageOverview'>
 <div id='menu'>
   <a href='javascript:openDownload()'>Download</a>
 </div>
@@ -78,6 +81,10 @@
 
 <div id='content'>
 </div>
+</div>
+
+<div id='pageShow'>
+</div>
 
 <hr/>
 Die <a href='https://github.com/plepe/radkummerkasten-tools'>radkummerkasten-tools</a> werden von Stephan Bösch-Plepelits entwickelt.
@@ -90,6 +97,15 @@ Reports und Erweiterungen sind herzlich willkommen.
 <img src="{{ attachments[0].url }}">
 {% endif %}
 {% if text|length > 200 %}{{ text|slice(0, 200)|nl2br }}...{% else %}{{ text|nl2br }}{% endif %}
+<br><a target="radkummerkasten" href="https://www.radkummerkasten.at/#marker-{{ id }}">{{ date }} von {{ user }}</a>, {{ likes }} Unterstützung(en), {{ comments|length}} Kommentar(e)
+</script>
+
+<script type='text/template' id='showTemplate'>
+<h3>#{{ id }} {{ categoryName }}: {{ title }}</h3>
+{% if attachments and attachments|length > 0 %}
+<img src="{{ attachments[0].url }}">
+{% endif %}
+{{ text|nl2br }}
 <br><a target="radkummerkasten" href="https://www.radkummerkasten.at/#marker-{{ id }}">{{ date }} von {{ user }}</a>, {{ likes }} Unterstützung(en), {{ comments|length}} Kommentar(e)
 </script>
 

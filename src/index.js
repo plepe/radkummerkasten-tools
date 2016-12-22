@@ -8,6 +8,7 @@ var stream = require('stream')
 var twig = require('twig').twig
 
 var teaserTemplate
+var showTemplate
 const step = 20
 
 function showEntry(entry, div) {
@@ -19,6 +20,9 @@ function showEntry(entry, div) {
 window.onload = function () {
   teaserTemplate = twig({
     data: document.getElementById('teaserTemplate').innerHTML
+  })
+  showTemplate = twig({
+    data: document.getElementById('showTemplate').innerHTML
   })
 
   update()
@@ -148,4 +152,32 @@ window.submitDownloadForm = function () {
   }
 
   return false
+}
+
+window.pageShow = function (id) {
+  document.getElementById('pageOverview').style.display = 'none'
+  var page = document.getElementById('pageShow')
+  page.innerHTML = ''
+  page.style.display = 'block'
+
+  Radkummerkasten.getEntries(
+    {
+      id: [ '' + id ],
+      includeDetails: true
+    },
+    function (err, entry) {
+      if (err) {
+        alert(err)
+        return
+      }
+
+      page.innerHTML = showTemplate.render(entry)
+    },
+    function (err) {}
+  )
+}
+
+window.pageOverview = function () {
+  document.getElementById('pageShow').style.display = 'none'
+  document.getElementById('pageOverview').style.display = 'block'
 }

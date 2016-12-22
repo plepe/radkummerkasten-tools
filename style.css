@@ -23,3 +23,7 @@ div#menu {
 form#downloadOptions {
   display: none;
 }
+
+div.pageShow {
+  display: none;
+}
