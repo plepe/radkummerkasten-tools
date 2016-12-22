@@ -35,9 +35,16 @@ div#pageShow .attachments {
   float: right;
   width: 400px;
 }
-div#pageShow .attachments img {
+div#pageShow .attachments img.attachment {
   max-width: 100%;
   max-height: 100%;
+  margin-bottom: 1em;
+}
+div#pageShow div#map {
+  float: right;
+  width: 400px;
+  height: 300px;
+  margin-bottom: 1em;
 }
 
 img#logo {

@@ -190,6 +190,17 @@ window.pageShow = function (id) {
       }
 
       page.innerHTML = showTemplate.render(entry)
+
+      if (document.getElementById('map')) {
+        console.log('here')
+        var map = L.map('map').setView([ entry.lat, entry.lon ], 17)
+
+	L.tileLayer('//{s}.tile.osm.org/{z}/{x}/{y}.png', {
+	    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+	}).addTo(map)
+
+	L.marker([ entry.lat, entry.lon ]).addTo(map)
+      }
     },
     function (err) {}
   )

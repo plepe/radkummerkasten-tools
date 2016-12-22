@@ -4,6 +4,7 @@
   <title>radkummerkasten-tools</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="node_modules/leaflet/dist/leaflet.css"/>
   <style>
 .leaflet-popup-content {
   max-height: 250px;
@@ -14,6 +15,7 @@
 }
   </style>
   <script src="dist/index.js"></script>
+  <script src="node_modules/leaflet/dist/leaflet.js"></script>
 </head>
 <body>
 
@@ -107,8 +109,9 @@ Reports und Erweiterungen sind herzlich willkommen.
 <script type='text/template' id='showTemplate'>
 <h2>#{{ id }} {{ categoryName }}: {{ title }} ({{ bezirk }}. Bezirk)</h2>
 <div class='attachments'>
+<div id='map'></div>
 {% for attachment in attachments %}
-<img src="{{ attachment.url }}">
+<img class='attachment' src="{{ attachment.url }}">
 {% endfor %}
 </div>
 <a target="radkummerkasten" href="https://www.radkummerkasten.at/#marker-{{ id }}">Öffne im Radkummerkasten</a><br/>
