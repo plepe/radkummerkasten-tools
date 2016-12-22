@@ -93,23 +93,43 @@ Diese sind Open Source und werden auf Github entwickelt. Kommentare, Bug
 Reports und Erweiterungen sind herzlich willkommen.
 
 <script type='text/template' id='teaserTemplate'>
-<h3><a href='#{{ id }}'>#{{ id }} {{ categoryName }}: {{ title }}</a></h3>
+<h3><a href='#{{ id }}'>#{{ id }} {{ categoryName }}: {{ title }} ({{ bezirk }}. Bezirk)</a></h3>
 {% if attachments and attachments|length > 0 %}
 <img src="{{ attachments[0].url }}">
 {% endif %}
-{% if text|length > 200 %}{{ text|slice(0, 200)|nl2br }}...{% else %}{{ text|nl2br }}{% endif %}
-<br><a target="radkummerkasten" href="https://www.radkummerkasten.at/#marker-{{ id }}">{{ date }} von {{ user }}</a>, {{ likes }} Unterstützung(en), {{ comments|length}} Kommentar(e)
+
+<p>
+<i>{{ user }} schrieb am {{ date }}:</i><br/>
+{% if text|length > 200 %}{{ text|slice(0, 200)|nl2br }}...{% else %}{{ text|nl2br }}{% endif %}<br/>
+
+<p>
+<a target="radkummerkasten" href="https://www.radkummerkasten.at/#marker-{{ id }}">Öffne im Radkummerkasten</a><br/>
+{{ likes }} Unterstützung(en), {{ comments|length}} Kommentar(e)
 </script>
 
 <script type='text/template' id='showTemplate'>
-<h2>#{{ id }} {{ categoryName }}: {{ title }}</h2>
+<h2>#{{ id }} {{ categoryName }}: {{ title }} ({{ bezirk }}. Bezirk)</h2>
 <div class='attachments'>
 {% for attachment in attachments %}
 <img src="{{ attachment.url }}">
 {% endfor %}
 </div>
+<a target="radkummerkasten" href="https://www.radkummerkasten.at/#marker-{{ id }}">Öffne im Radkummerkasten</a><br/>
+
+<p>
+{{ likes }} Unterstützung(en)<br/>
+{{ comments|length}} Kommentar(e)<br/>
+Bezirk: {{ bezirk }}<br/>
+
+<p>
+<i>{{ user }} schrieb am {{ date }}:</i><br/>
 {{ text|nl2br }}
-<br><a target="radkummerkasten" href="https://www.radkummerkasten.at/#marker-{{ id }}">{{ date }} von {{ user }}</a>, {{ likes }} Unterstützung(en), {{ comments|length}} Kommentar(e)
+
+{% for comment in comments %}
+<p>
+<i>{{ comment.user }} schrieb am {{ comment.date }}:</i><br/>
+{{ comment.text|nl2br }}
+{% endfor %}
 </script>
 
 </body>
