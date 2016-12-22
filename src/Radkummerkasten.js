@@ -320,7 +320,16 @@ RadkummerkastenEntry.prototype.getDetails = function (callback) {
         var p = data.htmlData.indexOf('</p>')
         this.text = fromHTML(data.htmlData.substr(m[0].length, p - m[0].length))
 
-        var remainingHtmlData = data.htmlData.substr(p + 4)
+        var remainingHtmlData = data.htmlData.substr(p + 4).trim()
+        while(m = remainingHtmlData.match(/^<\/div><div class="images"><a href="(.*)" class="swipebox" title="(.*)">((?!<\/a>).)*<\/a>/)) {
+          this.attachments.push({
+            url: Radkummerkasten.options.baseUrl + m[1],
+            title: m[2]
+          })
+
+          remainingHtmlData = remainingHtmlData.substr(m[0].length).trim()
+        }
+
         m = remainingHtmlData.match(/^[^]*<\/div><p class="text-center"><button type="button" class="btn btn-zustimmen btn-nodecoration btn-default" >Finde ich auch <i class="glyphicon glyphicon-thumbs-up"><\/i> <span class="badge">([0-9]+)<\/span><\/button><\/p>/m)
         this.likes = parseInt(m[1])
 
