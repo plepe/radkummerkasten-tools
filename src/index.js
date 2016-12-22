@@ -18,12 +18,7 @@ function showEntry(entry, div) {
 
 window.onload = function () {
   teaserTemplate = twig({
-    data: '<h3>#{{ id }} {{ categoryName }}: {{ title }}</h3>\n' +
-      '{% if attachments and attachments|length > 0 %}\n' +
-      '<img src="{{ attachments[0].url }}">\n' +
-      '{% endif %}\n' +
-      '{% if text|length > 200 %}{{ text|slice(0, 200)|nl2br }}...{% else %}{{ text|nl2br }}{% endif %}\n' +
-      '<br><a target="radkummerkasten" href="https://www.radkummerkasten.at/#marker-{{ id }}">{{ date }} von {{ user }}</a>, {{ likes }} Unterstützung(en), {{ comments|length}} Kommentar(e) '
+    data: document.getElementById('teaserTemplate').innerHTML
   })
 
   update()

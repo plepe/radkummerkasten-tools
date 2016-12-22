@@ -83,5 +83,15 @@
 Die <a href='https://github.com/plepe/radkummerkasten-tools'>radkummerkasten-tools</a> werden von Stephan Bösch-Plepelits entwickelt.
 Diese sind Open Source und werden auf Github entwickelt. Kommentare, Bug
 Reports und Erweiterungen sind herzlich willkommen.
+
+<script type='text/template' id='teaserTemplate'>
+<h3>#{{ id }} {{ categoryName }}: {{ title }}</h3>
+{% if attachments and attachments|length > 0 %}
+<img src="{{ attachments[0].url }}">
+{% endif %}
+{% if text|length > 200 %}{{ text|slice(0, 200)|nl2br }}...{% else %}{{ text|nl2br }}{% endif %}
+<br><a target="radkummerkasten" href="https://www.radkummerkasten.at/#marker-{{ id }}">{{ date }} von {{ user }}</a>, {{ likes }} Unterstützung(en), {{ comments|length}} Kommentar(e)
+</script>
+
 </body>
 </html>
