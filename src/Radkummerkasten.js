@@ -343,8 +343,23 @@ RadkummerkastenEntry.prototype.getDetails = function (callback) {
             this.comments.push({
               user: m[1],
               date: parseDate(m[3]),
-              text: fromHTML(m[4])
+              text: fromHTML(m[4]),
+              attachments: []
             })
+          }
+
+          if (i >= commentsHtmlData.length - 1) {
+            break
+          }
+
+          var remainingHtmlData = commentsHtmlData[i + 1].trim()
+          while(m = remainingHtmlData.match(/^<\/div><div class="images"><a href="(.*)" class="swipebox" title="(.*)">((?!<\/a>).)*<\/a>/)) {
+            this.comments[this.comments.length - 1].attachments.push({
+              url: Radkummerkasten.options.baseUrl + m[1],
+              title: m[2]
+            })
+
+            remainingHtmlData = remainingHtmlData.substr(m[0].length).trim()
           }
         }
         this.commentsCount = this.comments.length
