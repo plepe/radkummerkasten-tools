@@ -41,17 +41,14 @@ div#pageShow .attachments {
   width: 400px;
 }
 div#pageShow .attachments img.attachment {
+  margin-top: 1em;
   max-width: 100%;
   max-height: 100%;
-}
-div#pageShow .attachments div.image {
-  margin-bottom: 1em;
 }
 div#pageShow div#map {
   float: right;
   width: 400px;
   height: 300px;
-  margin-bottom: 1em;
 }
 
 img#logo {

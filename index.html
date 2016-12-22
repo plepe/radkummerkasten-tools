@@ -109,6 +109,8 @@ Reports und Erweiterungen sind herzlich willkommen.
 <h2>#{{ id }} {{ categoryName }}: {{ title }} ({{ bezirk }}. Bezirk)</h2>
 <div class='attachments'>
 <div id='map'></div>
+Koordinaten: {{ lat|number_format(5) }}, {{ lon|number_format(5) }}
+
 {% for attachment in attachments %}
   <div class='image'>
     <img class='attachment' src="{{ attachment.url }}">
