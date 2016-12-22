@@ -1,3 +1,8 @@
+body {
+  background-image: url('img/logo-small.png');
+  background-repeat: no-repeat;
+  background-position: right top;
+}
 div.entry img {
   max-width: 200px;
   max-height: 200px;
