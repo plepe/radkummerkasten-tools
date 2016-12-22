@@ -11,7 +11,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "standard ; exit 0",
     "doc": "jsdoc -d doc/ src/*.js",
-    "build": "mkdir -p dist && browserify index.js -o dist/radkummerkasten-tools.js && browserify src/page.js -o dist/page.js"
+    "build": "mkdir -p dist && browserify index.js -o dist/radkummerkasten-tools.js && browserify src/index.js -o dist/index.js"
   },
   "repository": {
     "type": "git",
@@ -35,6 +35,8 @@
   "devDependencies": {
     "browserify": "^13.1.1",
     "jsdoc": "^3.4.3",
-    "standard": "^8.6.0"
+    "sheet-router": "^4.1.4",
+    "standard": "^8.6.0",
+    "twig": "^0.10.3"
   }
 }

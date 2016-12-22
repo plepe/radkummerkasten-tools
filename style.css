@@ -1,0 +1,45 @@
+div.entry img {
+  max-width: 200px;
+  max-height: 200px;
+  float: right;
+}
+div.entry {
+  clear: right;
+}
+div.loadMore a {
+  display: block;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border: 1px solid #afafaf;
+  text-align: center;
+  text-decoration: none;
+  color: black;
+}
+form#downloadOptions {
+  display: none;
+}
+
+hr {
+  clear: both;
+}
+
+h1, h2, h3, a {
+  color: #004b67;
+  text-decoration: none;
+}
+div#pageShow {
+  display: none;
+  clear: both;
+}
+div#pageShow .attachments {
+  float: right;
+  width: 400px;
+}
+div#pageShow .attachments img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+img#logo {
+  float: right;
+}
