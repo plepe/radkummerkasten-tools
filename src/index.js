@@ -132,6 +132,9 @@ function createDownload (fileType, data) {
   a.href= 'data:' + contentType + ';charset=utf-8,' + encodeURI(data)
   a.download = 'radkummerkasten.' + extension
   a.appendChild(document.createTextNode('Download'))
+  a.onclick = function () {
+    document.getElementById('downloadOptions').style.display = 'none'
+  }
 
   download.appendChild(a)
 }
