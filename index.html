@@ -17,6 +17,7 @@
 </head>
 <body>
 
+<img id='logo' src='img/logo.png' />
 <h1><a href='#'>Radkummerkasten</a></h1>
 
 <div id='pageOverview'>
@@ -101,10 +102,12 @@ Reports und Erweiterungen sind herzlich willkommen.
 </script>
 
 <script type='text/template' id='showTemplate'>
-<h3>#{{ id }} {{ categoryName }}: {{ title }}</h3>
-{% if attachments and attachments|length > 0 %}
-<img src="{{ attachments[0].url }}">
-{% endif %}
+<h2>#{{ id }} {{ categoryName }}: {{ title }}</h2>
+<div class='attachments'>
+{% for attachment in attachments %}
+<img src="{{ attachment.url }}">
+{% endfor %}
+</div>
 {{ text|nl2br }}
 <br><a target="radkummerkasten" href="https://www.radkummerkasten.at/#marker-{{ id }}">{{ date }} von {{ user }}</a>, {{ likes }} Unterstützung(en), {{ comments|length}} Kommentar(e)
 </script>
