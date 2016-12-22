@@ -92,7 +92,7 @@ Diese sind Open Source und werden auf Github entwickelt. Kommentare, Bug
 Reports und Erweiterungen sind herzlich willkommen.
 
 <script type='text/template' id='teaserTemplate'>
-<h3>#{{ id }} {{ categoryName }}: {{ title }}</h3>
+<h3><a href='#{{ id }}'>#{{ id }} {{ categoryName }}: {{ title }}</a></h3>
 {% if attachments and attachments|length > 0 %}
 <img src="{{ attachments[0].url }}">
 {% endif %}

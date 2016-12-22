@@ -298,8 +298,6 @@ RadkummerkastenEntry.prototype.toGeoJSON = function () {
  * @param {function} callback - Callback function
  */
 RadkummerkastenEntry.prototype.getDetails = function (callback) {
-  this.hasDetails = true
-
   request.get(Radkummerkasten.options.baseUrl + '/ajax/?map&action=getMapEntry&marker=' + encodeURI(this.id),
     function (error, response, body) {
       var m
@@ -347,6 +345,7 @@ RadkummerkastenEntry.prototype.getDetails = function (callback) {
         this.commentsCount = this.comments.length
         this.attachmentsCount = this.attachments ? this.attachments.length : 0
 
+        this.hasDetails = true
         callback(null, this)
         return
       }

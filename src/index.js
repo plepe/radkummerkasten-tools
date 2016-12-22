@@ -6,9 +6,11 @@ var csvWriter = require('csv-write-stream')
 var concat = require('concat-stream')
 var stream = require('stream')
 var twig = require('twig').twig
+var hash = require('sheet-router/hash')
 
 var teaserTemplate
 var showTemplate
+var pageOverviewLoaded = false
 const step = 20
 
 function showEntry(entry, div) {
@@ -25,13 +27,26 @@ window.onload = function () {
     data: document.getElementById('showTemplate').innerHTML
   })
 
-  update()
+  hash(function (loc) {
+    if (loc.match(/^#[0-9]+$/)) {
+      pageShow(loc.substr(1))
+    } else {
+      pageOverview()
+    }
+  })
+
+  if (location.hash.match(/^#[0-9]+$/)) {
+    pageShow(location.hash.substr(1))
+  } else {
+    update()
+  }
 }
 
 window.update = function () {
   var entries = []
   var content = document.getElementById('content')
   var form = document.getElementById('form')
+  pageOverviewLoaded = true
 
   var filter = {}
   if (form.elements.bezirk.value !== '*') {
@@ -180,4 +195,8 @@ window.pageShow = function (id) {
 window.pageOverview = function () {
   document.getElementById('pageShow').style.display = 'none'
   document.getElementById('pageOverview').style.display = 'block'
+
+  if (!pageOverviewLoaded) {
+    update()
+  }
 }
