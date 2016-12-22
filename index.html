@@ -92,7 +92,7 @@ Reports und Erweiterungen sind herzlich willkommen.
 
 <script type='text/template' id='teaserTemplate'>
 <h3><a href='#{{ id }}'>#{{ id }} {{ categoryName }}: {{ title }} ({{ bezirk }}. Bezirk)</a></h3>
-{% if attachments and attachments|length > 0 %}
+{% if attachments|length > 0 %}
 <img src="{{ attachments[0].url }}">
 {% endif %}
 

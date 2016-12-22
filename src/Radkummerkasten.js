@@ -284,10 +284,7 @@ RadkummerkastenEntry.prototype.toGeoJSON = function () {
     ret.properties.text = this.text
     ret.properties.likes = this.likes
     ret.properties.comments = this.comments
-
-    if (this.attachments) {
-      ret.properties.attachments = this.attachments
-    }
+    ret.properties.attachments = this.attachments
   }
 
   return ret
@@ -306,15 +303,14 @@ RadkummerkastenEntry.prototype.getDetails = function (callback) {
         var data = JSON.parse(body)
 
         m = data.htmlData.match(/^<div class="marker-entry"><h3><span class="survey">([^<]*):<\/span> ([^<]*)<\/h3>(.*)<div class=""><p><span class="author"><i>(.*) schrieb am (.*), (.*):<\/i><\/span><br \/>/)
+        this.attachments = []
 
         if (m[3]) {
           var m1 = m[3].match(/<a href="(.*)" class="swipebox" title="(.*)"><img src/)
-          this.attachments = [
-            {
-              url: Radkummerkasten.options.baseUrl + m1[1],
-              title: m1[2]
-            }
-          ]
+          this.attachments.push({
+            url: Radkummerkasten.options.baseUrl + m1[1],
+            title: m1[2]
+          })
         }
 
         this.title = data.title
@@ -343,7 +339,7 @@ RadkummerkastenEntry.prototype.getDetails = function (callback) {
           }
         }
         this.commentsCount = this.comments.length
-        this.attachmentsCount = this.attachments ? this.attachments.length : 0
+        this.attachmentsCount = this.attachments.length
 
         this.hasDetails = true
         callback(null, this)
