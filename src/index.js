@@ -192,7 +192,6 @@ window.pageShow = function (id) {
       page.innerHTML = showTemplate.render(entry)
 
       if (document.getElementById('map')) {
-        console.log('here')
         var map = L.map('map').setView([ entry.lat, entry.lon ], 17)
 
 	L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
