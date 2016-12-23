@@ -152,10 +152,15 @@ Radkummerkasten._handleMarkers = function (options, featureCallback, finalCallba
 
     if (options.includeDetails && (options.forceDetails || !ob.hasDetails)) {
       detailsFunctions.push(function (ob, callback) {
-        ob.getDetails({}, function () {
-          featureCallback(null, ob)
-          callback()
-        })
+        ob.getDetails(
+          {
+            force: options.forceDetails
+          },
+          function () {
+            featureCallback(null, ob)
+            callback()
+          }
+        )
       }.bind(this, ob))
     } else {
       featureCallback(null, ob)
@@ -355,11 +360,19 @@ RadkummerkastenEntry.prototype.toGeoJSON = function () {
 /**
  * load details for the given RadkummerkastenEntry and call the callbackfunction, with error code and the entry as object.
  * @param {object} options - Options
+ * @param {boolean} options.force=false - Don't cache data if force is true
  * @param {function} callback - Callback function
  */
 RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
   if (!options) {
     options = {}
+  }
+
+  if (!options.force && this.hasDetails) {
+    async.setImmediate(function () {
+      callback(null, this)
+    }.bind(this))
+    return
   }
 
   request.get(Radkummerkasten.options.baseUrl + '/ajax/?map&action=getMapEntry&marker=' + encodeURI(this.id),
