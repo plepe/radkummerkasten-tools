@@ -8,7 +8,7 @@
     "rkk-geojson": "bin/rkk-geojson"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha --bail",
     "lint": "standard ; exit 0",
     "doc": "jsdoc -d doc/ src/*.js",
     "build": "mkdir -p dist && browserify index.js -o dist/radkummerkasten-tools.js && browserify src/index.js -o dist/index.js"
@@ -36,6 +36,7 @@
     "browserify": "^13.1.1",
     "jsdoc": "^3.4.3",
     "leaflet": "^1.0.2",
+    "mocha": "^3.2.0",
     "sheet-router": "^4.1.4",
     "standard": "^8.6.0",
     "twig": "^0.10.3"
