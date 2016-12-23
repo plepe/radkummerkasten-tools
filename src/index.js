@@ -12,6 +12,7 @@ var async = require('async')
 var teaserTemplate
 var showTemplate
 var pageOverviewLoaded = false
+window.knownEntries = {}
 const step = 20
 
 function showEntry(entry, div) {
@@ -90,7 +91,7 @@ window.onload = function () {
   ])
 }
 
-window.update = function () {
+window.update = function (reloadAll) {
   var entries = []
   var content = document.getElementById('content')
   var form = document.getElementById('form')
@@ -104,14 +105,22 @@ window.update = function () {
     filter.category = [ form.elements.category.value ]
   }
 
+  if (reloadAll) {
+    knownEntries = {}
+    content.innerHTML = ''
+  } else {
+    filter.force = true
+  }
+
   Radkummerkasten.getEntries(
     filter,
     function (err, entry) {
-      entries.push(entry)
+      if (!(entry.id in knownEntries)) {
+        entries.push(entry)
+        knownEntries[entry.id] = true
+      }
     },
     function (err) {
-      content.innerHTML = ''
-
       for (var i = Math.max(entries.length - step, 0); i < entries.length; i++) {
         var div = document.createElement('div')
         div.className = 'entry'

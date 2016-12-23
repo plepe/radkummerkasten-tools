@@ -22,14 +22,15 @@
 <h1><a href='#'>Radkummerkasten</a></h1>
 
 <div id='pageOverview'>
-<form id='form' onChange='return update()'>
+<form id='form' onChange='return update(true)'>
   <select name='bezirk'>
     <option value='*'>* Bezirk *</option>
   </select>
   <select name='category'>
     <option value='*'>* Kategorie *</option>
   </select>
-  <a href='javascript:openDownload()'>Download</a>
+  <a href='javascript:openDownload()'>Download</a> |
+  <a href='javascript:update(false)'>Reload</a>
 </form>
 
 <form id='downloadOptions' onSubmit='return submitDownloadForm()'>
