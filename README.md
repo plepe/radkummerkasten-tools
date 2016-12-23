@@ -22,10 +22,35 @@ git clone https://github.com/plepe/radkummerkasten-tools.git
 cd radkummerkasten-tools
 npm install
 sudo npm link # mache cli tools systemweit verfügbar (optional)
-npm run build # build JS code, so that web page is available
+npm run build # generiere JS für die Webseite (optional)
+npm run doc # generiere documentation im verzeichnis doc/ (optional)
 ```
 
-Danach sollten die command line tools verfügbar sein.
+API Usage
+=========
+Die `radkummerkasten-tools` stellen eine JavaScript API zur Verfügung, um auf
+die Daten des Radkummerkastens zuzugreifen.
+
+Ein funktionierendes Beispiel findet sich in der Datei `example.html`. Hier ein Auzug:
+```js
+  Radkummerkasten.getEntries(
+    {
+      bezirk: 15,
+      includeDetails: true,
+      limit: 5
+    },
+    // diese Funktion wird für jeden gefunden Eintrag aufgerufen
+    // entry ist vom Typ RadkummerkastenEntry.
+    function (err, entry) {
+      alert(JSON.stringify(entry.toGeoJSON()))
+    },
+    // nach dem lezten gefunden Eintrag wird noch diese Funktion aufgerufen.
+    function (err) {
+    }
+  )
+```
+
+Die volle Dokumentation über die Klassen `Radkummerkasten` und `RadkummerkastenEntry` findet sich in der Dokumentation (Verzeichnis `doc/` nachdem `npm run doc` aufgerufen wurde).
 
 CONTRIBUTING
 ============
