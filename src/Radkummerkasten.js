@@ -68,13 +68,13 @@ Radkummerkasten._getEntries = function (options, featureCallback, finalCallback,
     return
   }
 
-  var offset = typeof options.offset === 'undefined' ? 0 : options.offset
-  var limit = typeof options.limit === 'undefined' ? null : options.limit
+  // cached result
+  if (this.markers) {
+    return this._handleMarkers(options, featureCallback, finalCallback)
+  }
 
   request.get(this.options.baseUrl + '/ajax/?map&action=getMapMarkers',
     function (error, response, body) {
-      var detailsFunctions = []
-
       if (!error && response.statusCode === 200) {
         var data = JSON.parse(body)
 
@@ -103,63 +103,70 @@ Radkummerkasten._getEntries = function (options, featureCallback, finalCallback,
           }
         }
 
-        data.markers.forEach(function (entry) {
-          if (!(entry.id in this.cacheEntries)) {
-            this.cacheEntries[entry.id] = new RadkummerkastenEntry(entry)
-          }
-          var ob = this.cacheEntries[entry.id]
-
-          if (offset > 0) {
-            offset--
-            return
-          }
-
-          if (limit !== null) {
-            if (limit <= 0) {
-              return
-            } else {
-              limit--
-            }
-          }
-
-          if ('id' in options && options.id.indexOf('' + ob.id) === -1) {
-            return
-          }
-
-          if ('bezirk' in options && options.bezirk.indexOf('' + ob.bezirk) === -1) {
-            return
-          }
-
-          if ('category' in options && options.category.indexOf('' + ob.category) === -1) {
-            return
-          }
-
-          if (options.includeDetails && !ob.hasDetails) {
-            detailsFunctions.push(function (ob, callback) {
-              ob.getDetails(function () {
-                featureCallback(null, ob)
-                callback()
-              })
-            }.bind(this, ob))
-          } else {
-            featureCallback(null, ob)
-          }
-        }.bind(this))
-
-        if (options.includeDetails) {
-          async.parallelLimit(detailsFunctions, 4, function () {
-            finalCallback(null)
-          })
-        } else {
-          finalCallback(null)
-        }
-
-        return
+        this.markers = data.markers
+        return this._handleMarkers(options, featureCallback, finalCallback)
       }
 
       finalCallback(error, null)
     }.bind(this)
   )
+}
+
+Radkummerkasten._handleMarkers = function (options, featureCallback, finalCallback, error) {
+  var detailsFunctions = []
+  var offset = typeof options.offset === 'undefined' ? 0 : options.offset
+  var limit = typeof options.limit === 'undefined' ? null : options.limit
+
+  this.markers.forEach(function (entry) {
+    if (!(entry.id in this.cacheEntries)) {
+      this.cacheEntries[entry.id] = new RadkummerkastenEntry(entry)
+    }
+    var ob = this.cacheEntries[entry.id]
+
+    if (offset > 0) {
+      offset--
+      return
+    }
+
+    if (limit !== null) {
+      if (limit <= 0) {
+        return
+      } else {
+        limit--
+      }
+    }
+
+    if ('id' in options && options.id.indexOf('' + ob.id) === -1) {
+      return
+    }
+
+    if ('bezirk' in options && options.bezirk.indexOf('' + ob.bezirk) === -1) {
+      return
+    }
+
+    if ('category' in options && options.category.indexOf('' + ob.category) === -1) {
+      return
+    }
+
+    if (options.includeDetails && !ob.hasDetails) {
+      detailsFunctions.push(function (ob, callback) {
+        ob.getDetails(function () {
+          featureCallback(null, ob)
+          callback()
+        })
+      }.bind(this, ob))
+    } else {
+      featureCallback(null, ob)
+    }
+  }.bind(this))
+
+  if (options.includeDetails) {
+    async.parallelLimit(detailsFunctions, 4, function () {
+      finalCallback(null)
+    })
+  } else {
+    finalCallback(null)
+  }
 }
 
 /**
