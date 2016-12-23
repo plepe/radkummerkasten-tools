@@ -7,6 +7,7 @@ var concat = require('concat-stream')
 var stream = require('stream')
 var twig = require('twig').twig
 var hash = require('sheet-router/hash')
+var async = require('async')
 
 var teaserTemplate
 var showTemplate
@@ -27,19 +28,66 @@ window.onload = function () {
     data: document.getElementById('showTemplate').innerHTML
   })
 
-  hash(function (loc) {
-    if (loc.match(/^#[0-9]+$/)) {
-      pageShow(loc.substr(1))
-    } else {
-      pageOverview()
-    }
-  })
+  async.series([
+    function (callback) {
+      Radkummerkasten.loadBezirksgrenzen(function (err, bezirke) {
+        if (err) {
+          alert('Kann Bezirksgrenzen nicht laden! ' + err)
+          return
+        }
 
-  if (location.hash.match(/^#[0-9]+$/)) {
-    pageShow(location.hash.substr(1))
-  } else {
-    update()
-  }
+        var select = document.getElementById('form').elements.bezirk
+
+        bezirke.forEach(function (bezirk) {
+          var option = document.createElement('option')
+          option.value = bezirk.properties.BEZNR
+          option.appendChild(document.createTextNode(bezirk.properties.NAMEK_NUM))
+          select.appendChild(option)
+        })
+
+        var option = document.createElement('option')
+        option.value = 0
+        option.appendChild(document.createTextNode('außerhalb Wien'))
+        select.appendChild(option)
+
+        callback()
+      })
+    },
+    function (callback) {
+      Radkummerkasten.categories(function (err, categories) {
+        if (err) {
+          alert('Kann Kategorien nicht laden! ' + err)
+          return
+        }
+
+        var select = document.getElementById('form').elements.category
+
+        categories.forEach(function (category) {
+          var option = document.createElement('option')
+          option.value = category.id
+          option.appendChild(document.createTextNode(category.name))
+          select.appendChild(option)
+        })
+
+        callback()
+      })
+    },
+    function (callback) {
+      hash(function (loc) {
+        if (loc.match(/^#[0-9]+$/)) {
+          pageShow(loc.substr(1))
+        } else {
+          pageOverview()
+        }
+      })
+
+      if (location.hash.match(/^#[0-9]+$/)) {
+        pageShow(location.hash.substr(1))
+      } else {
+        update()
+      }
+    }
+  ])
 }
 
 window.update = function () {
