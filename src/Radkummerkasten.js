@@ -51,6 +51,8 @@ Radkummerkasten.init = function () {
  * @param {boolean} options.includeDetails=false - If true, for each entry the details will be loaded. Requires a separate http request for each entry.
  * @param {number[]} options.bezirk - Only include entries within the specified Bezirk or Bezirke.
  * @param {number[]|string[]} options.category - Only include entries of the specified categories (either numeric or string representation).
+ * @param {number} options.limit - Only return the first n entries (after offset) (default: all)
+ * @param {number} options.offset - Skip the first n entries (default: 0)
  * @param {Radkummerkasten~featureCallback} featureCallback - The featureCallback function will be called for each received entry.
  * @param {Radkummerkasten~finalCallback} [finalCallback] - The finalCallback will be called after the last entry.
  */
@@ -65,6 +67,9 @@ Radkummerkasten._getEntries = function (options, featureCallback, finalCallback,
     finalCallback(error)
     return
   }
+
+  var offset = typeof options.offset === 'undefined' ? 0 : options.offset
+  var limit = typeof options.limit === 'undefined' ? null : options.limit
 
   request.get(this.options.baseUrl + '/ajax/?map&action=getMapMarkers',
     function (error, response, body) {
@@ -103,6 +108,19 @@ Radkummerkasten._getEntries = function (options, featureCallback, finalCallback,
             this.cacheEntries[entry.id] = new RadkummerkastenEntry(entry)
           }
           var ob = this.cacheEntries[entry.id]
+
+          if (offset > 0) {
+            offset--
+            return
+          }
+
+          if (limit !== null) {
+            if (limit <= 0) {
+              return
+            } else {
+              limit--
+            }
+          }
 
           if ('id' in options && options.id.indexOf('' + ob.id) === -1) {
             return
