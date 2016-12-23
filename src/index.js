@@ -15,7 +15,7 @@ var pageOverviewLoaded = false
 const step = 20
 
 function showEntry(entry, div) {
-  entry.getDetails(function () {
+  entry.getDetails({}, function () {
     div.innerHTML = teaserTemplate.render(entry)
   })
 }

@@ -150,7 +150,7 @@ Radkummerkasten._handleMarkers = function (options, featureCallback, finalCallba
 
     if (options.includeDetails && !ob.hasDetails) {
       detailsFunctions.push(function (ob, callback) {
-        ob.getDetails(function () {
+        ob.getDetails({}, function () {
           featureCallback(null, ob)
           callback()
         })
@@ -352,9 +352,14 @@ RadkummerkastenEntry.prototype.toGeoJSON = function () {
 
 /**
  * load details for the given RadkummerkastenEntry and call the callbackfunction, with error code and the entry as object.
+ * @param {object} options - Options
  * @param {function} callback - Callback function
  */
-RadkummerkastenEntry.prototype.getDetails = function (callback) {
+RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
+  if (!options) {
+    options = {}
+  }
+
   request.get(Radkummerkasten.options.baseUrl + '/ajax/?map&action=getMapEntry&marker=' + encodeURI(this.id),
     function (error, response, body) {
       var m
