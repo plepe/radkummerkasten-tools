@@ -231,6 +231,37 @@ Radkummerkasten.getBezirk = function (lat, lon) {
 }
 
 /**
+ * get list of categories
+ * @param {function} callback - Will be called with 'err' (which should be null) and an object with the categories. [ { 'id': categoryId, 'name': categoryName }, ... ]
+ */
+Radkummerkasten.categories = function (callback) {
+  function _buildCategories () {
+    var ret = []
+    for (var k in categoryNames) {
+      ret.push({
+        id: k,
+        name: categoryNames[k]
+      })
+    }
+    return ret
+  }
+
+  if (!categoryNames) {
+    return this.getEntries(
+      { limit: 0 },
+      function () {},
+      function (err) {
+        callback(err, _buildCategories())
+      }
+    )
+  }
+
+  async.setImmediate(function () {
+    callback(null, _buildCategories())
+  })
+}
+
+/**
  * A comment entry
  * @typedef {Object} RadkummerkastenEntry.comments
  * @property {string} text - Kommentartext
