@@ -8,9 +8,8 @@
 window.onload = function () {
   Radkummerkasten.getEntries(
     {
-      limit: 1,
       includeDetails: true,
-      bezirk: 15
+      id: [ '5010' ]
     },
     function (err, entry) {
       if (err) {
