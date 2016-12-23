@@ -41,6 +41,22 @@ function init () {
     }
   )
 
+  parser.addArgument(
+    [ '--limit' ],
+    {
+      help: 'Lade nur die ersten LIMIT Einträge (nach dem Offset)',
+      type: 'int'
+    }
+  )
+
+  parser.addArgument(
+    [ '--offset' ],
+    {
+      help: 'Überspringe die ersten OFFSET Einträge',
+      type: 'int'
+    }
+  )
+
   return parser
 }
 
@@ -66,6 +82,13 @@ function compileFilter (args) {
     filter.category = args.category
   }
   filter.includeDetails = !!args.details
+
+  if ('offset' in args) {
+    filter.offset = args.offset
+  }
+  if ('limit' in args) {
+    filter.limit = args.limit
+  }
 
   return filter
 }
