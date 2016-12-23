@@ -229,7 +229,8 @@ window.pageShow = function (id) {
   Radkummerkasten.getEntries(
     {
       id: [ '' + id ],
-      includeDetails: true
+      includeDetails: true,
+      forceDetails: true
     },
     function (err, entry) {
       if (err) {
