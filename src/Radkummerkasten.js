@@ -171,7 +171,7 @@ Radkummerkasten._handleMarkers = function (options, featureCallback, finalCallba
 
 /**
  * load the this.bezirksgrenzen (district borders) from the server
- * @param {function} callback - Callback which should be called after loading. will be passed an error or null
+ * @param {function} callback - Callback which should be called after loading. will be passed an error or null as first parameter and the list of districts as second (array of GeoJSON objects).
  */
 Radkummerkasten.loadBezirksgrenzen = function (callback) {
   this.init()
@@ -179,7 +179,7 @@ Radkummerkasten.loadBezirksgrenzen = function (callback) {
   // already cached
   if (this.bezirksgrenzen) {
     async.setImmediate(function () {
-      callback(null)
+      callback(null, this.bezirksgrenzen)
     })
 
     return
@@ -198,9 +198,9 @@ Radkummerkasten.loadBezirksgrenzen = function (callback) {
           this.bezirksgrenzen.push(feature)
         }
 
-        callback(null)
+        callback(null, this.bezirksgrenzen)
       } else {
-        callback(error)
+        callback(error, null)
       }
     }.bind(this)
   )
