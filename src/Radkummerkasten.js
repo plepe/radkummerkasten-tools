@@ -49,8 +49,8 @@ Radkummerkasten.init = function () {
  * @param {object} options - Options and filter the results by certain criteria
  * @param {number[]} [options.id] - Only include entries with the specified ids (list might be filtered further by other filters)
  * @param {boolean} options.includeDetails=false - If true, for each entry the details will be loaded. Requires a separate http request for each entry.
- * @param {number[]} options.bezirk - Only include entries within the specified Bezirk or Bezirke.
- * @param {number[]|string[]} options.category - Only include entries of the specified categories (either numeric or string representation).
+ * @param {number[]|number} options.bezirk - Only include entries within the specified Bezirk or Bezirke.
+ * @param {number[]|number|string[]|string} options.category - Only include entries of the specified categories (either numeric or string representation).
  * @param {number} options.limit - Only return the first n entries (after offset) (default: all)
  * @param {number} options.offset - Skip the first n entries (default: 0)
  * @param {boolean} options.force=false - Force reload of list
@@ -79,14 +79,27 @@ Radkummerkasten._getEntries = function (options, featureCallback, finalCallback,
     function (error, response, body) {
       if (!error && response.statusCode === 200) {
         var data = JSON.parse(body)
+        var i
 
         categoryNames = {}
         for (var k in data.categories) {
           categoryNames[k] = data.categories[k].name
         }
 
+        if ('bezirk' in options) {
+          if (!Array.isArray(options.bezirk)) {
+            options.bezirk = [ options.bezirk ]
+          }
+          for (i = 0; i < options.bezirk.length; i++) {
+            options.bezirk[i] = '' + options.bezirk[i]
+          }
+        }
+
         if ('category' in options) {
-          for (var i = 0; i < options.category.length; i++) {
+          if (!Array.isArray(options.category)) {
+            options.category = [ options.category ]
+          }
+          for (i = 0; i < options.category.length; i++) {
             // convert string categories to numeric value
             var found = false
             if (isNaN(parseInt(options.category[i]))) {
@@ -101,6 +114,8 @@ Radkummerkasten._getEntries = function (options, featureCallback, finalCallback,
                 finalCallback('Can\'t parse Category name: ' + options.category[i])
                 return
               }
+            } else {
+              options.category[i] = '' + options.category[i]
             }
           }
         }
