@@ -198,6 +198,10 @@ Radkummerkasten.loadBezirksgrenzen = function (callback) {
           this.bezirksgrenzen.push(feature)
         }
 
+        this.bezirksgrenzen.sort(function (a, b) {
+          return a.properties.BEZNR - b.properties.BEZNR
+        })
+
         callback(null, this.bezirksgrenzen)
       } else {
         callback(error, null)
