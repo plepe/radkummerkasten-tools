@@ -53,6 +53,8 @@ Radkummerkasten.init = function () {
  * @param {number[]|string[]} options.category - Only include entries of the specified categories (either numeric or string representation).
  * @param {number} options.limit - Only return the first n entries (after offset) (default: all)
  * @param {number} options.offset - Skip the first n entries (default: 0)
+ * @param {boolean} options.force=false - Force reload of list
+ * @param {boolean} options.forceDetails=false - If a result already exists in cache, force reload anyway
  * @param {Radkummerkasten~featureCallback} featureCallback - The featureCallback function will be called for each received entry.
  * @param {Radkummerkasten~finalCallback} [finalCallback] - The finalCallback will be called after the last entry.
  */
@@ -69,7 +71,7 @@ Radkummerkasten._getEntries = function (options, featureCallback, finalCallback,
   }
 
   // cached result
-  if (this.markers) {
+  if (!options.force && this.markers) {
     return this._handleMarkers(options, featureCallback, finalCallback)
   }
 
@@ -148,7 +150,7 @@ Radkummerkasten._handleMarkers = function (options, featureCallback, finalCallba
       return
     }
 
-    if (options.includeDetails && !ob.hasDetails) {
+    if (options.includeDetails && (options.forceDetails || !ob.hasDetails)) {
       detailsFunctions.push(function (ob, callback) {
         ob.getDetails({}, function () {
           featureCallback(null, ob)
