@@ -46,21 +46,21 @@ Radkummerkasten.init = function () {
 
 /**
  * load all entries from Radkummerkasten and call the callbacks.
- * @param {object} filter - Filter the results by certain criteria
- * @param {number[]} [filter.id] - Only include entries with the specified ids (list might be filtered further by other filters)
- * @param {boolean} filter.includeDetails=false - If true, for each entry the details will be loaded. Requires a separate http request for each entry.
- * @param {number[]} filter.bezirk - Only include entries within the specified Bezirk or Bezirke.
- * @param {number[]|string[]} filter.category - Only include entries of the specified categories (either numeric or string representation).
+ * @param {object} options - Options and filter the results by certain criteria
+ * @param {number[]} [options.id] - Only include entries with the specified ids (list might be filtered further by other filters)
+ * @param {boolean} options.includeDetails=false - If true, for each entry the details will be loaded. Requires a separate http request for each entry.
+ * @param {number[]} options.bezirk - Only include entries within the specified Bezirk or Bezirke.
+ * @param {number[]|string[]} options.category - Only include entries of the specified categories (either numeric or string representation).
  * @param {Radkummerkasten~featureCallback} featureCallback - The featureCallback function will be called for each received entry.
  * @param {Radkummerkasten~finalCallback} [finalCallback] - The finalCallback will be called after the last entry.
  */
-Radkummerkasten.getEntries = function (filter, featureCallback, finalCallback) {
+Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) {
   this.init()
 
-  this.loadBezirksgrenzen(this._getEntries.bind(this, filter, featureCallback, finalCallback))
+  this.loadBezirksgrenzen(this._getEntries.bind(this, options, featureCallback, finalCallback))
 }
 
-Radkummerkasten._getEntries = function (filter, featureCallback, finalCallback, error) {
+Radkummerkasten._getEntries = function (options, featureCallback, finalCallback, error) {
   if (error) {
     finalCallback(error)
     return
@@ -78,20 +78,20 @@ Radkummerkasten._getEntries = function (filter, featureCallback, finalCallback, 
           categoryNames[k] = data.categories[k].name
         }
 
-        if ('category' in filter) {
-          for (var i = 0; i < filter.category.length; i++) {
+        if ('category' in options) {
+          for (var i = 0; i < options.category.length; i++) {
             // convert string categories to numeric value
             var found = false
-            if (isNaN(parseInt(filter.category[i]))) {
+            if (isNaN(parseInt(options.category[i]))) {
               for (k in categoryNames) {
-                if (categoryNames[k].toLowerCase() === filter.category[i].toLowerCase()) {
-                  filter.category[i] = k
+                if (categoryNames[k].toLowerCase() === options.category[i].toLowerCase()) {
+                  options.category[i] = k
                   found = true
                 }
               }
 
               if (!found) {
-                finalCallback('Can\'t parse Category name: ' + filter.category[i])
+                finalCallback('Can\'t parse Category name: ' + options.category[i])
                 return
               }
             }
@@ -104,19 +104,19 @@ Radkummerkasten._getEntries = function (filter, featureCallback, finalCallback, 
           }
           var ob = this.cacheEntries[entry.id]
 
-          if ('id' in filter && filter.id.indexOf('' + ob.id) === -1) {
+          if ('id' in options && options.id.indexOf('' + ob.id) === -1) {
             return
           }
 
-          if ('bezirk' in filter && filter.bezirk.indexOf('' + ob.bezirk) === -1) {
+          if ('bezirk' in options && options.bezirk.indexOf('' + ob.bezirk) === -1) {
             return
           }
 
-          if ('category' in filter && filter.category.indexOf('' + ob.category) === -1) {
+          if ('category' in options && options.category.indexOf('' + ob.category) === -1) {
             return
           }
 
-          if (filter.includeDetails && !ob.hasDetails) {
+          if (options.includeDetails && !ob.hasDetails) {
             detailsFunctions.push(function (ob, callback) {
               ob.getDetails(function () {
                 featureCallback(null, ob)
@@ -128,7 +128,7 @@ Radkummerkasten._getEntries = function (filter, featureCallback, finalCallback, 
           }
         }.bind(this))
 
-        if (filter.includeDetails) {
+        if (options.includeDetails) {
           async.parallelLimit(detailsFunctions, 4, function () {
             finalCallback(null)
           })
