@@ -125,6 +125,18 @@ Radkummerkasten._handleMarkers = function (options, featureCallback, finalCallba
     }
     var ob = this.cacheEntries[entry.id]
 
+    if ('id' in options && options.id.indexOf('' + ob.id) === -1) {
+      return
+    }
+
+    if ('bezirk' in options && options.bezirk.indexOf('' + ob.bezirk) === -1) {
+      return
+    }
+
+    if ('category' in options && options.category.indexOf('' + ob.category) === -1) {
+      return
+    }
+
     if (offset > 0) {
       offset--
       return
@@ -136,18 +148,6 @@ Radkummerkasten._handleMarkers = function (options, featureCallback, finalCallba
       } else {
         limit--
       }
-    }
-
-    if ('id' in options && options.id.indexOf('' + ob.id) === -1) {
-      return
-    }
-
-    if ('bezirk' in options && options.bezirk.indexOf('' + ob.bezirk) === -1) {
-      return
-    }
-
-    if ('category' in options && options.category.indexOf('' + ob.category) === -1) {
-      return
     }
 
     if (options.includeDetails && (options.forceDetails || !ob.hasDetails)) {
