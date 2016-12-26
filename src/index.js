@@ -15,9 +15,13 @@ var pageOverviewLoaded = false
 window.knownEntries = {}
 const step = 20
 
-function showEntry(entry, div) {
-  entry.getDetails({}, function () {
+function showEntry(entry, div, callback) {
+  entry.getDetails({}, function (err) {
     div.innerHTML = teaserTemplate.render(entry)
+
+    if (callback) {
+      callback(err)
+    }
   })
 }
 
@@ -126,7 +130,11 @@ window.update = function (reloadAll) {
         div.className = 'entry'
         content.insertBefore(div, content.firstChild)
 
-        showEntry(entries[i], div)
+        showEntry(entries[i], div, function (err, result) {
+          if (err) {
+            alert('Error occured loading entry ' + entries[i].id + ': ' + err)
+          }
+        })
       }
 
       var done = step
