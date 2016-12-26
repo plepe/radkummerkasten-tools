@@ -8,6 +8,7 @@ var stream = require('stream')
 var twig = require('twig').twig
 var hash = require('sheet-router/hash')
 var async = require('async')
+var loadingIndicator = require('simple-loading-indicator')
 
 var teaserTemplate
 var showTemplate
@@ -33,6 +34,8 @@ window.onload = function () {
     data: document.getElementById('showTemplate').innerHTML
   })
 
+  loadingIndicator.setActive()
+
   async.series([
     function (callback) {
       Radkummerkasten.loadBezirksgrenzen(function (err, bezirke) {
@@ -40,6 +43,8 @@ window.onload = function () {
           alert('Kann Bezirksgrenzen nicht laden! ' + err)
           return
         }
+
+        loadingIndicator.setValue(0.5)
 
         var select = document.getElementById('form').elements.bezirk
 
@@ -65,6 +70,8 @@ window.onload = function () {
           return
         }
 
+        loadingIndicator.setValue(1)
+
         var select = document.getElementById('form').elements.category
 
         categories.forEach(function (category) {
@@ -78,6 +85,8 @@ window.onload = function () {
       })
     },
     function (callback) {
+      loadingIndicator.setInactive()
+
       hash(function (loc) {
         if (loc.match(/^#[0-9]+$/)) {
           pageShow(loc.substr(1))
@@ -116,6 +125,8 @@ window.update = function (reloadAll) {
     filter.force = true
   }
 
+  loadingIndicator.setActive()
+
   Radkummerkasten.getEntries(
     filter,
     function (err, entry) {
@@ -125,6 +136,14 @@ window.update = function (reloadAll) {
       }
     },
     function (err) {
+      var willLoad = Math.min(entries.length, step)
+      var loaded = 0
+      loadingIndicator.setValue(1 / (willLoad + 1))
+
+      if (willLoad === 0) {
+        loadingIndicator.setInactive()
+      }
+
       for (var i = Math.max(entries.length - step, 0); i < entries.length; i++) {
         var div = document.createElement('div')
         div.className = 'entry'
@@ -133,6 +152,13 @@ window.update = function (reloadAll) {
         showEntry(entries[i], div, function (err, result) {
           if (err) {
             alert('Error occured loading entry ' + entries[i].id + ': ' + err)
+          }
+
+          loaded++
+          loadingIndicator.setValue((loaded + 1) / (willLoad + 1))
+
+          if (loaded >= willLoad) {
+            loadingIndicator.setInactive()
           }
         })
       }
@@ -243,6 +269,8 @@ window.pageShow = function (id) {
   page.innerHTML = ''
   page.style.display = 'block'
 
+  loadingIndicator.setActive()
+
   Radkummerkasten.getEntries(
     {
       id: [ '' + id ],
@@ -250,6 +278,8 @@ window.pageShow = function (id) {
       forceDetails: true
     },
     function (err, entry) {
+      loadingIndicator.setInactive()
+
       if (err) {
         alert(err)
         return
