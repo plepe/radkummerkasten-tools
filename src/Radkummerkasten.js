@@ -1,4 +1,4 @@
-var request = require('request')
+var request = require('request-xmlhttprequest')
 var async = require('async')
 var parseDate = require('./parseDate')
 var fromHTML = require('./fromHTML')
