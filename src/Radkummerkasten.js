@@ -297,6 +297,13 @@ Radkummerkasten.categories = function (callback) {
 }
 
 /**
+ * clear the cache of the map entries
+ */
+Radkummerkasten.clearCache = function () {
+  this.cacheEntries = {}
+}
+
+/**
  * A comment entry
  * @typedef {Object} RadkummerkastenEntry.comments
  * @property {string} text - Kommentartext
