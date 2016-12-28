@@ -11,6 +11,11 @@ var categoryNames = null
 /**
  * The interface to Radkummerkasten
  * @constructor
+ * @property {object} options - Configuration
+ * @property {string} options.baseUrl - base URL of the radkummerkasten. Default: either http://www.radkummerkasten.at or https://www.radkummerkasten.at
+ * @property {string} options.urlBezirksgrenzen - relative URL of the bezirksgrenzen GeoJSON
+ * @property {string} options.urlMapMarkers - relative URL of the MapMarkers request
+ * @property {string} options.urlMapEntry - relative URL of the MapEntry request. '{id}' will be replaced by the id of the map entry.
  */
 function Radkummerkasten () {
 }
@@ -29,6 +34,10 @@ Radkummerkasten.init = function () {
   } else {
     this.options.baseUrl = 'https://www.radkummerkasten.at'
   }
+
+  this.options.urlBezirksgrenzen = '/wp-content/plugins/radkummerkasten/js/data.wien.gv.at_bezirksgrenzen.json'
+  this.options.urlMapMarkers = '/ajax/?map&action=getMapMarkers'
+  this.options.urlMapEntry = '/ajax/?map&action=getMapEntry&marker={id}'
 
   this.cacheEntries = {}
 }
@@ -75,7 +84,7 @@ Radkummerkasten._getEntries = function (options, featureCallback, finalCallback,
     return this._handleMarkers(options, featureCallback, finalCallback)
   }
 
-  request.get(this.options.baseUrl + '/ajax/?map&action=getMapMarkers',
+  request.get(this.options.baseUrl + this.options.urlMapMarkers,
     function (error, response, body) {
       if (!error && response.statusCode === 200) {
         var data = JSON.parse(body)
@@ -209,7 +218,7 @@ Radkummerkasten.loadBezirksgrenzen = function (callback) {
 
   this.bezirksgrenzen = []
 
-  request.get(this.options.baseUrl + '/wp-content/plugins/radkummerkasten/js/data.wien.gv.at_bezirksgrenzen.json',
+  request.get(this.options.baseUrl + this.options.urlBezirksgrenzen,
     function (error, response, body) {
       if (!error && response.statusCode === 200) {
         var data = JSON.parse(body)
@@ -390,7 +399,7 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
     return
   }
 
-  request.get(Radkummerkasten.options.baseUrl + '/ajax/?map&action=getMapEntry&marker=' + encodeURI(this.id),
+  request.get(Radkummerkasten.options.baseUrl + Radkummerkasten.options.urlMapEntry.replace('{id}', encodeURI(this.id)),
     function (error, response, body) {
       var m
 
