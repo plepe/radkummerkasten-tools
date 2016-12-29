@@ -95,40 +95,6 @@ Radkummerkasten._getEntries = function (options, featureCallback, finalCallback,
           categoryNames[k] = data.categories[k].name
         }
 
-        if ('bezirk' in options) {
-          if (!Array.isArray(options.bezirk)) {
-            options.bezirk = [ options.bezirk ]
-          }
-          for (i = 0; i < options.bezirk.length; i++) {
-            options.bezirk[i] = '' + options.bezirk[i]
-          }
-        }
-
-        if ('category' in options) {
-          if (!Array.isArray(options.category)) {
-            options.category = [ options.category ]
-          }
-          for (i = 0; i < options.category.length; i++) {
-            // convert string categories to numeric value
-            var found = false
-            if (isNaN(parseInt(options.category[i]))) {
-              for (k in categoryNames) {
-                if (categoryNames[k].toLowerCase() === options.category[i].toLowerCase()) {
-                  options.category[i] = k
-                  found = true
-                }
-              }
-
-              if (!found) {
-                finalCallback('Can\'t parse Category name: ' + options.category[i])
-                return
-              }
-            } else {
-              options.category[i] = '' + options.category[i]
-            }
-          }
-        }
-
         this.markers = data.markers
         return this._handleMarkers(options, featureCallback, finalCallback)
       }
@@ -149,6 +115,40 @@ Radkummerkasten._handleMarkers = function (options, featureCallback, finalCallba
     }
     for (i = 0; i < options.id.length; i++) {
       options.id[i] = parseInt(options.id[i])
+    }
+  }
+
+  if ('bezirk' in options) {
+    if (!Array.isArray(options.bezirk)) {
+      options.bezirk = [ options.bezirk ]
+    }
+    for (i = 0; i < options.bezirk.length; i++) {
+      options.bezirk[i] = '' + options.bezirk[i]
+    }
+  }
+
+  if ('category' in options) {
+    if (!Array.isArray(options.category)) {
+      options.category = [ options.category ]
+    }
+    for (i = 0; i < options.category.length; i++) {
+      // convert string categories to numeric value
+      var found = false
+      if (isNaN(parseInt(options.category[i]))) {
+        for (k in categoryNames) {
+          if (categoryNames[k].toLowerCase() === options.category[i].toLowerCase()) {
+            options.category[i] = k
+            found = true
+          }
+        }
+
+        if (!found) {
+          finalCallback('Can\'t parse Category name: ' + options.category[i])
+          return
+        }
+      } else {
+        options.category[i] = '' + options.category[i]
+      }
     }
   }
 
