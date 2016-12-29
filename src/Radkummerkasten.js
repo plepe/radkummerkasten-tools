@@ -56,7 +56,7 @@ Radkummerkasten.init = function () {
 /**
  * load all entries from Radkummerkasten and call the callbacks.
  * @param {object} options - Options and filter the results by certain criteria
- * @param {number[]} [options.id] - Only include entries with the specified ids (list might be filtered further by other filters)
+ * @param {number[]|number|string[]|string} [options.id] - Only include entries with the specified ids (list might be filtered further by other filters)
  * @param {boolean} options.includeDetails=false - If true, for each entry the details will be loaded. Requires a separate http request for each entry.
  * @param {number[]|number} options.bezirk - Only include entries within the specified Bezirk or Bezirke.
  * @param {number[]|number|string[]|string} options.category - Only include entries of the specified categories (either numeric or string representation).
@@ -143,13 +143,22 @@ Radkummerkasten._handleMarkers = function (options, featureCallback, finalCallba
   var offset = typeof options.offset === 'undefined' ? 0 : options.offset
   var limit = typeof options.limit === 'undefined' ? null : options.limit
 
+  if ('id' in options) {
+    if (!Array.isArray(options.id)) {
+      options.id = [ options.id ]
+    }
+    for (i = 0; i < options.id.length; i++) {
+      options.id[i] = parseInt(options.id[i])
+    }
+  }
+
   this.markers.forEach(function (entry) {
     if (!(entry.id in this.cacheEntries)) {
       this.cacheEntries[entry.id] = new RadkummerkastenEntry(entry)
     }
     var ob = this.cacheEntries[entry.id]
 
-    if ('id' in options && options.id.indexOf('' + ob.id) === -1) {
+    if ('id' in options && options.id.indexOf(ob.id) === -1) {
       return
     }
 
