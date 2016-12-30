@@ -163,5 +163,27 @@ describe('Radkummerkasten', function () {
         }
       )
     })
+
+    it('{id: 4, includeDetails: true}', function (done) {
+      var results = []
+
+      Radkummerkasten.clearCache()
+      Radkummerkasten.getEntries(
+        {
+          id: [ '4' ],
+          includeDetails: true
+        },
+        function (err, entry) {
+          assert.equal(err, null, 'Error on featureCallback!')
+          results.push(entry.id)
+          assert.equal(entry.comments.length, 0, 'Wrong count of comments')
+          assert.equal(entry.attachments.length, 3, 'Comment should have three attachments')
+        },
+        function (err) {
+          assert.deepEqual(results, [ 4 ], 'Wrong count of results')
+          done(err)
+        }
+      )
+    })
   })
 })
