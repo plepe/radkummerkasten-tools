@@ -426,7 +426,7 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
         this.attachments = []
 
         if (m[3]) {
-          var m1 = m[3].match(/<a href="(.*)" class="swipebox" title="(.*)"><img src/)
+          var m1 = m[3].match(/<a href="([^"]*)" class="swipebox" title="([^"]*)"><img src/)
           this.attachments.push({
             url: Radkummerkasten.options.baseUrl + m1[1],
             title: m1[2]
@@ -441,7 +441,7 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
         this.text = fromHTML(data.htmlData.substr(m[0].length, p - m[0].length))
 
         var remainingHtmlData = data.htmlData.substr(p + 4).trim()
-        while(m = remainingHtmlData.match(/^<\/div><div class="images"><a href="(.*)" class="swipebox" title="(.*)">((?!<\/a>).)*<\/a>/)) {
+        while(m = remainingHtmlData.match(/^(?:<\/div><div class="images">)?<a href="([^"]*)" class="swipebox" title="([^"]*)">((?!<\/a>).)*<\/a>/)) {
           this.attachments.push({
             url: Radkummerkasten.options.baseUrl + m[1],
             title: m[2]
@@ -473,7 +473,7 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
           }
 
           var remainingHtmlData = commentsHtmlData[i + 1].trim()
-          while(m = remainingHtmlData.match(/^<\/div><div class="images"><a href="(.*)" class="swipebox" title="(.*)">((?!<\/a>).)*<\/a>/)) {
+          while(m = remainingHtmlData.match(/^(?:<\/div><div class="images">)?<a href="([^"]*)" class="swipebox" title="([^"]*)">((?!<\/a>).)*<\/a>/)) {
             this.comments[this.comments.length - 1].attachments.push({
               url: Radkummerkasten.options.baseUrl + m[1],
               title: m[2]

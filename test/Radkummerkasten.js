@@ -155,10 +155,10 @@ describe('Radkummerkasten', function () {
           assert.equal(err, null, 'Error on featureCallback!')
           results.push(entry.id)
           assert.equal(entry.comments.length, 1, 'Wrong count of comments')
-          assert.equal(entry.comments[0].attachments.length, 3, 'Comment should have three attachments')
+          assert.equal(entry.comments[0].attachments.length, 2, 'Comment should have two attachments')
         },
         function (err) {
-          assert.deepEqual(results, [ 3 ], 'Wrong count of results') 
+          assert.deepEqual(results, [ 3 ], 'Wrong count of results')
           done(err)
         }
       )
