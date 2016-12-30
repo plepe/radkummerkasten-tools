@@ -185,5 +185,45 @@ describe('Radkummerkasten', function () {
         }
       )
     })
+
+    it('{includeDetails: true}', function (done) {
+      var results = []
+
+      Radkummerkasten.clearCache()
+      Radkummerkasten.getEntries(
+        {
+          includeDetails: true
+        },
+        function (err, entry) {
+          assert.equal(err, null, 'Error on featureCallback!')
+          results.push(entry.id)
+        },
+        function (err) {
+          results.sort()
+          assert.deepEqual(results, [ 1, 2, 3, 4 ], 'Wrong count of results')
+          done(err)
+        }
+      )
+    })
+
+    it('{bezirk: 15, includeDetails: true}', function (done) {
+      var results = []
+
+      Radkummerkasten.clearCache()
+      Radkummerkasten.getEntries(
+        {
+          bezirk: 15,
+          includeDetails: true
+        },
+        function (err, entry) {
+          assert.equal(err, null, 'Error on featureCallback!')
+          results.push(entry.id)
+        },
+        function (err) {
+          assert.deepEqual(results, [ 2 ], 'Wrong count of results')
+          done(err)
+        }
+      )
+    })
   })
 })
