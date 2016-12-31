@@ -54,6 +54,8 @@ Die volle Dokumentation über die Klassen `Radkummerkasten` und `Radkummerkasten
 
 CONTRIBUTING
 ============
+Diese Sourcen sind nicht Teil des offiziellen [http://www.radkummerkasten.at](Radkummerkastens), sondern verwendet nur die Daten aus diesem.
+
 Die radkummerkasten-tools werden von Stephan Bösch-Plepelits entwickelt. Diese sind Open Source und werden auf Github entwickelt. Kommentare, Bug Reports und Erweiterungen sind herzlich willkommen: https://github.com/plepe/radkummerkasten-tools
 
 Für Erweiterungen generiere bitte Tests (siehe Verzeichnis `test/`). In NodeJS können diese mit dem Kommando `npm test` ausgeführt werden, für Browser Tests mit `npm run build-test` kompilieren und dann die Datei `test.html` im Browser öffnen.
