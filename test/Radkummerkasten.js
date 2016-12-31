@@ -1,6 +1,10 @@
 var Radkummerkasten = require('../src/Radkummerkasten')
 Radkummerkasten.init()
-Radkummerkasten.options.baseUrl = 'file:test/data/'
+if (window) {
+  Radkummerkasten.options.baseUrl = location.origin + location.pathname.replace(/\\/g,'/').replace(/\/[^\/]*$/, '') + '/test/data/'
+} else {
+  Radkummerkasten.options.baseUrl = 'file:test/data/'
+}
 Radkummerkasten.options.urlBezirksgrenzen = 'data.wien.gv.at_bezirksgrenzen.json'
 Radkummerkasten.options.urlMapMarkers = 'mapMarkers.json'
 Radkummerkasten.options.urlMapEntry = '{id}.json'
