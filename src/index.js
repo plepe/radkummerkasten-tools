@@ -27,6 +27,8 @@ function showEntry(entry, div, callback) {
 }
 
 window.onload = function () {
+  document.getElementById('version').appendChild(document.createTextNode(Radkummerkasten.version))
+
   teaserTemplate = twig({
     data: document.getElementById('teaserTemplate').innerHTML
   })

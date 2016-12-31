@@ -20,6 +20,8 @@ var categoryNames = null
 function Radkummerkasten () {
 }
 
+Radkummerkasten.version = '__GIT_MY_VERSION__'
+
 Radkummerkasten.init = function () {
   if (typeof this.options !== 'undefined') {
     return
