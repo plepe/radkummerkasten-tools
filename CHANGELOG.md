@@ -1,3 +1,8 @@
+## Version 0.3.3, 2016-12-31
+* Unit tests via Mocha (`npm test` on command line; `npm run build-test`, open test.html in web browser)
+* Besseres Parsing für Attachments
+* Bezirkszuordnung im Radkummerkasten teilweise falsch -> Spalte 'bezirkRkk'
+
 ## Version 0.3.2, 2016-12-26
 * Loading indicator
 
