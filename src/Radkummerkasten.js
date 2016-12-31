@@ -11,6 +11,11 @@ var categoryNames = null
 /**
  * The interface to Radkummerkasten
  * @constructor
+ * @property {object} options - Configuration
+ * @property {string} options.baseUrl - base URL of the radkummerkasten. Default: either http://www.radkummerkasten.at or https://www.radkummerkasten.at
+ * @property {string} options.urlBezirksgrenzen - relative URL of the bezirksgrenzen GeoJSON
+ * @property {string} options.urlMapMarkers - relative URL of the MapMarkers request
+ * @property {string} options.urlMapEntry - relative URL of the MapEntry request. '{id}' will be replaced by the id of the map entry.
  */
 function Radkummerkasten () {
 }
@@ -30,6 +35,10 @@ Radkummerkasten.init = function () {
     this.options.baseUrl = 'https://www.radkummerkasten.at'
   }
 
+  this.options.urlBezirksgrenzen = '/wp-content/plugins/radkummerkasten/js/data.wien.gv.at_bezirksgrenzen.json'
+  this.options.urlMapMarkers = '/ajax/?map&action=getMapMarkers'
+  this.options.urlMapEntry = '/ajax/?map&action=getMapEntry&marker={id}'
+
   this.cacheEntries = {}
 }
 
@@ -47,7 +56,7 @@ Radkummerkasten.init = function () {
 /**
  * load all entries from Radkummerkasten and call the callbacks.
  * @param {object} options - Options and filter the results by certain criteria
- * @param {number[]} [options.id] - Only include entries with the specified ids (list might be filtered further by other filters)
+ * @param {number[]|number|string[]|string} [options.id] - Only include entries with the specified ids (list might be filtered further by other filters)
  * @param {boolean} options.includeDetails=false - If true, for each entry the details will be loaded. Requires a separate http request for each entry.
  * @param {number[]|number} options.bezirk - Only include entries within the specified Bezirk or Bezirke.
  * @param {number[]|number|string[]|string} options.category - Only include entries of the specified categories (either numeric or string representation).
@@ -75,7 +84,7 @@ Radkummerkasten._getEntries = function (options, featureCallback, finalCallback,
     return this._handleMarkers(options, featureCallback, finalCallback)
   }
 
-  request.get(this.options.baseUrl + '/ajax/?map&action=getMapMarkers',
+  request.get(this.options.baseUrl + this.options.urlMapMarkers,
     function (error, response, body) {
       if (!error && response.statusCode === 200) {
         var data = JSON.parse(body)
@@ -84,40 +93,6 @@ Radkummerkasten._getEntries = function (options, featureCallback, finalCallback,
         categoryNames = {}
         for (var k in data.categories) {
           categoryNames[k] = data.categories[k].name
-        }
-
-        if ('bezirk' in options) {
-          if (!Array.isArray(options.bezirk)) {
-            options.bezirk = [ options.bezirk ]
-          }
-          for (i = 0; i < options.bezirk.length; i++) {
-            options.bezirk[i] = '' + options.bezirk[i]
-          }
-        }
-
-        if ('category' in options) {
-          if (!Array.isArray(options.category)) {
-            options.category = [ options.category ]
-          }
-          for (i = 0; i < options.category.length; i++) {
-            // convert string categories to numeric value
-            var found = false
-            if (isNaN(parseInt(options.category[i]))) {
-              for (k in categoryNames) {
-                if (categoryNames[k].toLowerCase() === options.category[i].toLowerCase()) {
-                  options.category[i] = k
-                  found = true
-                }
-              }
-
-              if (!found) {
-                finalCallback('Can\'t parse Category name: ' + options.category[i])
-                return
-              }
-            } else {
-              options.category[i] = '' + options.category[i]
-            }
-          }
         }
 
         this.markers = data.markers
@@ -133,6 +108,50 @@ Radkummerkasten._handleMarkers = function (options, featureCallback, finalCallba
   var detailsFunctions = []
   var offset = typeof options.offset === 'undefined' ? 0 : options.offset
   var limit = typeof options.limit === 'undefined' ? null : options.limit
+  var i
+
+  if ('id' in options) {
+    if (!Array.isArray(options.id)) {
+      options.id = [ options.id ]
+    }
+    for (i = 0; i < options.id.length; i++) {
+      options.id[i] = parseInt(options.id[i])
+    }
+  }
+
+  if ('bezirk' in options) {
+    if (!Array.isArray(options.bezirk)) {
+      options.bezirk = [ options.bezirk ]
+    }
+    for (i = 0; i < options.bezirk.length; i++) {
+      options.bezirk[i] = '' + options.bezirk[i]
+    }
+  }
+
+  if ('category' in options) {
+    if (!Array.isArray(options.category)) {
+      options.category = [ options.category ]
+    }
+    for (i = 0; i < options.category.length; i++) {
+      // convert string categories to numeric value
+      var found = false
+      if (isNaN(parseInt(options.category[i]))) {
+        for (k in categoryNames) {
+          if (categoryNames[k].toLowerCase() === options.category[i].toLowerCase()) {
+            options.category[i] = k
+            found = true
+          }
+        }
+
+        if (!found) {
+          finalCallback('Can\'t parse Category name: ' + options.category[i])
+          return
+        }
+      } else {
+        options.category[i] = '' + options.category[i]
+      }
+    }
+  }
 
   this.markers.forEach(function (entry) {
     if (!(entry.id in this.cacheEntries)) {
@@ -140,7 +159,7 @@ Radkummerkasten._handleMarkers = function (options, featureCallback, finalCallba
     }
     var ob = this.cacheEntries[entry.id]
 
-    if ('id' in options && options.id.indexOf('' + ob.id) === -1) {
+    if ('id' in options && options.id.indexOf(ob.id) === -1) {
       return
     }
 
@@ -209,7 +228,7 @@ Radkummerkasten.loadBezirksgrenzen = function (callback) {
 
   this.bezirksgrenzen = []
 
-  request.get(this.options.baseUrl + '/wp-content/plugins/radkummerkasten/js/data.wien.gv.at_bezirksgrenzen.json',
+  request.get(this.options.baseUrl + this.options.urlBezirksgrenzen,
     function (error, response, body) {
       if (!error && response.statusCode === 200) {
         var data = JSON.parse(body)
@@ -285,6 +304,13 @@ Radkummerkasten.categories = function (callback) {
   async.setImmediate(function () {
     callback(null, _buildCategories())
   })
+}
+
+/**
+ * clear the cache of the map entries
+ */
+Radkummerkasten.clearCache = function () {
+  this.cacheEntries = {}
 }
 
 /**
@@ -391,7 +417,7 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
     return
   }
 
-  request.get(Radkummerkasten.options.baseUrl + '/ajax/?map&action=getMapEntry&marker=' + encodeURI(this.id),
+  request.get(Radkummerkasten.options.baseUrl + Radkummerkasten.options.urlMapEntry.replace('{id}', encodeURI(this.id)),
     function (error, response, body) {
       var m
 
@@ -402,7 +428,7 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
         this.attachments = []
 
         if (m[3]) {
-          var m1 = m[3].match(/<a href="(.*)" class="swipebox" title="(.*)"><img src/)
+          var m1 = m[3].match(/<a href="([^"]*)" class="swipebox" title="([^"]*)"><img src/)
           this.attachments.push({
             url: Radkummerkasten.options.baseUrl + m1[1],
             title: m1[2]
@@ -417,7 +443,7 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
         this.text = fromHTML(data.htmlData.substr(m[0].length, p - m[0].length))
 
         var remainingHtmlData = data.htmlData.substr(p + 4).trim()
-        while(m = remainingHtmlData.match(/^<\/div><div class="images"><a href="(.*)" class="swipebox" title="(.*)">((?!<\/a>).)*<\/a>/)) {
+        while(m = remainingHtmlData.match(/^(?:<\/div><div class="images">)?<a href="([^"]*)" class="swipebox" title="([^"]*)">((?!<\/a>).)*<\/a>/)) {
           this.attachments.push({
             url: Radkummerkasten.options.baseUrl + m[1],
             title: m[2]
@@ -449,7 +475,7 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
           }
 
           var remainingHtmlData = commentsHtmlData[i + 1].trim()
-          while(m = remainingHtmlData.match(/^<\/div><div class="images"><a href="(.*)" class="swipebox" title="(.*)">((?!<\/a>).)*<\/a>/)) {
+          while(m = remainingHtmlData.match(/^(?:<\/div><div class="images">)?<a href="([^"]*)" class="swipebox" title="([^"]*)">((?!<\/a>).)*<\/a>/)) {
             this.comments[this.comments.length - 1].attachments.push({
               url: Radkummerkasten.options.baseUrl + m[1],
               title: m[2]
