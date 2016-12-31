@@ -108,6 +108,7 @@ Radkummerkasten._handleMarkers = function (options, featureCallback, finalCallba
   var detailsFunctions = []
   var offset = typeof options.offset === 'undefined' ? 0 : options.offset
   var limit = typeof options.limit === 'undefined' ? null : options.limit
+  var i
 
   if ('id' in options) {
     if (!Array.isArray(options.id)) {
