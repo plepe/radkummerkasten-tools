@@ -70,6 +70,12 @@ Reports und Erweiterungen sind herzlich willkommen.
 <p>
 <a target="radkummerkasten" href="https://www.radkummerkasten.at/#marker-{{ id }}">Öffne im Radkummerkasten</a><br/>
 {{ likes }} Unterstützung(en), {{ comments|length}} Kommentar(e)
+{% if bezirk != bezirkRkk %}
+<br/><span class='error'>
+Fehler: Laut Radkummerkasten ist der Eintrag im Bezirk {{ bezirkRkk }}.
+</span>
+{% endif %}
+</p>
 </script>
 
 <script type='text/template' id='showTemplate'>
@@ -99,7 +105,13 @@ Koordinaten: {{ lat|number_format(5) }}, {{ lon|number_format(5) }}
 <p>
 {{ likes }} Unterstützung(en)<br/>
 {{ comments|length}} Kommentar(e)<br/>
-Bezirk: {{ bezirk }}<br/>
+Bezirk: {{ bezirk }}
+{% if bezirk != bezirkRkk %}
+<span class='error'>
+(Fehler: Laut Radkummerkasten {{ bezirkRkk }}. Bezirk).
+</span>
+{% endif %}
+<br/>
 
 <p>
 <i>{{ user }} schrieb am {{ date }}:</i><br/>

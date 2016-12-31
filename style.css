@@ -11,6 +11,9 @@ div.entry img {
 div.entry {
   clear: right;
 }
+.error {
+  color: #7f0000;
+}
 div.loadMore a {
   display: block;
   padding-top: 0.5em;

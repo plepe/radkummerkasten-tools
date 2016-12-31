@@ -313,6 +313,7 @@ Radkummerkasten.categories = function (callback) {
  * @property {number} category - Category of the entry
  * @property {string} categoryName - Category as string
  * @property {number} bezirk - Bezirk
+ * @property {number} bezirkRkk - Bezirk laut Radkummerkasten
  * @property {string} title - Title (load details first)
  * @property {string} user - User, e.g. 'Max M.' (load details first)
  * @property {string} date - Date, ISO8601 (e.g. '2016-12-24') (load details first)
@@ -409,7 +410,7 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
         }
 
         this.title = data.title
-        this.bezirk = data.bezirk
+        this.bezirkRkk = data.bezirk
         this.user = m[4]
         this.date = parseDate(m[6])
         var p = data.htmlData.indexOf('</p>')
