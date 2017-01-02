@@ -152,10 +152,6 @@ window.update = function (reloadAll) {
         content.insertBefore(div, content.firstChild)
 
         showEntry(entries[i], div, function (err, result) {
-          if (err) {
-            alert('Error occured loading entry ' + entries[i].id + ': ' + err)
-          }
-
           loaded++
           loadingIndicator.setValue((loaded + 1) / (willLoad + 1))
 

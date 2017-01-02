@@ -78,6 +78,9 @@ Reports und Erweiterungen sind herzlich willkommen.</p>
 Fehler: Laut Radkummerkasten ist der Eintrag im Bezirk {{ bezirkRkk }}.
 </span>
 {% endif %}
+{% for error in errors %}
+<br/><span class='error'>Fehler: {{ error }}</span>
+{% endfor %}
 </p>
 </script>
 
@@ -115,6 +118,10 @@ Bezirk: {{ bezirk }}
 </span>
 {% endif %}
 <br/>
+
+{% for error in errors %}
+<span class='error'>Fehler: {{ error }}</span><br/>
+{% endfor %}
 
 <p>
 <i>{{ user }} schrieb am {{ date }}:</i><br/>
