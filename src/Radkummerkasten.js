@@ -89,7 +89,11 @@ Radkummerkasten._getEntries = function (options, featureCallback, finalCallback,
   request.get(this.options.baseUrl + this.options.urlMapMarkers,
     function (error, response, body) {
       if (!error && response.statusCode === 200) {
-        var data = JSON.parse(body)
+        var [ e, data ] = jsonParse(body)
+        if (e) {
+          finalCallback(e, null)
+          return
+        }
         var i
 
         categoryNames = {}
@@ -233,7 +237,11 @@ Radkummerkasten.loadBezirksgrenzen = function (callback) {
   request.get(this.options.baseUrl + this.options.urlBezirksgrenzen,
     function (error, response, body) {
       if (!error && response.statusCode === 200) {
-        var data = JSON.parse(body)
+        var [ e, data ] = jsonParse(body)
+        if (e) {
+          callback(e, null)
+          return
+        }
 
         for (var i = 0; i < data.features.length; i++) {
           var feature = data.features[i]
@@ -425,7 +433,12 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
       var m
 
       if (!error && response.statusCode === 200) {
-        var data = JSON.parse(body)
+        var [ e, data ] = jsonParse(body)
+        if (e) {
+          this.errors = [ e ]
+          callback(e, null)
+          return
+        }
 
         m = data.htmlData.match(/^<div class="marker-entry"><h3><span class="survey">([^<]*):<\/span> ([^<]*)<\/h3>(.*)<div class=""><p><span class="author"><i>(.*) schrieb am (.*), (.*):<\/i><\/span><br \/>/)
         this.attachments = []
@@ -498,6 +511,20 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
       callback(error, null)
     }.bind(this)
   )
+}
+
+function jsonParse (str) {
+  if (str === '') {
+    return [ 'Error: JSON data empty' ]
+  }
+
+  try {
+    var data = JSON.parse(str)
+  } catch (e) {
+    return [ e, null ]
+  }
+
+  return [ null, data ]
 }
 
 module.exports = Radkummerkasten
