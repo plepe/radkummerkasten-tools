@@ -1,6 +1,6 @@
 var Radkummerkasten = require('../src/Radkummerkasten')
 Radkummerkasten.init()
-if (window) {
+if (typeof window !== 'undefined') {
   Radkummerkasten.options.baseUrl = location.origin + location.pathname.replace(/\\/g,'/').replace(/\/[^\/]*$/, '') + '/test/data/'
 } else {
   Radkummerkasten.options.baseUrl = 'file:test/data/'
