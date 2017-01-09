@@ -3,6 +3,7 @@ var assert = require('assert')
 
 describe('parseDate', function () {
   var dates = [
+    [ ' 1. Jänner 2017', '2017-01-01' ],
     [ '24. Dezember 2016', '2016-12-24' ],
     [ ' 8. März 2016', '2016-03-08' ],
     [ ' 8. Dezember 2016', '2016-12-08' ]
