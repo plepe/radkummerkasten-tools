@@ -7,12 +7,16 @@ div.entry img {
   max-width: 200px;
   max-height: 200px;
   float: right;
+  margin-bottom: 0.5em;
 }
 div.entry {
   clear: right;
 }
 .error {
   color: #7f0000;
+}
+div.loadMore {
+  clear: both;
 }
 div.loadMore a {
   display: block;
