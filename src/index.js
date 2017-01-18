@@ -309,11 +309,22 @@ window.pageShow = function (id) {
       page.innerHTML = showTemplate.render(entry)
 
       if (document.getElementById('map')) {
-        var map = L.map('map').setView([ entry.lat, entry.lon ], 17)
+        var layers = {}
 
-	L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-	    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-	}).addTo(map)
+        layers['OSM Default'] =
+          L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          })
+
+        layers['OSM CycleMap'] =
+          L.tileLayer('//{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', {
+              attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, Tiles courtesy of <a href="http://www.thunderforest.com/">Andy Allan</a>'
+          })
+
+        var map = L.map('map', {
+          layers: layers['OSM Default']
+        }).setView([ entry.lat, entry.lon ], 17)
+        L.control.layers(layers).addTo(map)
 
 	L.marker([ entry.lat, entry.lon ]).addTo(map)
       }
