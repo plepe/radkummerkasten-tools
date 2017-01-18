@@ -14,6 +14,7 @@ var teaserTemplate
 var showTemplate
 var pageOverviewLoaded = false
 var popScrollTop = null
+var preferredLayer = null
 window.knownEntries = {}
 const step = 20
 
@@ -320,13 +321,20 @@ window.pageShow = function (id) {
           L.tileLayer('//{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', {
               attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, Tiles courtesy of <a href="http://www.thunderforest.com/">Andy Allan</a>'
           })
+        if (preferredLayer === null) {
+          preferredLayer = 'OSM Default'
+        }
 
         var map = L.map('map', {
-          layers: layers['OSM Default']
+          layers: layers[preferredLayer]
         }).setView([ entry.lat, entry.lon ], 17)
         L.control.layers(layers).addTo(map)
 
 	L.marker([ entry.lat, entry.lon ]).addTo(map)
+
+        map.on('baselayerchange', function (event) {
+          preferredLayer = event.name
+        })
       }
     },
     function (err) {
