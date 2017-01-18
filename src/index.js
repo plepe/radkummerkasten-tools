@@ -314,17 +314,23 @@ window.pageShow = function (id) {
 
         layers['OSM Default'] =
           L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-              attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+              attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+              maxZoom: 19,
+              maxNativeZoom: 19
           })
 
         layers['OSM CycleMap'] =
           L.tileLayer('//{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', {
-              attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, Tiles courtesy of <a href="http://www.thunderforest.com/">Andy Allan</a>'
+              attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, Tiles: <a href="http://www.thunderforest.com/">Andy Allan</a>',
+              maxZoom: 19,
+              maxNativeZoom: 18
           })
 
         layers['Radkummerkasten'] =
           L.tileLayer('//radkummerkasten.at/map/{z}/{x}/{y}.png', {
               attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, Tiles: <a href="http://radlkarte.at/">radlkarte.at</a>',
+              maxZoom: 19,
+              maxNativeZoom: 18
           })
         if (preferredLayer === null) {
           preferredLayer = 'OSM Default'
