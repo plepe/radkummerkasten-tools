@@ -321,6 +321,11 @@ window.pageShow = function (id) {
           L.tileLayer('//{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', {
               attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, Tiles courtesy of <a href="http://www.thunderforest.com/">Andy Allan</a>'
           })
+
+        layers['Radkummerkasten'] =
+          L.tileLayer('//radkummerkasten.at/map/{z}/{x}/{y}.png', {
+              attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, Tiles: <a href="http://radlkarte.at/">radlkarte.at</a>',
+          })
         if (preferredLayer === null) {
           preferredLayer = 'OSM Default'
         }
