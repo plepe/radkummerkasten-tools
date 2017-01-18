@@ -13,6 +13,7 @@ var loadingIndicator = require('simple-loading-indicator')
 var teaserTemplate
 var showTemplate
 var pageOverviewLoaded = false
+var popScrollTop = null
 window.knownEntries = {}
 const step = 20
 
@@ -26,6 +27,14 @@ function showEntry(entry, div, callback) {
   })
 }
 
+function restoreScroll() {
+  if (popScrollTop !== null) {
+    document.body.scrollTop = popScrollTop
+  }
+
+  popScrollTop = null
+}
+
 window.onload = function () {
   document.getElementById('version').appendChild(document.createTextNode(Radkummerkasten.version))
 
@@ -34,6 +43,17 @@ window.onload = function () {
   })
   showTemplate = twig({
     data: document.getElementById('showTemplate').innerHTML
+  })
+
+  window.addEventListener('popstate', function (event) {
+    if (event.state && 'scrollTop' in event.state) {
+      popScrollTop = event.state.scrollTop
+    } else {
+      popScrollTop = null
+    }
+  })
+  window.addEventListener('scroll', function (event) {
+    history.replaceState({ scrollTop: document.body.scrollTop }, '', location.hash)
   })
 
   loadingIndicator.setActive()
@@ -164,6 +184,7 @@ window.update = function (reloadAll) {
       var done = step
 
       if (entries.length <= step) {
+        restoreScroll()
         return
       }
 
@@ -193,6 +214,8 @@ window.update = function (reloadAll) {
 
       divLoadMore.appendChild(a)
       content.appendChild(divLoadMore)
+
+      restoreScroll()
     }
   )
 }
@@ -295,7 +318,9 @@ window.pageShow = function (id) {
 	L.marker([ entry.lat, entry.lon ]).addTo(map)
       }
     },
-    function (err) {}
+    function (err) {
+      restoreScroll()
+    }
   )
 }
 
@@ -305,5 +330,7 @@ window.pageOverview = function () {
 
   if (!pageOverviewLoaded) {
     update()
+  } else {
+    restoreScroll()
   }
 }
