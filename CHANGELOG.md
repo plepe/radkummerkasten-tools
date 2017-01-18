@@ -1,3 +1,13 @@
+## Version 0.3.6, 2016-01-18
+* Merke Scroll Position beim vor/zurück gehen in der Browser History
+* OSM Default, OSM CycleMap und Radkummerkasten als alternative Kartenhintergründe
+
+## Version 0.3.5, 2016-01-09
+* Bugfixes
+
+## Version 0.3.4, 2016-01-03
+* Bugfixes
+
 ## Version 0.3.3, 2016-12-31
 * Unit tests via Mocha (`npm test` on command line; `npm run build-test`, open test.html in web browser)
 * Besseres Parsing für Attachments
