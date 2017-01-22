@@ -3,6 +3,7 @@ var async = require('async')
 var parseDate = require('./parseDate')
 var fromHTML = require('./fromHTML')
 var twig = require('twig').twig
+var imageToURI = require('image-to-data-uri')
 var turf = {
   inside: require('@turf/inside')
 }
@@ -528,6 +529,7 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
 /**
  * render entry as HTML
  * @param {object} options
+ * @param {boolean} [options.includeImgs=false] Convert img src to data uris
  * @param {function} callback Called with resulting HTML data. Parameters: err, result.
  */
 RadkummerkastenEntry.prototype.renderHTML = function (options, callback) {
@@ -539,9 +541,39 @@ RadkummerkastenEntry.prototype.renderHTML = function (options, callback) {
 
   var result = showTemplate.render(this)
 
+  if (options.includeImgs) {
+    return this._renderHTMLincludeImgs(result, options, callback)
+  }
+
   async.setImmediate(function () {
     callback(null, result)
   })
+}
+
+RadkummerkastenEntry.prototype._renderHTMLincludeImgs = function (result, options, callback) {
+  var dom = document.createElement('div')
+  dom.innerHTML = result
+
+  var imgs = dom.getElementsByTagName('img')
+  async.each(
+    imgs,
+    function (img, callback) {
+      imageToURI(
+        img.src,
+        function (err, uri) {
+          if (err) {
+            alert(err)
+          } else {
+            img.src = uri
+          }
+          callback()
+        }
+      )
+    },
+    function (err) {
+      callback(err, dom.innerHTML)
+    }
+  )
 }
 
 function jsonParse (str) {
