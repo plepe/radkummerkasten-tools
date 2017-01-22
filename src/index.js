@@ -11,7 +11,6 @@ var async = require('async')
 var loadingIndicator = require('simple-loading-indicator')
 
 var teaserTemplate
-var showTemplate
 var pageOverviewLoaded = false
 var popScrollTop = null
 var preferredLayer = null
@@ -41,9 +40,6 @@ window.onload = function () {
 
   teaserTemplate = twig({
     data: document.getElementById('teaserTemplate').innerHTML
-  })
-  showTemplate = twig({
-    data: document.getElementById('showTemplate').innerHTML
   })
 
   window.addEventListener('popstate', function (event) {
@@ -307,46 +303,50 @@ window.pageShow = function (id) {
         return
       }
 
-      page.innerHTML = showTemplate.render(entry)
+      entry.renderHTML({},
+        function (err, result) {
+          page.innerHTML = result
 
-      if (document.getElementById('map')) {
-        var layers = {}
+          if (document.getElementById('map')) {
+            var layers = {}
 
-        layers['OSM Default'] =
-          L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-              attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-              maxZoom: 19,
-              maxNativeZoom: 19
-          })
+            layers['OSM Default'] =
+              L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                  attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+                  maxZoom: 19,
+                  maxNativeZoom: 19
+              })
 
-        layers['OSM CycleMap'] =
-          L.tileLayer('//{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', {
-              attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, Tiles: <a href="http://www.thunderforest.com/">Andy Allan</a>',
-              maxZoom: 19,
-              maxNativeZoom: 18
-          })
+            layers['OSM CycleMap'] =
+              L.tileLayer('//{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', {
+                  attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, Tiles: <a href="http://www.thunderforest.com/">Andy Allan</a>',
+                  maxZoom: 19,
+                  maxNativeZoom: 18
+              })
 
-        layers['Radkummerkasten'] =
-          L.tileLayer('//radkummerkasten.at/map/{z}/{x}/{y}.png', {
-              attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, Tiles: <a href="http://radlkarte.at/">radlkarte.at</a>',
-              maxZoom: 19,
-              maxNativeZoom: 18
-          })
-        if (preferredLayer === null) {
-          preferredLayer = 'OSM Default'
+            layers['Radkummerkasten'] =
+              L.tileLayer('//radkummerkasten.at/map/{z}/{x}/{y}.png', {
+                  attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, Tiles: <a href="http://radlkarte.at/">radlkarte.at</a>',
+                  maxZoom: 19,
+                  maxNativeZoom: 18
+              })
+            if (preferredLayer === null) {
+              preferredLayer = 'OSM Default'
+            }
+
+            var map = L.map('map', {
+              layers: layers[preferredLayer]
+            }).setView([ entry.lat, entry.lon ], 17)
+            L.control.layers(layers).addTo(map)
+
+            L.marker([ entry.lat, entry.lon ]).addTo(map)
+
+            map.on('baselayerchange', function (event) {
+              preferredLayer = event.name
+            })
+          }
         }
-
-        var map = L.map('map', {
-          layers: layers[preferredLayer]
-        }).setView([ entry.lat, entry.lon ], 17)
-        L.control.layers(layers).addTo(map)
-
-	L.marker([ entry.lat, entry.lon ]).addTo(map)
-
-        map.on('baselayerchange', function (event) {
-          preferredLayer = event.name
-        })
-      }
+      )
     },
     function (err) {
       restoreScroll()
