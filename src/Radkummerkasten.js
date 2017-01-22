@@ -1,6 +1,7 @@
 var request = require('request-xmlhttprequest')
 var async = require('async')
 var parseDate = require('./parseDate')
+var getTemplate = require('./getTemplate')
 var fromHTML = require('./fromHTML')
 var twig = require('twig').twig
 var imageToURI = require('image-to-data-uri')
