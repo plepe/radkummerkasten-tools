@@ -2,9 +2,12 @@ var request = require('request-xmlhttprequest')
 var async = require('async')
 var parseDate = require('./parseDate')
 var fromHTML = require('./fromHTML')
+var twig = require('twig').twig
 var turf = {
   inside: require('@turf/inside')
 }
+
+var showTemplate
 
 var categoryNames = null
 
@@ -520,6 +523,25 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
       callback(error, null)
     }.bind(this)
   )
+}
+
+/**
+ * render entry as HTML
+ * @param {object} options
+ * @param {function} callback Called with resulting HTML data. Parameters: err, result.
+ */
+RadkummerkastenEntry.prototype.renderHTML = function (options, callback) {
+  if (typeof showTemplate === 'undefined') {
+    showTemplate = twig({
+      data: document.getElementById('showTemplate').innerHTML
+    })
+  }
+
+  var result = showTemplate.render(this)
+
+  async.setImmediate(function () {
+    callback(null, result)
+  })
 }
 
 function jsonParse (str) {
