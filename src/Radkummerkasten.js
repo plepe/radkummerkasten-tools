@@ -89,7 +89,10 @@ Radkummerkasten._getEntries = function (options, featureCallback, finalCallback,
   request.get(this.options.baseUrl + this.options.urlMapMarkers,
     function (error, response, body) {
       if (!error && response.statusCode === 200) {
-        var [ e, data ] = jsonParse(body)
+        var p = jsonParse(body)
+        var e = p[0]
+        var data = p[1]
+
         if (e) {
           finalCallback(e, null)
           return
@@ -237,7 +240,10 @@ Radkummerkasten.loadBezirksgrenzen = function (callback) {
   request.get(this.options.baseUrl + this.options.urlBezirksgrenzen,
     function (error, response, body) {
       if (!error && response.statusCode === 200) {
-        var [ e, data ] = jsonParse(body)
+        var p = jsonParse(body)
+        var e = p[0]
+        var data = p[1]
+
         if (e) {
           callback(e, null)
           return
@@ -433,7 +439,10 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
       var m
 
       if (!error && response.statusCode === 200) {
-        var [ e, data ] = jsonParse(body)
+        var p = jsonParse(body)
+        var e = p[0]
+        var data = p[1]
+
         if (e) {
           this.errors = [ e ]
           callback(e, null)
