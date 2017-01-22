@@ -1,0 +1,16 @@
+#!/usr/bin/env node
+var createHTML = require('../src/createHTML')
+var ArgHandler = require('../src/cliHandleArguments')
+
+var parser = ArgHandler.init()
+parser.description = 'Lade Einträge aus dem Radkummerkasten und generiere eine HTML Datei daraus.'
+
+var args = ArgHandler.parseArgs()
+
+args.details = true
+
+var filter = {}
+
+var filter = ArgHandler.compileFilter(args)
+
+createHTML(filter, process.stdout, function () {})

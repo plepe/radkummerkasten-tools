@@ -5,7 +5,8 @@
   "main": "index.js",
   "bin": {
     "rkk-csv": "bin/rkk-csv",
-    "rkk-geojson": "bin/rkk-geojson"
+    "rkk-geojson": "bin/rkk-geojson",
+    "rkk-html": "bin/rkk-html"
   },
   "scripts": {
     "test": "mocha --bail",
@@ -32,6 +33,7 @@
     "csv-write-stream": "^2.0.0",
     "entities": "^1.1.1",
     "image-to-data-uri": "^1.1.0",
+    "jsdom": "^9.9.1",
     "request-xmlhttprequest": "*"
   },
   "devDependencies": {
