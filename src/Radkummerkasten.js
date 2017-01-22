@@ -535,11 +535,19 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
  */
 RadkummerkastenEntry.prototype.renderHTML = function (options, callback) {
   if (typeof showTemplate === 'undefined') {
-    showTemplate = twig({
-      data: document.getElementById('showTemplate').innerHTML
-    })
-  }
+    getTemplate('showTemplate', function (err, result) {
+      showTemplate = twig({
+        data: result
+      })
 
+      this._renderHTML(options, callback)
+    }.bind(this))
+  } else {
+    this._renderHTML(options, callback)
+  }
+}
+
+RadkummerkastenEntry.prototype._renderHTML = function (options, callback) {
   var result = showTemplate.render(this)
 
   if (options.includeImgs) {
