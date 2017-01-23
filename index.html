@@ -50,6 +50,19 @@
 </div>
 
 <div id='pageShow'>
+<a href='javascript:openShowDownload()'>Download</a>
+<form id='showDownloadOptions' style='display: none;' onSubmit='return submitDownloadForm(this)'>
+  <input type='hidden' name='filterId' value=''/>
+  Dateityp: <select name='fileType'>
+    <option value='csv'>CSV (Comma Separated Value, e.g. Excel)</option>
+    <option value='geojson'>GeoJSON (GIS-Applications, e.g. qGIS)</option>
+  </select><br/>
+  <input type='submit' value='Generiere Download' />
+  <span id='showDownload'></span>
+</form>
+<hr>
+<div id='showContent'>
+</div>
 </div>
 
 <hr/>

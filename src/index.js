@@ -222,6 +222,11 @@ window.openDownload = function () {
   formDownload.style.display = 'block'
 }
 
+window.openShowDownload = function () {
+  var formDownload = document.getElementById('showDownloadOptions')
+  formDownload.style.display = 'block'
+}
+
 function createDownload (downloadDom, fileType, data) {
   downloadDom.innerHTML = ''
 
@@ -248,19 +253,26 @@ function createDownload (downloadDom, fileType, data) {
 }
 
 window.submitDownloadForm = function (formDownload) {
-  var form = document.getElementById('form')
   var filter = {}
   var downloadDom = document.getElementById('download')
 
-  if (form.elements.bezirk.value !== '*') {
-    filter.bezirk = [ form.elements.bezirk.value ]
-  }
-  if (form.elements.category.value !== '*') {
-    filter.category = [ form.elements.category.value ]
-  }
-
-  if (formDownload.elements.includeDetails.checked) {
+  if (formDownload.id === 'showDownloadOptions') {
+    filter.id = formDownload.elements.filterId.value
     filter.includeDetails = true
+    downloadDom = document.getElementById('showDownload')
+  } else {
+    var form = document.getElementById('form')
+
+    if (form.elements.bezirk.value !== '*') {
+      filter.bezirk = [ form.elements.bezirk.value ]
+    }
+    if (form.elements.category.value !== '*') {
+      filter.category = [ form.elements.category.value ]
+    }
+
+    if (formDownload.elements.includeDetails.checked) {
+      filter.includeDetails = true
+    }
   }
 
   downloadDom.innerHTML = 'Daten werden geladen, bitte warten ...'
@@ -282,8 +294,10 @@ window.submitDownloadForm = function (formDownload) {
 window.pageShow = function (id) {
   document.getElementById('pageOverview').style.display = 'none'
   var page = document.getElementById('pageShow')
-  page.innerHTML = ''
   page.style.display = 'block'
+  var pageContent = document.getElementById('showContent')
+  pageContent.innerHTML = ''
+  document.getElementById('showDownloadOptions').elements.filterId.value = id
 
   loadingIndicator.setActive()
 
@@ -303,7 +317,7 @@ window.pageShow = function (id) {
 
       entry.renderHTML({},
         function (err, result) {
-          page.innerHTML = result
+          pageContent.innerHTML = result
 
           if (document.getElementById('map')) {
             var layers = {}
