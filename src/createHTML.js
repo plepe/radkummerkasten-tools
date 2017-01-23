@@ -1,8 +1,5 @@
 var Radkummerkasten = require('./Radkummerkasten')
 var async = require('async')
-var jsdom = require('jsdom').jsdom
-global.window = jsdom().defaultView
-global.document = window.document
 
 module.exports = function (filter, pipe, callback) {
   var entries = []

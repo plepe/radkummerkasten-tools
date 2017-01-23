@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 var createHTML = require('../src/createHTML')
 var ArgHandler = require('../src/cliHandleArguments')
+var jsdom = require('jsdom').jsdom
+global.window = jsdom().defaultView
+global.document = window.document
 
 var parser = ArgHandler.init()
 parser.description = 'Lade Einträge aus dem Radkummerkasten und generiere eine HTML Datei daraus.'
