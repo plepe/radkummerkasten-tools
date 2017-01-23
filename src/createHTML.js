@@ -29,13 +29,14 @@ module.exports = function (filter, pipe, callback) {
         entries,
         function (entry, callback) {
           entry.renderHTML(renderParam, function (err, result) {
-            pipe.write(result, null, '  ')
+            pipe.write(result)
 
             callback()
           })
         },
         function (err) {
           pipe.write('</body></html>')
+          callback()
         }
       )
     }
