@@ -10,6 +10,7 @@ var twig = require('twig').twig
 var hash = require('sheet-router/hash')
 var async = require('async')
 var loadingIndicator = require('simple-loading-indicator')
+var FileSaver = require('file-saver');
 
 var teaserTemplate
 var pageOverviewLoaded = false
@@ -245,15 +246,9 @@ function createDownload (downloadDom, fileType, data) {
     extension = 'odt'
   }
 
-  var a = document.createElement('a')
-  a.href= 'data:' + contentType + ';charset=utf-8,' + encodeURI(data)
-  a.download = 'radkummerkasten.' + extension
-  a.appendChild(document.createTextNode('Hier herunterladen'))
-  a.onclick = function () {
-    document.getElementById('downloadOptions').style.display = 'none'
-  }
-
-  downloadDom.appendChild(a)
+  var blob = new Blob([ data ], { type: contentType + ";charset=utf-8" })
+  FileSaver.saveAs(blob, 'radkummerkasten.' + extension)
+  document.getElementById('downloadOptions').style.display = 'none'
 }
 
 window.submitDownloadForm = function (formDownload) {

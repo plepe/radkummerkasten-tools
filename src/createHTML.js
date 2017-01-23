@@ -5,6 +5,7 @@ var async = require('async')
 function process (filter, pipe, callback) {
   var entries = []
   var renderParam = {
+     includeImgs: true
   }
 
   Radkummerkasten.getEntries(
