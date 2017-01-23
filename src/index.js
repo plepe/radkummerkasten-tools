@@ -1,6 +1,7 @@
 window.Radkummerkasten = require('../src/Radkummerkasten')
 var createCsv = require('../src/createCsv')
 var createGeoJson = require('../src/createGeoJson')
+var createHTML = require('../src/createHTML')
 
 var csvWriter = require('csv-write-stream')
 var concat = require('concat-stream')
@@ -239,6 +240,9 @@ function createDownload (downloadDom, fileType, data) {
   } else if (fileType === 'geojson') {
     contentType = 'application/vnd.geo+json'
     extension = 'geojson'
+  } else if (fileType === 'html') {
+    contentType = 'text/html'
+    extension = 'odt'
   }
 
   var a = document.createElement('a')
@@ -284,6 +288,13 @@ window.submitDownloadForm = function (formDownload) {
     var downloadStream = concat(createDownload.bind(this, downloadDom, fileType))
 
     createGeoJson(filter, downloadStream, function () {
+      downloadStream.end()
+    })
+  } else if (fileType === 'html') {
+    var downloadStream = concat(createDownload.bind(this, downloadDom, fileType))
+
+    // filter.includeImgs = true
+    createHTML(filter, downloadStream, function () {
       downloadStream.end()
     })
   }
