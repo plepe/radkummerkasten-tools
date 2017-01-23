@@ -222,9 +222,8 @@ window.openDownload = function () {
   formDownload.style.display = 'block'
 }
 
-function createDownload (fileType, data) {
-  var download = document.getElementById('download')
-  download.innerHTML = ''
+function createDownload (downloadDom, fileType, data) {
+  downloadDom.innerHTML = ''
 
   var contentType
   var extension
@@ -245,13 +244,13 @@ function createDownload (fileType, data) {
     document.getElementById('downloadOptions').style.display = 'none'
   }
 
-  download.appendChild(a)
+  downloadDom.appendChild(a)
 }
 
-window.submitDownloadForm = function () {
+window.submitDownloadForm = function (formDownload) {
   var form = document.getElementById('form')
-  var formDownload = document.getElementById('downloadOptions')
   var filter = {}
+  var downloadDom = document.getElementById('download')
 
   if (form.elements.bezirk.value !== '*') {
     filter.bezirk = [ form.elements.bezirk.value ]
@@ -264,14 +263,13 @@ window.submitDownloadForm = function () {
     filter.includeDetails = true
   }
 
-  var download = document.getElementById('download')
-  download.innerHTML = 'Daten werden geladen, bitte warten ...'
+  downloadDom.innerHTML = 'Daten werden geladen, bitte warten ...'
 
   var fileType = formDownload.elements.fileType.value
   if (fileType === 'csv') {
-    createCsv(filter, concat(createDownload.bind(this, fileType)))
+    createCsv(filter, concat(createDownload.bind(this, downloadDom, fileType)))
   } else if (fileType === 'geojson') {
-    var downloadStream = concat(createDownload.bind(this, fileType))
+    var downloadStream = concat(createDownload.bind(this, downloadDom, fileType))
 
     createGeoJson(filter, downloadStream, function () {
       downloadStream.end()

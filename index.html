@@ -33,7 +33,7 @@
   <a href='javascript:update(false)'>Reload</a>
 </form>
 
-<form id='downloadOptions' onSubmit='return submitDownloadForm()'>
+<form id='downloadOptions' onSubmit='return submitDownloadForm(this)'>
   <input name='includeDetails' type='checkbox'/>Lade Details für Einträge</input><br/>
   Dateityp: <select name='fileType'>
     <option value='csv'>CSV (Comma Separated Value, e.g. Excel)</option>
