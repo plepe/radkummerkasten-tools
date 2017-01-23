@@ -1,12 +1,11 @@
 var Radkummerkasten = require('./Radkummerkasten')
+var getTemplate = require('./getTemplate')
 var async = require('async')
 
-module.exports = function (filter, pipe, callback) {
+function process (filter, pipe, callback) {
   var entries = []
   var renderParam = {
   }
-
-  pipe.write('<html><head></head><body>\n')
 
   Radkummerkasten.getEntries(
     filter,
@@ -32,10 +31,32 @@ module.exports = function (filter, pipe, callback) {
           })
         },
         function (err) {
-          pipe.write('</body></html>')
           callback()
         }
       )
     }
   )
+}
+
+module.exports = function (filter, pipe, callback) {
+
+  async.series([
+    function (callback) {
+      getTemplate('showTemplateHeader', function (err, result) {
+        pipe.write(result)
+        callback(err)
+      })
+    },
+    function (callback) {
+      process(filter, pipe, callback)
+    },
+    function (callback) {
+      getTemplate('showTemplateFooter', function (err, result) {
+        pipe.write(result)
+        callback(err)
+      })
+    }
+  ], function (err) {
+    callback(err)
+  })
 }
