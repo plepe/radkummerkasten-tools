@@ -5,7 +5,8 @@ var async = require('async')
 function process (filter, pipe, callback) {
   var entries = []
   var renderParam = {
-     embedImgs: true
+     embedImgs: true,
+     embedMapAsImg: true
   }
 
   Radkummerkasten.getEntries(
@@ -22,11 +23,20 @@ function process (filter, pipe, callback) {
         throw (err)
       }
 
-      var dom = document.createElement('div')
+      var fakelayer = document.createElement('div')
+      fakelayer.style = {
+        position: 'absolute',
+        width: 0,
+        height: 0
+      }
+      document.body.appendChild(fakelayer)
 
       async.each(
         entries,
         function (entry, callback) {
+          var dom = document.createElement('div')
+          fakelayer.appendChild(dom)
+
           entry.showHTML(dom, renderParam, function (err, dom) {
             pipe.write(dom.innerHTML)
 
@@ -34,6 +44,7 @@ function process (filter, pipe, callback) {
           })
         },
         function (err) {
+          document.body.removeChild(fakelayer)
           callback()
         }
       )
