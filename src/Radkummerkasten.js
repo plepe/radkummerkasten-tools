@@ -530,7 +530,7 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
 /**
  * render entry as HTML
  * @param {object} options
- * @param {boolean} [options.includeImgs=false] Convert img src to data uris
+ * @param {boolean} [options.embedImgs=false] Convert img src to data uris
  * @param {function} callback Called with resulting HTML data. Parameters: err, result.
  */
 RadkummerkastenEntry.prototype.renderHTML = function (options, callback) {
@@ -550,7 +550,7 @@ RadkummerkastenEntry.prototype.renderHTML = function (options, callback) {
 RadkummerkastenEntry.prototype._renderHTML = function (options, callback) {
   var result = showTemplate.render(this)
 
-  if (options.includeImgs) {
+  if (options.embedImgs) {
     return this._renderHTMLincludeImgs(result, options, callback)
   }
 

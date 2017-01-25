@@ -288,7 +288,7 @@ window.submitDownloadForm = function (formDownload) {
   } else if (fileType === 'html') {
     var downloadStream = concat(createDownload.bind(this, downloadDom, fileType))
 
-    // filter.includeImgs = true
+    // filter.embedImgs = true
     createHTML(filter, downloadStream, function () {
       downloadStream.end()
     })
