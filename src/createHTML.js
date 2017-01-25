@@ -22,11 +22,13 @@ function process (filter, pipe, callback) {
         throw (err)
       }
 
+      var dom = document.createElement('div')
+
       async.each(
         entries,
         function (entry, callback) {
-          entry.renderHTML(renderParam, function (err, result) {
-            pipe.write(result)
+          entry.showHTML(dom, renderParam, function (err, dom) {
+            pipe.write(dom.innerHTML)
 
             callback()
           })

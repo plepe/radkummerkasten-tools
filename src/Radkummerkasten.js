@@ -528,41 +528,39 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
 }
 
 /**
- * render entry as HTML
+ * show object
+ * @param {object} dom
  * @param {object} options
  * @param {boolean} [options.embedImgs=false] Convert img src to data uris
- * @param {function} callback Called with resulting HTML data. Parameters: err, result.
+ * @param {function} callback Called with resulting HTML data. Parameters: err, dom (the same as in the first parameter).
  */
-RadkummerkastenEntry.prototype.renderHTML = function (options, callback) {
+RadkummerkastenEntry.prototype.showHTML = function (dom, options, callback) {
   if (typeof showTemplate === 'undefined') {
     getTemplate('showTemplate', function (err, result) {
       showTemplate = twig({
         data: result
       })
 
-      this._renderHTML(options, callback)
+      this._showHTML(dom, options, callback)
     }.bind(this))
   } else {
-    this._renderHTML(options, callback)
+    this._showHTML(dom, options, callback)
   }
 }
 
-RadkummerkastenEntry.prototype._renderHTML = function (options, callback) {
-  var result = showTemplate.render(this)
+RadkummerkastenEntry.prototype._showHTML = function (dom, options, callback) {
+  dom.innerHTML = showTemplate.render(this)
 
   if (options.embedImgs) {
-    return this._renderHTMLincludeImgs(result, options, callback)
+    return this._showHTMLincludeImgs(dom, options, callback)
   }
 
   async.setImmediate(function () {
-    callback(null, result)
+    callback(null, dom)
   })
 }
 
-RadkummerkastenEntry.prototype._renderHTMLincludeImgs = function (result, options, callback) {
-  var dom = document.createElement('div')
-  dom.innerHTML = result
-
+RadkummerkastenEntry.prototype._showHTMLincludeImgs = function (dom, options, callback) {
   var imgs = dom.getElementsByTagName('img')
   async.each(
     imgs,
@@ -580,7 +578,7 @@ RadkummerkastenEntry.prototype._renderHTMLincludeImgs = function (result, option
       )
     },
     function (err) {
-      callback(err, dom.innerHTML)
+      callback(err, dom)
     }
   )
 }

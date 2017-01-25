@@ -321,10 +321,10 @@ window.pageShow = function (id) {
         return
       }
 
-      entry.renderHTML({},
-        function (err, result) {
-          pageContent.innerHTML = result
-
+      entry.showHTML(
+        pageContent,
+        {},
+        function (err, pageContent) {
           if (document.getElementById('map')) {
             var layers = {}
 
