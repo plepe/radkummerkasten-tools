@@ -5,6 +5,7 @@ var getTemplate = require('./getTemplate')
 var fromHTML = require('./fromHTML')
 var twig = require('twig').twig
 var imageToURI = require('image-to-data-uri')
+var leafletImage = require('leaflet-image')
 var turf = {
   inside: require('@turf/inside')
 }
@@ -532,6 +533,7 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
  * @param {object} dom
  * @param {object} options
  * @param {boolean} [options.embedImgs=false] Convert img src to data uris
+ * @param {boolean} [options.embedMapAsImg=false] Convert map to a data url image
  * @param {function} callback Called with resulting HTML data. Parameters: err, dom (the same as in the first parameter).
  */
 RadkummerkastenEntry.prototype.showHTML = function (dom, options, callback) {
@@ -616,6 +618,7 @@ RadkummerkastenEntry.prototype._showHTMLinitMap = function (dom, options, callba
         maxZoom: 19,
         maxNativeZoom: 18
     })
+
   if (!options.preferredLayer) {
     options.preferredLayer = 'OSM Default'
   }
@@ -631,7 +634,21 @@ RadkummerkastenEntry.prototype._showHTMLinitMap = function (dom, options, callba
     options.preferredLayer = event.name
   })
 
-  callback()
+  if (options.embedMapAsImg) {
+    leafletImage(map, function (err, canvas) {
+      var img = document.createElement('img')
+      var dimensions = map.getSize()
+      img.width = dimensions.x
+      img.height = dimensions.y
+      img.src = canvas.toDataURL()
+      document.getElementById('map').innerHTML = ''
+      document.getElementById('map').appendChild(img)
+
+      callback()
+    })
+  } else {
+    callback()
+  }
 }
 
 function jsonParse (str) {
