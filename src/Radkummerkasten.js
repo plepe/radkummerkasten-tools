@@ -666,6 +666,11 @@ RadkummerkastenEntry.prototype._showHTMLinitMap = function (dom, options, callba
       document.getElementById(this.map.id).innerHTML = ''
       document.getElementById(this.map.id).appendChild(img)
 
+      var divAttr = document.createElement('div')
+      divAttr.className = 'attribution'
+      divAttr.innerHTML = layers[options.preferredLayer].options.attribution
+      document.getElementById(this.map.id).appendChild(divAttr)
+
       callback()
     }.bind(this))
   } else {
