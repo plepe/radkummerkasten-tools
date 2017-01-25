@@ -551,13 +551,17 @@ RadkummerkastenEntry.prototype.showHTML = function (dom, options, callback) {
 RadkummerkastenEntry.prototype._showHTML = function (dom, options, callback) {
   dom.innerHTML = showTemplate.render(this)
 
+  var todo = []
   if (options.embedImgs) {
-    return this._showHTMLincludeImgs(dom, options, callback)
+    todo.push(this._showHTMLincludeImgs.bind(this, dom, options))
   }
 
-  async.setImmediate(function () {
-    callback(null, dom)
-  })
+  async.parallel(
+    todo,
+    function (err) {
+      callback(null, dom)
+    }
+  )
 }
 
 RadkummerkastenEntry.prototype._showHTMLincludeImgs = function (dom, options, callback) {
