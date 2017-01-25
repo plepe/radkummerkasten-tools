@@ -551,6 +551,7 @@ RadkummerkastenEntry.prototype.showHTML = function (dom, options, callback) {
 }
 
 RadkummerkastenEntry.prototype._showHTML = function (dom, options, callback) {
+  this.mapId = 'map-' + Math.random()
   dom.innerHTML = showTemplate.render(this)
 
   var todo = []
@@ -592,7 +593,7 @@ RadkummerkastenEntry.prototype._showHTMLincludeImgs = function (dom, options, ca
 }
 
 RadkummerkastenEntry.prototype._showHTMLinitMap = function (dom, options, callback) {
-  if (!document.getElementById('map')) {
+  if (!document.getElementById(this.mapId)) {
     callback()
   }
 
@@ -623,7 +624,7 @@ RadkummerkastenEntry.prototype._showHTMLinitMap = function (dom, options, callba
     options.preferredLayer = 'OSM Default'
   }
 
-  var map = L.map('map', {
+  var map = L.map(this.mapId, {
     layers: layers[options.preferredLayer]
   }).setView([ this.lat, this.lon ], 17)
   L.control.layers(layers).addTo(map)
@@ -641,11 +642,11 @@ RadkummerkastenEntry.prototype._showHTMLinitMap = function (dom, options, callba
       img.width = dimensions.x
       img.height = dimensions.y
       img.src = canvas.toDataURL()
-      document.getElementById('map').innerHTML = ''
-      document.getElementById('map').appendChild(img)
+      document.getElementById(this.mapId).innerHTML = ''
+      document.getElementById(this.mapId).appendChild(img)
 
       callback()
-    })
+    }.bind(this))
   } else {
     callback()
   }

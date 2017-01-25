@@ -1,6 +1,6 @@
 <h2>#{{ id }} {{ categoryName }}: {{ title }} ({{ bezirk }}. Bezirk)</h2>
 <div class='attachments'>
-<div id='map'></div>
+<div class='map' style='width: 400px; height: 300px;' id='{{ mapId }}'></div>
 Koordinaten: {{ lat|number_format(5) }}, {{ lon|number_format(5) }}
 
 {% for attachment in attachments %}
