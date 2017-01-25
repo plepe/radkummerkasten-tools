@@ -16,6 +16,7 @@ var teaserTemplate
 var pageOverviewLoaded = false
 var popScrollTop = null
 var preferredLayer = null
+var entryOptions = {}
 window.knownEntries = {}
 const step = 20
 
@@ -323,46 +324,8 @@ window.pageShow = function (id) {
 
       entry.showHTML(
         pageContent,
-        {},
+        entryOptions,
         function (err, pageContent) {
-          if (document.getElementById('map')) {
-            var layers = {}
-
-            layers['OSM Default'] =
-              L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                  attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-                  maxZoom: 19,
-                  maxNativeZoom: 19
-              })
-
-            layers['OSM CycleMap'] =
-              L.tileLayer('//{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', {
-                  attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, Tiles: <a href="http://www.thunderforest.com/">Andy Allan</a>',
-                  maxZoom: 19,
-                  maxNativeZoom: 18
-              })
-
-            layers['Radkummerkasten'] =
-              L.tileLayer('//radkummerkasten.at/map/{z}/{x}/{y}.png', {
-                  attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, Tiles: <a href="http://radlkarte.at/">radlkarte.at</a>',
-                  maxZoom: 19,
-                  maxNativeZoom: 18
-              })
-            if (preferredLayer === null) {
-              preferredLayer = 'OSM Default'
-            }
-
-            var map = L.map('map', {
-              layers: layers[preferredLayer]
-            }).setView([ entry.lat, entry.lon ], 17)
-            L.control.layers(layers).addTo(map)
-
-            L.marker([ entry.lat, entry.lon ]).addTo(map)
-
-            map.on('baselayerchange', function (event) {
-              preferredLayer = event.name
-            })
-          }
         }
       )
     },

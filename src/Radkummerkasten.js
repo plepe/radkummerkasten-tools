@@ -556,6 +556,8 @@ RadkummerkastenEntry.prototype._showHTML = function (dom, options, callback) {
     todo.push(this._showHTMLincludeImgs.bind(this, dom, options))
   }
 
+  todo.push(this._showHTMLinitMap.bind(this, dom, options))
+
   async.parallel(
     todo,
     function (err) {
@@ -585,6 +587,51 @@ RadkummerkastenEntry.prototype._showHTMLincludeImgs = function (dom, options, ca
       callback(err, dom)
     }
   )
+}
+
+RadkummerkastenEntry.prototype._showHTMLinitMap = function (dom, options, callback) {
+  if (!document.getElementById('map')) {
+    callback()
+  }
+
+  var layers = {}
+
+  layers['OSM Default'] =
+    L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19,
+        maxNativeZoom: 19
+    })
+
+  layers['OSM CycleMap'] =
+    L.tileLayer('//{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, Tiles: <a href="http://www.thunderforest.com/">Andy Allan</a>',
+        maxZoom: 19,
+        maxNativeZoom: 18
+    })
+
+  layers['Radkummerkasten'] =
+    L.tileLayer('//radkummerkasten.at/map/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, Tiles: <a href="http://radlkarte.at/">radlkarte.at</a>',
+        maxZoom: 19,
+        maxNativeZoom: 18
+    })
+  if (!options.preferredLayer) {
+    options.preferredLayer = 'OSM Default'
+  }
+
+  var map = L.map('map', {
+    layers: layers[options.preferredLayer]
+  }).setView([ this.lat, this.lon ], 17)
+  L.control.layers(layers).addTo(map)
+
+  L.marker([ this.lat, this.lon ]).addTo(map)
+
+  map.on('baselayerchange', function (event) {
+    options.preferredLayer = event.name
+  })
+
+  callback()
 }
 
 function jsonParse (str) {
