@@ -534,6 +534,8 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
  * @param {object} options
  * @param {boolean} [options.embedImgs=false] Convert img src to data uris
  * @param {boolean} [options.embedMapAsImg=false] Convert map to a data url image
+ * @param {number} [options.mapWidth] Force map width
+ * @param {number} [options.mapHeight] Force map height
  * @param {function} callback Called with resulting HTML data. Parameters: err, dom (the same as in the first parameter).
  */
 RadkummerkastenEntry.prototype.showHTML = function (dom, options, callback) {
@@ -551,7 +553,18 @@ RadkummerkastenEntry.prototype.showHTML = function (dom, options, callback) {
 }
 
 RadkummerkastenEntry.prototype._showHTML = function (dom, options, callback) {
-  this.mapId = 'map-' + Math.random()
+  this.map = {
+    style: '',
+    id: 'map-' + Math.random()
+  }
+
+  if (options.mapWidth) {
+    this.map.style += 'width: ' + options.mapWidth + 'px;'
+  }
+  if (options.mapHeight) {
+    this.map.style += 'height: ' + options.mapHeight + 'px;'
+  }
+
   dom.innerHTML = showTemplate.render(this)
 
   var todo = []
@@ -593,7 +606,7 @@ RadkummerkastenEntry.prototype._showHTMLincludeImgs = function (dom, options, ca
 }
 
 RadkummerkastenEntry.prototype._showHTMLinitMap = function (dom, options, callback) {
-  if (!document.getElementById(this.mapId)) {
+  if (!document.getElementById(this.map.id)) {
     callback()
   }
 
@@ -624,9 +637,12 @@ RadkummerkastenEntry.prototype._showHTMLinitMap = function (dom, options, callba
     options.preferredLayer = 'OSM Default'
   }
 
-  var map = L.map(this.mapId, {
+  var map = L.map(this.map.id, {
     layers: layers[options.preferredLayer]
   }).setView([ this.lat, this.lon ], 17)
+  if (map.setSize && options.mapWidth !== 'auto') {
+    map.setSize(options.mapWidth, options.mapHeight)
+  }
   L.control.layers(layers).addTo(map)
 
   L.marker([ this.lat, this.lon ]).addTo(map)
@@ -642,8 +658,8 @@ RadkummerkastenEntry.prototype._showHTMLinitMap = function (dom, options, callba
       img.width = dimensions.x
       img.height = dimensions.y
       img.src = canvas.toDataURL()
-      document.getElementById(this.mapId).innerHTML = ''
-      document.getElementById(this.mapId).appendChild(img)
+      document.getElementById(this.map.id).innerHTML = ''
+      document.getElementById(this.map.id).appendChild(img)
 
       callback()
     }.bind(this))

@@ -6,7 +6,9 @@ function process (filter, pipe, callback) {
   var entries = []
   var renderParam = {
      embedImgs: true,
-     embedMapAsImg: true
+     embedMapAsImg: true,
+     mapWidth: 400,
+     mapHeight: 300
   }
 
   Radkummerkasten.getEntries(
