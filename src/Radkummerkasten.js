@@ -4,7 +4,7 @@ var parseDate = require('./parseDate')
 var getTemplate = require('./getTemplate')
 var fromHTML = require('./fromHTML')
 var twig = require('twig').twig
-var imageToURI = require('image-to-data-uri')
+var toDataUrl = require('./to-data-url')
 var leafletImage = require('leaflet-image')
 var turf = {
   inside: require('@turf/inside')
@@ -587,7 +587,7 @@ RadkummerkastenEntry.prototype._showHTMLincludeImgs = function (dom, options, ca
   async.each(
     imgs,
     function (img, callback) {
-      imageToURI(
+      toDataUrl(
         img.src,
         function (err, uri) {
           if (err) {
