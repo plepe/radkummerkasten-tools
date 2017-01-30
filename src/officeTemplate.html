@@ -26,7 +26,7 @@ Koordinaten: {{ lat|number_format(5) }}, {{ lon|number_format(5) }}
 {% endfor %}
 
 {% set col=0 %}
-<table width="100%" cellpadding="4" cellspacing="0">
+<table width="100%" cellpadding="4" cellspacing="0" style="page-break-inside: avoid;">
   <col width="128*">
   <col width="128*">
 {% for attachment in attachments %}
