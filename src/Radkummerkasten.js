@@ -534,10 +534,16 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
  * @param {boolean} [options.embedMapAsImg=false] Convert map to a data url image
  * @param {number} [options.mapWidth] Force map width
  * @param {number} [options.mapHeight] Force map height
+ * @param {string} [options.template="showTemplate"] Template to use for rendering
  * @param {function} callback Called with resulting HTML data. Parameters: err, dom (the same as in the first parameter).
  */
 RadkummerkastenEntry.prototype.showHTML = function (dom, options, callback) {
-  getTemplate('showTemplate', function (err, result) {
+  var template = 'showTemplate'
+  if (options.template) {
+    template = options.template
+  }
+
+  getTemplate(template, function (err, result) {
     var showTemplate = twig({
       data: result
     })

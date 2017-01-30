@@ -10,6 +10,9 @@ function process (filter, pipe, callback) {
      mapWidth: 400,
      mapHeight: 300
   }
+  if (filter.template) {
+    renderParam.template = filter.template
+  }
 
   Radkummerkasten.getEntries(
     filter,
@@ -55,10 +58,14 @@ function process (filter, pipe, callback) {
 }
 
 module.exports = function (filter, pipe, callback) {
+  var template = 'showTemplate'
+  if (filter.template) {
+    template = filter.template
+  }
 
   async.series([
     function (callback) {
-      getTemplate('showTemplateHeader', function (err, result) {
+      getTemplate(template + 'Header', function (err, result) {
         pipe.write(result)
         callback(err)
       })
@@ -67,7 +74,7 @@ module.exports = function (filter, pipe, callback) {
       process(filter, pipe, callback)
     },
     function (callback) {
-      getTemplate('showTemplateFooter', function (err, result) {
+      getTemplate(template + 'Footer', function (err, result) {
         pipe.write(result)
         callback(err)
       })
