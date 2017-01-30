@@ -10,8 +10,6 @@ var turf = {
   inside: require('@turf/inside')
 }
 
-var showTemplate
-
 var categoryNames = null
 
 /**
@@ -539,20 +537,16 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
  * @param {function} callback Called with resulting HTML data. Parameters: err, dom (the same as in the first parameter).
  */
 RadkummerkastenEntry.prototype.showHTML = function (dom, options, callback) {
-  if (typeof showTemplate === 'undefined') {
-    getTemplate('showTemplate', function (err, result) {
-      showTemplate = twig({
-        data: result
-      })
+  getTemplate('showTemplate', function (err, result) {
+    var showTemplate = twig({
+      data: result
+    })
 
-      this._showHTML(dom, options, callback)
-    }.bind(this))
-  } else {
-    this._showHTML(dom, options, callback)
-  }
+    this._showHTML(dom, options, showTemplate, callback)
+  }.bind(this))
 }
 
-RadkummerkastenEntry.prototype._showHTML = function (dom, options, callback) {
+RadkummerkastenEntry.prototype._showHTML = function (dom, options, showTemplate, callback) {
   this.map = {
     style: '',
     id: 'map-' + Math.random()
