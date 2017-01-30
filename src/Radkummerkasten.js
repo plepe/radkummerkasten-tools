@@ -680,6 +680,15 @@ RadkummerkastenEntry.prototype._showHTMLinitMap = function (dom, options, callba
           img.setAttribute(attrs[i].name, attrs[i].value)
         }
 
+        if (img.hasAttribute('scale')) {
+          var scale = img.getAttribute('scale')
+          var longerEdge = img.width > img.height ? img.width : img.height
+          img.setAttribute('width', scale * img.width / longerEdge)
+          img.setAttribute('height', scale * img.height / longerEdge)
+          img.style.width = img.getAttribute('width') + 'px'
+          img.style.height = img.getAttribute('height') + 'px'
+        }
+
         mapDiv.parentNode.replaceChild(img, mapDiv)
       } else {
         mapDiv.innerHTML = ''
