@@ -5,6 +5,8 @@ var jsdom = require('jsdom').jsdom
 global.window = jsdom().defaultView
 global.document = window.document
 global.L = require('leaflet-headless');
+global.XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest
+global.FileReader = require('filereader')
 
 var parser = ArgHandler.init()
 parser.description = 'Lade Einträge aus dem Radkummerkasten und generiere eine HTML Datei daraus.'
