@@ -35,7 +35,7 @@ Koordinaten: {{ lat|number_format(5) }}, {{ lon|number_format(5) }}
 {% endif %}
 {% set col=col+1 %}
     <td width="50%">
-    <img class='attachment' src="{{ attachment.url }}">
+    <img class='attachment' src="{{ attachment.url }}" scale="314" />
     Bereitgestellt von {{ user }} am {{ date }}
     </td>
 {% if col == 2 %}
@@ -51,7 +51,7 @@ Koordinaten: {{ lat|number_format(5) }}, {{ lon|number_format(5) }}
     {% endif %}
 {% set col=col+1 %}
         <td width="50%">
-        <img class='attachment' src="{{ attachment.url }}">
+        <img class='attachment' src="{{ attachment.url }}" scale="314" />
         Bereitgestellt von {{ comment.user }} am {{ comment.date }}
         </td>
     {% if col == 2 %}

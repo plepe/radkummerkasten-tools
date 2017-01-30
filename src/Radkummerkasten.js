@@ -594,6 +594,15 @@ RadkummerkastenEntry.prototype._showHTMLincludeImgs = function (dom, options, ca
             alert(err)
           } else {
             img.src = uri
+
+            if (img.hasAttribute('scale')) {
+              var scale = img.getAttribute('scale')
+              var test = document.createElement('img')
+              test.src = uri
+              var longerEdge = test.width > test.height ? test.width : test.height
+              img.setAttribute('width', scale * test.width / longerEdge)
+              img.setAttribute('height', scale * test.height / longerEdge)
+            }
           }
           callback()
         }
