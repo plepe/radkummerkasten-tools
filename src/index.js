@@ -244,6 +244,9 @@ function createDownload (downloadDom, fileType, data) {
     extension = 'geojson'
   } else if (fileType === 'html') {
     contentType = 'text/html'
+    extension = 'html'
+  } else if (fileType === 'office') {
+    contentType = 'text/html'
     extension = 'odt'
   }
 
@@ -290,6 +293,13 @@ window.submitDownloadForm = function (formDownload) {
     var downloadStream = concat(createDownload.bind(this, downloadDom, fileType))
 
     // filter.embedImgs = true
+    createHTML(filter, downloadStream, function () {
+      downloadStream.end()
+    })
+  } else if (fileType === 'office') {
+    var downloadStream = concat(createDownload.bind(this, downloadDom, fileType))
+
+    filter.template = 'officeTemplate'
     createHTML(filter, downloadStream, function () {
       downloadStream.end()
     })
