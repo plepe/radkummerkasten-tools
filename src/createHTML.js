@@ -1,6 +1,7 @@
 var Radkummerkasten = require('./Radkummerkasten')
 var getTemplate = require('./getTemplate')
 var async = require('async')
+var twig = require('twig').twig
 
 function process (filter, pipe, callback) {
   var entries = []
@@ -66,7 +67,11 @@ module.exports = function (filter, pipe, callback) {
   async.series([
     function (callback) {
       getTemplate(template + 'Header', function (err, result) {
-        pipe.write(result)
+        var template = twig({
+          data: result
+        })
+        pipe.write(template.render({}))
+
         callback(err)
       })
     },
@@ -75,7 +80,11 @@ module.exports = function (filter, pipe, callback) {
     },
     function (callback) {
       getTemplate(template + 'Footer', function (err, result) {
-        pipe.write(result)
+        var template = twig({
+          data: result
+        })
+        pipe.write(template.render({}))
+
         callback(err)
       })
     }
