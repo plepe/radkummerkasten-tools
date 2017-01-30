@@ -672,13 +672,24 @@ RadkummerkastenEntry.prototype._showHTMLinitMap = function (dom, options, callba
       img.width = dimensions.x
       img.height = dimensions.y
       img.src = canvas.toDataURL()
-      document.getElementById(this.map.id).innerHTML = ''
-      document.getElementById(this.map.id).appendChild(img)
+      var mapDiv = document.getElementById(this.map.id)
 
-      var divAttr = document.createElement('div')
-      divAttr.className = 'attribution'
-      divAttr.innerHTML = layers[options.preferredLayer].options.attribution
-      document.getElementById(this.map.id).appendChild(divAttr)
+      if (mapDiv.hasAttribute('replaceDiv')) {
+        var attrs = mapDiv.attributes
+        for (var i = 0; i < attrs.length; i++) {
+          img.setAttribute(attrs[i].name, attrs[i].value)
+        }
+
+        mapDiv.parentNode.replaceChild(img, mapDiv)
+      } else {
+        mapDiv.innerHTML = ''
+        mapDiv.appendChild(img)
+
+        var divAttr = document.createElement('div')
+        divAttr.className = 'attribution'
+        divAttr.innerHTML = layers[options.preferredLayer].options.attribution
+        mapDiv.appendChild(divAttr)
+      }
 
       callback()
     }.bind(this))
