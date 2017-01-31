@@ -4,7 +4,11 @@ var ArgHandler = require('../src/cliHandleArguments')
 var jsdom = require('jsdom').jsdom
 global.window = jsdom().defaultView
 global.document = window.document
-global.L = require('leaflet-headless');
+try {
+  global.L = require('leaflet-headless');
+} catch (err) {
+  global.L = null
+}
 global.XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest
 global.FileReader = require('filereader')
 
