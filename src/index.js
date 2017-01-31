@@ -20,7 +20,10 @@ const step = 20
 
 function showEntry(entry, div, callback) {
   entry.getDetails({}, function (err) {
-    div.innerHTML = teaserTemplate.render(entry)
+    var data = JSON.parse(JSON.stringify(entry))
+    data.baseUrl = Radkummerkasten.options.baseUrl
+
+    div.innerHTML = teaserTemplate.render(data)
 
     if (callback) {
       callback(err)
