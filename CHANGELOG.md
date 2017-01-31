@@ -1,3 +1,7 @@
+## Version 0.3.7, 2016-01-31
+* Wähle richtiges Protokoll zum Zugriff auf Radkummerkasten: http: oder https:
+* Starte CSV Dateien mit dem UTF-8 Byte Order Mark (damit Encoding richtig erkannt wird)
+
 ## Version 0.3.6, 2016-01-18
 * Merke Scroll Position beim vor/zurück gehen in der Browser History
 * OSM Default, OSM CycleMap und Radkummerkasten als alternative Kartenhintergründe
