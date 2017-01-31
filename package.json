@@ -11,7 +11,9 @@
     "test": "mocha --bail",
     "lint": "standard ; exit 0",
     "doc": "jsdoc -d doc/ src/*.js",
-    "build": "mkdir -p dist && browserify index.js -o dist/radkummerkasten-tools.js && browserify -g browserify-css -t browserify-git-my-version src/index.js -o dist/index.js && npm run build-test",
+    "build": "mkdir -p dist && npm run build-dist && npm run build-frontend && npm run build-test",
+    "build-dist": "browserify index.js -o dist/radkummerkasten-tools.js",
+    "build-frontend": "browserify -g browserify-css -t browserify-git-my-version src/index.js -o dist/index.js",
     "build-test": "browserify -g browserify-css test/*.js --debug -o dist/test.js"
   },
   "repository": {
