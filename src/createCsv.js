@@ -7,6 +7,9 @@ module.exports = function (filter, pipe) {
     headers = [ 'id', 'title', 'bezirk', 'bezirkRkk', 'user', 'date', 'category', 'categoryName', 'status', 'likes', 'lat', 'lon', 'text', 'commentsCount', 'attachmentsCount' ]
   }
 
+  // BOM (UTF-8 Byte Order Mark)
+  pipe.write('﻿')
+
   var writer = csvWriter({
     headers: headers
   })
