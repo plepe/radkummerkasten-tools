@@ -31,7 +31,7 @@ Radkummerkasten.init = function () {
 
   if (typeof location === 'undefined') {
     this.options.baseUrl = 'https://www.radkummerkasten.at'
-  } else if (location.protocol === 'http') {
+  } else if (location.protocol === 'http:') {
     this.options.baseUrl = 'http://www.radkummerkasten.at'
   } else {
     this.options.baseUrl = 'https://www.radkummerkasten.at'
