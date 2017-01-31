@@ -63,6 +63,9 @@ module.exports = function (filter, pipe, callback) {
   if (filter.template) {
     template = filter.template
   }
+  var templateData = {
+    version: "__GIT_MY_VERSION__"
+  }
 
   async.series([
     function (callback) {
@@ -70,7 +73,7 @@ module.exports = function (filter, pipe, callback) {
         var template = twig({
           data: result
         })
-        pipe.write(template.render({}))
+        pipe.write(template.render(templateData))
 
         callback(err)
       })
@@ -83,7 +86,7 @@ module.exports = function (filter, pipe, callback) {
         var template = twig({
           data: result
         })
-        pipe.write(template.render({}))
+        pipe.write(template.render(templateData))
 
         callback(err)
       })
