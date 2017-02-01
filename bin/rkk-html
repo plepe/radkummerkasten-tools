@@ -20,6 +20,14 @@ parser.addArgument(
   }
 )
 
+parser.addArgument(
+  [ '--embed-images' ],
+  {
+    help: 'Sollen die Bilder in das Dokument eingebettet werden',
+    nargs: 0
+  }
+)
+
 var args = ArgHandler.parseArgs()
 
 args.details = true
@@ -28,5 +36,6 @@ var filter = {}
 
 var filter = ArgHandler.compileFilter(args)
 filter.template = args.template + 'Template'
+filter.embedImgs = !!args.embed_images
 
 createHTML(filter, process.stdout, function () {})
