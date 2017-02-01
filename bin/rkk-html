@@ -10,6 +10,16 @@ global.XMLHttpRequest = require('w3c-xmlhttprequest').XMLHttpRequest
 var parser = ArgHandler.init()
 parser.description = 'Lade Einträge aus dem Radkummerkasten und generiere eine HTML Datei daraus.'
 
+parser.addArgument(
+  [ '--template' ],
+  {
+    help: 'Welches Template soll verwendet werden. Entweder "show" (normales HTML, ähnlich der Web-Ansicht; "office" (HTML zum Import in Office).',
+    type: 'string',
+    choices: [ 'show', 'office' ],
+    defaultValue: 'show'
+  }
+)
+
 var args = ArgHandler.parseArgs()
 
 args.details = true
@@ -17,5 +27,6 @@ args.details = true
 var filter = {}
 
 var filter = ArgHandler.compileFilter(args)
+filter.template = args.template + 'Template'
 
 createHTML(filter, process.stdout, function () {})
