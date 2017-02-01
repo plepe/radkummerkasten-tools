@@ -28,6 +28,14 @@ parser.addArgument(
   }
 )
 
+parser.addArgument(
+  [ '--no-map' ],
+  {
+    help: 'Es soll keine Karte eingebettet werden.',
+    nargs: 0
+  }
+)
+
 var args = ArgHandler.parseArgs()
 
 args.details = true
@@ -37,5 +45,6 @@ var filter = {}
 var filter = ArgHandler.compileFilter(args)
 filter.template = args.template + 'Template'
 filter.embedImgs = !!args.embed_images
+filter.noMap = !!args.no_map
 
 createHTML(filter, process.stdout, function () {})
