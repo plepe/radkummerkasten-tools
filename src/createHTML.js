@@ -3,10 +3,14 @@ var getTemplate = require('./getTemplate')
 var async = require('async')
 var twig = require('twig').twig
 
+/**
+ * @param object filter
+ * @param boolean [filter.embedImgs=false] shall images be embeded?
+ */
 function process (filter, pipe, callback) {
   var entries = []
   var renderParam = {
-     embedImgs: true,
+     embedImgs: 'embedImgs' in filter ? filter.embedImgs : false,
      embedMapAsImg: true,
      mapWidth: 400,
      mapHeight: 300
