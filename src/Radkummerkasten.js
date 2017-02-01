@@ -570,6 +570,8 @@ RadkummerkastenEntry.prototype._showHTML = function (dom, options, showTemplate,
   var todo = []
   if (options.embedImgs) {
     todo.push(this._showHTMLincludeImgs.bind(this, dom, options))
+  } else {
+    todo.push(this._showHTMLnotIncludeImgs.bind(this, dom, options))
   }
 
   todo.push(this._showHTMLinitMap.bind(this, dom, options))
@@ -607,6 +609,33 @@ RadkummerkastenEntry.prototype._showHTMLincludeImgs = function (dom, options, ca
           callback()
         }
       )
+    },
+    function (err) {
+      callback(err, dom)
+    }
+  )
+}
+
+RadkummerkastenEntry.prototype._showHTMLnotIncludeImgs = function (dom, options, callback) {
+  var imgs = dom.getElementsByTagName('img')
+  async.each(
+    imgs,
+    function (img, callback) {
+      if (img.hasAttribute('scale')) {
+        img.onload = function () {
+          var scale = img.getAttribute('scale')
+          var longerEdge = img.width > img.height ? img.width : img.height
+
+          var h = scale * img.height / longerEdge
+          var w = scale * img.width / longerEdge
+          img.setAttribute('height', h)
+          img.setAttribute('width', w)
+
+          callback()
+        }
+      } else {
+        callback()
+      }
     },
     function (err) {
       callback(err, dom)
