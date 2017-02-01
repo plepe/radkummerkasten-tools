@@ -589,26 +589,49 @@ RadkummerkastenEntry.prototype._showHTMLincludeImgs = function (dom, options, ca
   async.each(
     imgs,
     function (img, callback) {
-      toDataUrl(
-        img.src,
-        function (err, uri) {
-          if (err) {
-            alert(err)
-          } else {
-            img.src = uri
+      var width
+      var height
+      var longerEdge
+      var dataUri
 
-            if (img.hasAttribute('scale')) {
-              var scale = img.getAttribute('scale')
-              var test = document.createElement('img')
-              test.src = uri
-              var longerEdge = test.width > test.height ? test.width : test.height
-              img.setAttribute('width', scale * test.width / longerEdge)
-              img.setAttribute('height', scale * test.height / longerEdge)
-            }
+      async.parallel([
+        function (callback) {
+          img.onload = function () {
+            img.onload = null
+            width = img.width
+            height = img.height
+            longerEdge = width > height ? width : height
+
+            callback()
           }
-          callback()
+        },
+        function (callback) {
+          toDataUrl(
+            img.src,
+            function (err, uri) {
+              if (err) {
+                alert(err)
+              } else {
+                dataUri = uri
+              }
+
+              callback(err)
+            }
+          )
         }
-      )
+      ],
+      function (err) {
+        img.src = dataUri
+
+        if (img.hasAttribute('scale')) {
+          var scale = img.getAttribute('scale')
+
+          img.setAttribute('width', scale * width / longerEdge)
+          img.setAttribute('height', scale * height / longerEdge)
+        }
+
+        callback()
+      })
     },
     function (err) {
       callback(err, dom)
