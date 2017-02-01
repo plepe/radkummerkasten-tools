@@ -532,6 +532,7 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
  * @param {object} options
  * @param {boolean} [options.embedImgs=false] Convert img src to data uris
  * @param {boolean} [options.embedMapAsImg=false] Convert map to a data url image
+ * @param {boolean} [options.noMap=false] Don't embed a map.
  * @param {number} [options.mapWidth] Force map width
  * @param {number} [options.mapHeight] Force map height
  * @param {string} [options.template="showTemplate"] Template to use for rendering
@@ -574,7 +575,14 @@ RadkummerkastenEntry.prototype._showHTML = function (dom, options, showTemplate,
     todo.push(this._showHTMLnotIncludeImgs.bind(this, dom, options))
   }
 
-  todo.push(this._showHTMLinitMap.bind(this, dom, options))
+  if (options.noMap) {
+    var mapDom = document.getElementById(this.map.id)
+    if (mapDom) {
+      mapDom.parentNode.removeChild(mapDom)
+    }
+  } else {
+    todo.push(this._showHTMLinitMap.bind(this, dom, options))
+  }
 
   async.parallel(
     todo,

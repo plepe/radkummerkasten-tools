@@ -6,12 +6,14 @@ var twig = require('twig').twig
 /**
  * @param object filter
  * @param boolean [filter.embedImgs=false] shall images be embeded?
+ * @param {boolean} [options.noMap=false] Don't embed a map.
  */
 function process (filter, pipe, callback) {
   var entries = []
   var renderParam = {
      embedImgs: 'embedImgs' in filter ? filter.embedImgs : false,
      embedMapAsImg: true,
+     noMap: 'noMap' in filter ? filter.noMap : false,
      mapWidth: 400,
      mapHeight: 300
   }
