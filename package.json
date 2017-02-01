@@ -49,6 +49,7 @@
     "sheet-router": "^4.1.4",
     "simple-loading-indicator": "https://github.com/plepe/simple-loading-indicator",
     "standard": "^8.6.0",
-    "twig": "^0.10.3"
+    "twig": "^0.10.3",
+    "w3c-xmlhttprequest": "^2.1.2"
   }
 }
