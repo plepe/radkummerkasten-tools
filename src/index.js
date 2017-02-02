@@ -296,6 +296,12 @@ window.submitDownloadForm = function () {
   if (formDownload.elements.includeDetails.checked) {
     filter.includeDetails = true
   }
+  if (formDownload.elements.embedImgs.checked) {
+    filter.embedImgs = true
+  }
+  if (formDownload.elements.noMap.checked) {
+    filter.noMap = true
+  }
 
   downloadDom.innerHTML = 'Daten werden geladen, bitte warten ...'
 
