@@ -17,6 +17,7 @@ var pageOverviewLoaded = false
 var popScrollTop = null
 var preferredLayer = null
 var entryOptions = {}
+var currentPage = 'Overview'
 window.knownEntries = {}
 const step = 20
 
@@ -68,7 +69,7 @@ window.onload = function () {
 
         loadingIndicator.setValue(0.5)
 
-        var select = document.getElementById('form').elements.bezirk
+        var select = document.getElementById('filterOverview').elements.bezirk
 
         bezirke.forEach(function (bezirk) {
           var option = document.createElement('option')
@@ -94,7 +95,7 @@ window.onload = function () {
 
         loadingIndicator.setValue(1)
 
-        var select = document.getElementById('form').elements.category
+        var select = document.getElementById('filterOverview').elements.category
 
         categories.forEach(function (category) {
           var option = document.createElement('option')
@@ -128,8 +129,8 @@ window.onload = function () {
 
 window.update = function (reloadAll) {
   var entries = []
-  var content = document.getElementById('content')
-  var form = document.getElementById('form')
+  var content = document.getElementById('pageOverview')
+  var form = document.getElementById('filterOverview')
   pageOverviewLoaded = true
 
   var filter = {}
@@ -255,27 +256,24 @@ function createDownload (downloadDom, fileType, data) {
   document.getElementById('downloadOptions').style.display = 'none'
 }
 
-window.submitDownloadForm = function (formDownload) {
+window.submitDownloadForm = function () {
   var filter = {}
   var downloadDom = document.getElementById('download')
 
-  if (formDownload.id === 'showDownloadOptions') {
-    filter.id = formDownload.elements.filterId.value
+  var formDownload = document.getElementById('downloadOptions')
+  var formFilter = document.getElementById('filter' + currentPage)
+
+  if ('filterId' in formFilter.elements) {
+    filter.id = formFilter.elements.filterId.value
+  }
+  if ('bezirk' in formFilter.elements && formFilter.elements.bezirk.value !== '*') {
+    filter.bezirk = [ formFilter.elements.bezirk.value ]
+  }
+  if ('category' in formFilter.elements && formFilter.elements.category.value !== '*') {
+    filter.category = [ formFilter.elements.category.value ]
+  }
+  if (formDownload.elements.includeDetails.checked) {
     filter.includeDetails = true
-    downloadDom = document.getElementById('showDownload')
-  } else {
-    var form = document.getElementById('form')
-
-    if (form.elements.bezirk.value !== '*') {
-      filter.bezirk = [ form.elements.bezirk.value ]
-    }
-    if (form.elements.category.value !== '*') {
-      filter.category = [ form.elements.category.value ]
-    }
-
-    if (formDownload.elements.includeDetails.checked) {
-      filter.includeDetails = true
-    }
   }
 
   downloadDom.innerHTML = 'Daten werden geladen, bitte warten ...'
@@ -309,12 +307,15 @@ window.submitDownloadForm = function (formDownload) {
 }
 
 window.pageShow = function (id) {
+  currentPage = 'Show'
+  document.getElementById('menuOverview').style.display = 'none'
   document.getElementById('pageOverview').style.display = 'none'
+  var menu = document.getElementById('menuShow')
+  menu.style.display = 'block'
   var page = document.getElementById('pageShow')
   page.style.display = 'block'
-  var pageContent = document.getElementById('showContent')
-  pageContent.innerHTML = ''
-  document.getElementById('showDownloadOptions').elements.filterId.value = id
+  page.innerHTML = ''
+  document.getElementById('filterShow').elements.filterId.value = id
 
   loadingIndicator.setActive()
 
@@ -333,9 +334,9 @@ window.pageShow = function (id) {
       }
 
       entry.showHTML(
-        pageContent,
+        page,
         entryOptions,
-        function (err, pageContent) {
+        function (err, page) {
         }
       )
     },
@@ -346,8 +347,11 @@ window.pageShow = function (id) {
 }
 
 window.pageOverview = function () {
-  document.getElementById('pageShow').style.display = 'none'
+  currentPage = 'Overview'
   document.getElementById('pageOverview').style.display = 'block'
+  document.getElementById('menuOverview').style.display = 'block'
+  document.getElementById('pageShow').style.display = 'none'
+  document.getElementById('menuShow').style.display = 'none'
 
   if (!pageOverviewLoaded) {
     update()

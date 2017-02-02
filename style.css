@@ -39,6 +39,10 @@ h1, h2, h3, a {
   color: #004b67;
   text-decoration: none;
 }
+div#menuShow {
+  display: none;
+  clear: both;
+}
 div#pageShow {
   display: none;
   clear: both;

@@ -21,19 +21,28 @@
 
 <h1><a href='#'>Radkummerkasten</a></h1>
 
-<div id='pageOverview'>
-<form id='form' onChange='return update(true)'>
+<div id='menu'>
+<div id='menuOverview'>
+<form id='filterOverview' onChange='return update(true)'>
   <select name='bezirk'>
     <option value='*'>* Bezirk *</option>
   </select>
   <select name='category'>
     <option value='*'>* Kategorie *</option>
   </select>
-  <a href='javascript:openDownload()'>Download</a> |
-  <a href='javascript:update(false)'>Reload</a>
 </form>
+</div>
 
-<form id='downloadOptions' onSubmit='return submitDownloadForm(this)'>
+<div id='menuShow'>
+<form id='filterShow'>
+<input type='hidden' name='filterId' value=''/>
+</form>
+</div>
+
+<a href='javascript:openDownload()'>Download</a> |
+<a href='javascript:update(false)'>Reload</a>
+
+<form id='downloadOptions' onSubmit='return submitDownloadForm()'>
   <input name='includeDetails' type='checkbox'/>Lade Details für Einträge</input><br/>
   Dateityp: <select name='fileType'>
     <option value='csv'>CSV (Comma Separated Value, e.g. Excel)</option>
@@ -45,28 +54,14 @@
   <span id='download'></span>
 </form>
 
+</div>
+
 <hr/>
 
-<div id='content'>
-</div>
+<div id='pageOverview'>
 </div>
 
 <div id='pageShow'>
-<a href='javascript:openShowDownload()'>Download</a>
-<form id='showDownloadOptions' style='display: none;' onSubmit='return submitDownloadForm(this)'>
-  <input type='hidden' name='filterId' value=''/>
-  Dateityp: <select name='fileType'>
-    <option value='csv'>CSV (Comma Separated Value, e.g. Excel)</option>
-    <option value='geojson'>GeoJSON (GIS-Applications, e.g. qGIS)</option>
-    <option value='html'>HTML</option>
-    <option value='office'>Office (formatierter Text, im Prinzip HTML)</option>
-  </select><br/>
-  <input type='submit' value='Generiere Download' />
-  <span id='showDownload'></span>
-</form>
-<hr>
-<div id='showContent'>
-</div>
 </div>
 
 <hr/>
