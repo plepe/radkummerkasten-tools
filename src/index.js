@@ -2,6 +2,7 @@ window.Radkummerkasten = require('../src/Radkummerkasten')
 var createCsv = require('../src/createCsv')
 var createGeoJson = require('../src/createGeoJson')
 var createHTML = require('../src/createHTML')
+var getTemplate = require('../src/getTemplate')
 
 var csvWriter = require('csv-write-stream')
 var concat = require('concat-stream')
@@ -42,10 +43,6 @@ function restoreScroll() {
 window.onload = function () {
   document.getElementById('version').appendChild(document.createTextNode(Radkummerkasten.version))
 
-  teaserTemplate = twig({
-    data: document.getElementById('teaserTemplate').innerHTML
-  })
-
   window.addEventListener('popstate', function (event) {
     if (event.state && 'scrollTop' in event.state) {
       popScrollTop = event.state.scrollTop
@@ -61,13 +58,29 @@ window.onload = function () {
 
   async.series([
     function (callback) {
+      getTemplate('teaserBody', function (err, result) {
+        if (err) {
+          alert('Kann Template "teaser" nicht laden! ' + err)
+          return
+        }
+
+        loadingIndicator.setValue(0.333)
+
+        teaserTemplate = twig({
+          data: result
+        })
+
+        callback()
+      })
+    },
+    function (callback) {
       Radkummerkasten.loadBezirksgrenzen(function (err, bezirke) {
         if (err) {
           alert('Kann Bezirksgrenzen nicht laden! ' + err)
           return
         }
 
-        loadingIndicator.setValue(0.5)
+        loadingIndicator.setValue(0.667)
 
         var select = document.getElementById('filterOverview').elements.bezirk
 

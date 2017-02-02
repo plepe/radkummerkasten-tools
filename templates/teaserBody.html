@@ -1,0 +1,21 @@
+<h3><a href='#{{ id }}'>#{{ id }} {{ categoryName }}: {{ title }} ({{ bezirk }}. Bezirk)</a></h3>
+{% if attachments|length > 0 %}
+<img src="{{ attachments[0].url }}">
+{% endif %}
+
+<p>
+<i>{{ user }} schrieb am {{ date }}:</i><br/>
+{% if text|length > 200 %}{{ text|slice(0, 200)|nl2br }}...{% else %}{{ text|nl2br }}{% endif %}<br/>
+
+<p>
+<a target="radkummerkasten" href="{{ baseUrl }}/#marker-{{ id }}">Öffne im Radkummerkasten</a><br/>
+{{ likes }} Unterstützung(en), {{ comments|length}} Kommentar(e)
+{% if bezirkRkk and bezirk != bezirkRkk %}
+<br/><span class='error'>
+Fehler: Laut Radkummerkasten ist der Eintrag im Bezirk {{ bezirkRkk }}.
+</span>
+{% endif %}
+{% for error in errors %}
+<br/><span class='error'>Fehler: {{ error }}</span>
+{% endfor %}
+</p>
