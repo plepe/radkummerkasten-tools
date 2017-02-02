@@ -224,6 +224,7 @@ window.update = function (reloadAll) {
 window.openDownload = function () {
   var formDownload = document.getElementById('downloadOptions')
   formDownload.style.display = 'block'
+  updateDownloadForm()
 }
 
 window.openShowDownload = function () {
@@ -254,6 +255,26 @@ function createDownload (downloadDom, fileType, data) {
   var blob = new Blob([ data ], { type: contentType + ";charset=utf-8" })
   FileSaver.saveAs(blob, 'radkummerkasten.' + extension)
   document.getElementById('downloadOptions').style.display = 'none'
+}
+
+window.updateDownloadForm = function () {
+  var formDownload = document.getElementById('downloadOptions')
+  var fileType = formDownload.elements.fileType.value
+
+  var divs = formDownload.getElementsByClassName('downloadOption')
+  for (var i = 0; i < divs.length; i++) {
+    var div = divs[i]
+
+    var t = div.getAttribute('downloadTypes')
+    if (t) {
+      t = t.split(',')
+      if (t.indexOf(fileType) === -1) {
+        div.style.display = 'none'
+      } else {
+        div.style.display = 'block'
+      }
+    }
+  }
 }
 
 window.submitDownloadForm = function () {

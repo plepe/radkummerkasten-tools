@@ -43,13 +43,18 @@
 <a href='javascript:update(false)'>Reload</a>
 
 <form id='downloadOptions' onSubmit='return submitDownloadForm()'>
-  <input name='includeDetails' type='checkbox'/>Lade Details für Einträge</input><br/>
-  Dateityp: <select name='fileType'>
-    <option value='csv'>CSV (Comma Separated Value, e.g. Excel)</option>
-    <option value='geojson'>GeoJSON (GIS-Applications, e.g. qGIS)</option>
-    <option value='html'>HTML</option>
-    <option value='office'>Office (formatierter Text, im Prinzip HTML)</option>
-  </select><br/>
+  <div class='downloadOption'>
+    Dateityp:
+    <select name='fileType' onChange='updateDownloadForm()'>
+      <option value='csv'>CSV (Comma Separated Value, e.g. Excel)</option>
+      <option value='geojson'>GeoJSON (GIS-Applications, e.g. qGIS)</option>
+      <option value='html'>HTML</option>
+      <option value='office'>Office (formatierter Text, im Prinzip HTML)</option>
+    </select>
+  </div>
+  <div class='downloadOption' downloadTypes='csv,geojson'>
+    <input name='includeDetails' type='checkbox' />Lade Details für Einträge
+  </div>
   <input type='submit' value='Generiere Download' />
   <span id='download'></span>
 </form>
