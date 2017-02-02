@@ -20,11 +20,49 @@ function mapLayers (options) {
         maxNativeZoom: 18
     })
 
-  layers['Radkummerkasten'] =
+  layers['radlkarte.at'] =
     L.tileLayer(protocol + '//radkummerkasten.at/map/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, Tiles: <a href="http://radlkarte.at/">radlkarte.at</a>',
         maxZoom: 19,
         maxNativeZoom: 18
+    })
+
+  layers['Basemap'] =
+    L.tileLayer(protocol + '//{s}.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png', {
+        attribution: '&copy; <a href="http://www.basemap.at/">basemap.at</a>',
+        maxZoom: 19,
+        maxNativeZoom: 19,
+        subdomains: [ 'maps', 'maps1', 'maps2', 'maps3', 'maps4' ]
+    })
+
+  layers['Basemap Orthophoto'] =
+    L.tileLayer(protocol + '//{s}.wien.gv.at/basemap/bmaporthofoto30cm/normal/google3857/{z}/{y}/{x}.jpg', {
+        attribution: '&copy; <a href="http://www.basemap.at/">basemap.at</a>',
+        maxZoom: 19,
+        maxNativeZoom: 19,
+        subdomains: [ 'maps', 'maps1', 'maps2', 'maps3', 'maps4' ]
+    })
+
+  layers['Stadtplan Wien Orthophoto'] =
+    L.tileLayer(protocol + '//{s}.wien.gv.at/wmts/lb/farbe/google3857/{z}/{y}/{x}.jpeg', {
+        attribution: '&copy; <a href="http://www.wien.gv.at">Stadt Wien</a>',
+        maxZoom: 19,
+        maxNativeZoom: 19,
+        subdomains: [ 'maps', 'maps1', 'maps2', 'maps3', 'maps4' ]
+    })
+
+  layers['OpenTopoMap'] =
+    L.tileLayer(protocol + '//{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, Tiles: <a href="http://opentopomap.org/">OpenTopoMap</a>',
+        maxZoom: 19,
+        maxNativeZoom: 17
+    })
+
+  layers['Hauptradverkehrsnetz 2015'] =
+    L.tileLayer(protocol + '//fahrrad.lima-city.de/Karten/Karten/Hauptradverkehrsnetz2015/Z{z}/{y}/{x}.png', {
+        attribution: '&copy; <a href="http://www.wien.gv.at">Stadt Wien</a>',
+        maxZoom: 19,
+        maxNativeZoom: 16
     })
 
   return layers
