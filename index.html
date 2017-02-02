@@ -21,32 +21,55 @@
 
 <h1><a href='#'>Radkummerkasten</a></h1>
 
-<div id='pageOverview'>
-<form id='form' onChange='return update(true)'>
+<div id='menu'>
+<div id='menuOverview'>
+<form id='filterOverview' onChange='return update(true)'>
   <select name='bezirk'>
     <option value='*'>* Bezirk *</option>
   </select>
   <select name='category'>
     <option value='*'>* Kategorie *</option>
   </select>
-  <a href='javascript:openDownload()'>Download</a> |
-  <a href='javascript:update(false)'>Reload</a>
 </form>
+</div>
+
+<div id='menuShow'>
+<form id='filterShow'>
+<input type='hidden' name='filterId' value=''/>
+</form>
+</div>
+
+<a href='javascript:openDownload()'>Download</a> |
+<a href='javascript:update(false)'>Reload</a>
 
 <form id='downloadOptions' onSubmit='return submitDownloadForm()'>
-  <input name='includeDetails' type='checkbox'/>Lade Details für Einträge</input><br/>
-  Dateityp: <select name='fileType'>
-    <option value='csv'>CSV (Comma Separated Value, e.g. Excel)</option>
-    <option value='geojson'>GeoJSON (GIS-Applications, e.g. qGIS)</option>
-  </select><br/>
+  <div class='downloadOption'>
+    Dateityp:
+    <select name='fileType' onChange='updateDownloadForm()'>
+      <option value='csv'>CSV (Comma Separated Value, e.g. Excel)</option>
+      <option value='geojson'>GeoJSON (GIS-Applications, e.g. qGIS)</option>
+      <option value='html'>HTML</option>
+      <option value='office'>Office (formatierter Text, im Prinzip HTML)</option>
+    </select>
+  </div>
+  <div class='downloadOption' downloadTypes='csv,geojson'>
+    <input name='includeDetails' type='checkbox' />Lade Details für Einträge
+  </div>
+  <div class='downloadOption' downloadTypes='html,office'>
+    <input name='embedImgs' type='checkbox' />Bilder einbetten
+  </div>
+  <div class='downloadOption' downloadTypes='html,office'>
+    <input name='noMap' type='checkbox' />Keine Karte inkludieren
+  </div>
   <input type='submit' value='Generiere Download' />
   <span id='download'></span>
 </form>
 
+</div>
+
 <hr/>
 
-<div id='content'>
-</div>
+<div id='pageOverview'>
 </div>
 
 <div id='pageShow'>
@@ -59,80 +82,5 @@ Diese Webseite ist nicht Teil des offiziellen <a href='http://www.radkummerkaste
 Diese sind Open Source und werden auf Github entwickelt. Kommentare, Bug
 Reports und Erweiterungen sind herzlich willkommen.</p>
 <p>Version: <a target='_blank' id='version' href='https://github.com/plepe/radkummerkasten-tools/blob/master/CHANGELOG.md'></a></p>
-
-<script type='text/template' id='teaserTemplate'>
-<h3><a href='#{{ id }}'>#{{ id }} {{ categoryName }}: {{ title }} ({{ bezirk }}. Bezirk)</a></h3>
-{% if attachments|length > 0 %}
-<img src="{{ attachments[0].url }}">
-{% endif %}
-
-<p>
-<i>{{ user }} schrieb am {{ date }}:</i><br/>
-{% if text|length > 200 %}{{ text|slice(0, 200)|nl2br }}...{% else %}{{ text|nl2br }}{% endif %}<br/>
-
-<p>
-<a target="radkummerkasten" href="{{ baseUrl }}/#marker-{{ id }}">Öffne im Radkummerkasten</a><br/>
-{{ likes }} Unterstützung(en), {{ comments|length}} Kommentar(e)
-{% if bezirkRkk and bezirk != bezirkRkk %}
-<br/><span class='error'>
-Fehler: Laut Radkummerkasten ist der Eintrag im Bezirk {{ bezirkRkk }}.
-</span>
-{% endif %}
-{% for error in errors %}
-<br/><span class='error'>Fehler: {{ error }}</span>
-{% endfor %}
-</p>
-</script>
-
-<script type='text/template' id='showTemplate'>
-<h2>#{{ id }} {{ categoryName }}: {{ title }} ({{ bezirk }}. Bezirk)</h2>
-<div class='attachments'>
-<div id='map'></div>
-Koordinaten: {{ lat|number_format(5) }}, {{ lon|number_format(5) }}
-
-{% for attachment in attachments %}
-  <div class='image'>
-    <img class='attachment' src="{{ attachment.url }}">
-    Bereitgestellt von {{ user }} am {{ date }}
-  </div>
-{% endfor %}
-
-{% for comment in comments %}
-  {% for attachment in comment.attachments %}
-    <div class='image'>
-      <img class='attachment' src="{{ attachment.url }}"><br/>
-      Bereitgestellt von {{ comment.user }} am {{ comment.date }}
-    </div>
-  {% endfor %}
-{% endfor %}
-</div>
-<a target="radkummerkasten" href="{{ baseUrl }}/#marker-{{ id }}">Öffne im Radkummerkasten</a><br/>
-
-<p>
-{{ likes }} Unterstützung(en)<br/>
-{{ comments|length}} Kommentar(e)<br/>
-Bezirk: {{ bezirk }}
-{% if bezirkRkk and bezirk != bezirkRkk %}
-<span class='error'>
-(Fehler: Laut Radkummerkasten {{ bezirkRkk }}. Bezirk).
-</span>
-{% endif %}
-<br/>
-
-{% for error in errors %}
-<span class='error'>Fehler: {{ error }}</span><br/>
-{% endfor %}
-
-<p>
-<i>{{ user }} schrieb am {{ date }}:</i><br/>
-{{ text|nl2br }}
-
-{% for comment in comments %}
-<p>
-<i>{{ comment.user }} schrieb am {{ comment.date }}:</i><br/>
-{{ comment.text|nl2br }}
-{% endfor %}
-</script>
-
 </body>
 </html>

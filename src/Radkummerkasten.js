@@ -1,7 +1,11 @@
 var request = require('request-xmlhttprequest')
 var async = require('async')
 var parseDate = require('./parseDate')
+var getTemplate = require('./getTemplate')
 var fromHTML = require('./fromHTML')
+var twig = require('twig').twig
+var toDataUrl = require('./to-data-url')
+var leafletImage = require('leaflet-image')
 var turf = {
   inside: require('@turf/inside')
 }
@@ -520,6 +524,247 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
       callback(error, null)
     }.bind(this)
   )
+}
+
+/**
+ * show object
+ * @param {object} dom
+ * @param {object} options
+ * @param {boolean} [options.embedImgs=false] Convert img src to data uris
+ * @param {boolean} [options.embedMapAsImg=false] Convert map to a data url image
+ * @param {boolean} [options.noMap=false] Don't embed a map.
+ * @param {number} [options.mapWidth] Force map width
+ * @param {number} [options.mapHeight] Force map height
+ * @param {string} [options.template="show"] Template to use for rendering
+ * @param {function} callback Called with resulting HTML data. Parameters: err, dom (the same as in the first parameter).
+ */
+RadkummerkastenEntry.prototype.showHTML = function (dom, options, callback) {
+  var template = 'show'
+  if (options.template) {
+    template = options.template
+  }
+
+  getTemplate(template + 'Body', function (err, result) {
+    var showTemplate = twig({
+      data: result
+    })
+
+    this._showHTML(dom, options, showTemplate, callback)
+  }.bind(this))
+}
+
+RadkummerkastenEntry.prototype._showHTML = function (dom, options, showTemplate, callback) {
+  this.map = {
+    style: '',
+    id: 'map-' + Math.random()
+  }
+
+  if (options.mapWidth) {
+    this.map.style += 'width: ' + options.mapWidth + 'px;'
+  }
+  if (options.mapHeight) {
+    this.map.style += 'height: ' + options.mapHeight + 'px;'
+  }
+
+  dom.innerHTML = showTemplate.render(this)
+
+  var todo = []
+  if (options.embedImgs) {
+    todo.push(this._showHTMLincludeImgs.bind(this, dom, options))
+  } else {
+    todo.push(this._showHTMLnotIncludeImgs.bind(this, dom, options))
+  }
+
+  if (options.noMap) {
+    var mapDom = document.getElementById(this.map.id)
+    if (mapDom) {
+      mapDom.parentNode.removeChild(mapDom)
+    }
+  } else {
+    todo.push(this._showHTMLinitMap.bind(this, dom, options))
+  }
+
+  async.parallel(
+    todo,
+    function (err) {
+      callback(null, dom)
+    }
+  )
+}
+
+RadkummerkastenEntry.prototype._showHTMLincludeImgs = function (dom, options, callback) {
+  var imgs = dom.getElementsByTagName('img')
+  async.each(
+    imgs,
+    function (img, callback) {
+      var width
+      var height
+      var longerEdge
+      var dataUri
+
+      async.parallel([
+        function (callback) {
+          img.onload = function () {
+            img.onload = null
+            width = img.width
+            height = img.height
+            longerEdge = width > height ? width : height
+
+            callback()
+          }
+        },
+        function (callback) {
+          toDataUrl(
+            img.src,
+            function (err, uri) {
+              if (err) {
+                alert(err)
+              } else {
+                dataUri = uri
+              }
+
+              callback(err)
+            }
+          )
+        }
+      ],
+      function (err) {
+        img.src = dataUri
+
+        if (img.hasAttribute('scale')) {
+          var scale = img.getAttribute('scale')
+
+          img.setAttribute('width', scale * width / longerEdge)
+          img.setAttribute('height', scale * height / longerEdge)
+        }
+
+        callback()
+      })
+    },
+    function (err) {
+      callback(err, dom)
+    }
+  )
+}
+
+RadkummerkastenEntry.prototype._showHTMLnotIncludeImgs = function (dom, options, callback) {
+  var imgs = dom.getElementsByTagName('img')
+  async.each(
+    imgs,
+    function (img, callback) {
+      if (img.hasAttribute('scale')) {
+        img.onload = function () {
+          var scale = img.getAttribute('scale')
+          var longerEdge = img.width > img.height ? img.width : img.height
+
+          var h = scale * img.height / longerEdge
+          var w = scale * img.width / longerEdge
+          img.setAttribute('height', h)
+          img.setAttribute('width', w)
+
+          callback()
+        }
+      } else {
+        callback()
+      }
+    },
+    function (err) {
+      callback(err, dom)
+    }
+  )
+}
+
+RadkummerkastenEntry.prototype._showHTMLinitMap = function (dom, options, callback) {
+  if (!document.getElementById(this.map.id)) {
+    callback()
+  }
+
+  var layers = {}
+
+  var protocol = 'https:'
+  if (typeof location !== 'undefined') {
+    protocol = location.protocol
+  }
+
+  layers['OSM Default'] =
+    L.tileLayer(protocol + '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19,
+        maxNativeZoom: 19
+    })
+
+  layers['OSM CycleMap'] =
+    L.tileLayer(protocol + '//{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, Tiles: <a href="http://www.thunderforest.com/">Andy Allan</a>',
+        maxZoom: 19,
+        maxNativeZoom: 18
+    })
+
+  layers['Radkummerkasten'] =
+    L.tileLayer(protocol + '//radkummerkasten.at/map/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, Tiles: <a href="http://radlkarte.at/">radlkarte.at</a>',
+        maxZoom: 19,
+        maxNativeZoom: 18
+    })
+
+  if (!options.preferredLayer) {
+    options.preferredLayer = 'OSM Default'
+  }
+
+  var map = L.map(this.map.id, {
+    layers: layers[options.preferredLayer]
+  }).setView([ this.lat, this.lon ], 17)
+  if (map.setSize && options.mapWidth !== 'auto') {
+    map.setSize(options.mapWidth, options.mapHeight)
+  }
+  L.control.layers(layers).addTo(map)
+
+  L.marker([ this.lat, this.lon ]).addTo(map)
+
+  map.on('baselayerchange', function (event) {
+    options.preferredLayer = event.name
+  })
+
+  if (options.embedMapAsImg) {
+    leafletImage(map, function (err, canvas) {
+      var img = document.createElement('img')
+      var dimensions = map.getSize()
+      img.width = dimensions.x
+      img.height = dimensions.y
+      img.src = canvas.toDataURL()
+      var mapDiv = document.getElementById(this.map.id)
+
+      if (mapDiv.hasAttribute('replaceDiv')) {
+        var attrs = mapDiv.attributes
+        for (var i = 0; i < attrs.length; i++) {
+          img.setAttribute(attrs[i].name, attrs[i].value)
+        }
+
+        if (img.hasAttribute('scale')) {
+          var scale = img.getAttribute('scale')
+          var longerEdge = img.width > img.height ? img.width : img.height
+          img.setAttribute('width', scale * img.width / longerEdge)
+          img.setAttribute('height', scale * img.height / longerEdge)
+          img.style.width = img.getAttribute('width') + 'px'
+          img.style.height = img.getAttribute('height') + 'px'
+        }
+
+        mapDiv.parentNode.replaceChild(img, mapDiv)
+      } else {
+        mapDiv.innerHTML = ''
+        mapDiv.appendChild(img)
+
+        var divAttr = document.createElement('div')
+        divAttr.className = 'attribution'
+        divAttr.innerHTML = layers[options.preferredLayer].options.attribution
+        mapDiv.appendChild(divAttr)
+      }
+
+      callback()
+    }.bind(this))
+  } else {
+    callback()
+  }
 }
 
 function jsonParse (str) {

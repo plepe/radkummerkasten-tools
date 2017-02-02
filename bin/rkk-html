@@ -1,0 +1,62 @@
+#!/usr/bin/env node
+var createHTML = require('../src/createHTML')
+var ArgHandler = require('../src/cliHandleArguments')
+var jsdom = require('jsdom').jsdom
+global.window = jsdom().defaultView
+global.document = jsdom(
+  '<html><head></head><body></body></html>',
+  {
+    features: {
+      FetchExternalResources: ['img']
+    }
+  }
+)
+
+try {
+  global.L = require('leaflet-headless');
+} catch (err) {
+  console.error('WARNING: Module "leaflet-headless" not found. Maybe canvas could not be compiled? Check https://www.npmjs.com/package/canvas for details and re-install with "npm install leaflet-headless".')
+}
+global.XMLHttpRequest = require('w3c-xmlhttprequest').XMLHttpRequest
+
+var parser = ArgHandler.init()
+parser.description = 'Lade Einträge aus dem Radkummerkasten und generiere eine HTML Datei daraus.'
+
+parser.addArgument(
+  [ '--template' ],
+  {
+    help: 'Welches Template soll verwendet werden. Entweder "show" (normales HTML, ähnlich der Web-Ansicht; "office" (HTML zum Import in Office).',
+    type: 'string',
+    choices: [ 'show', 'office' ],
+    defaultValue: 'show'
+  }
+)
+
+parser.addArgument(
+  [ '--embed-images' ],
+  {
+    help: 'Sollen die Bilder in das Dokument eingebettet werden',
+    nargs: 0
+  }
+)
+
+parser.addArgument(
+  [ '--no-map' ],
+  {
+    help: 'Es soll keine Karte eingebettet werden.',
+    nargs: 0
+  }
+)
+
+var args = ArgHandler.parseArgs()
+
+args.details = true
+
+var filter = {}
+
+var filter = ArgHandler.compileFilter(args)
+filter.template = args.template
+filter.embedImgs = !!args.embed_images
+filter.noMap = typeof L === 'undefined' ? true : !!args.no_map
+
+createHTML(filter, process.stdout, function () {})

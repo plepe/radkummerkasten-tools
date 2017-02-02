@@ -1,0 +1,47 @@
+<h2>#{{ id }} {{ categoryName }}: {{ title }} ({{ bezirk }}. Bezirk)</h2>
+<div class='attachments'>
+<div class='map' style='{{ map.style }}' id='{{ map.id }}'></div>
+Koordinaten: {{ lat|number_format(5) }}, {{ lon|number_format(5) }}
+
+{% for attachment in attachments %}
+  <div class='image'>
+    <img class='attachment' src="{{ attachment.url }}">
+    Bereitgestellt von {{ user }} am {{ date }}
+  </div>
+{% endfor %}
+
+{% for comment in comments %}
+  {% for attachment in comment.attachments %}
+    <div class='image'>
+      <img class='attachment' src="{{ attachment.url }}"><br/>
+      Bereitgestellt von {{ comment.user }} am {{ comment.date }}
+    </div>
+  {% endfor %}
+{% endfor %}
+</div>
+<a target="radkummerkasten" href="{{ baseUrl }}/#marker-{{ id }}">Öffne im Radkummerkasten</a><br/>
+
+<p>
+{{ likes }} Unterstützung(en)<br/>
+{{ comments|length}} Kommentar(e)<br/>
+Bezirk: {{ bezirk }}
+{% if bezirkRkk and bezirk != bezirkRkk %}
+<span class='error'>
+(Fehler: Laut Radkummerkasten {{ bezirkRkk }}. Bezirk).
+</span>
+{% endif %}
+<br/>
+
+{% for error in errors %}
+<span class='error'>Fehler: {{ error }}</span><br/>
+{% endfor %}
+
+<p>
+<i>{{ user }} schrieb am {{ date }}:</i><br/>
+{{ text|nl2br }}
+
+{% for comment in comments %}
+<p>
+<i>{{ comment.user }} schrieb am {{ comment.date }}:</i><br/>
+{{ comment.text|nl2br }}
+{% endfor %}

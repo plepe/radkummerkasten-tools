@@ -1,6 +1,8 @@
 window.Radkummerkasten = require('../src/Radkummerkasten')
 var createCsv = require('../src/createCsv')
 var createGeoJson = require('../src/createGeoJson')
+var createHTML = require('../src/createHTML')
+var getTemplate = require('../src/getTemplate')
 
 var csvWriter = require('csv-write-stream')
 var concat = require('concat-stream')
@@ -9,12 +11,14 @@ var twig = require('twig').twig
 var hash = require('sheet-router/hash')
 var async = require('async')
 var loadingIndicator = require('simple-loading-indicator')
+var FileSaver = require('file-saver');
 
 var teaserTemplate
-var showTemplate
 var pageOverviewLoaded = false
 var popScrollTop = null
 var preferredLayer = null
+var entryOptions = {}
+var currentPage = 'Overview'
 window.knownEntries = {}
 const step = 20
 
@@ -42,13 +46,6 @@ function restoreScroll() {
 window.onload = function () {
   document.getElementById('version').appendChild(document.createTextNode(Radkummerkasten.version))
 
-  teaserTemplate = twig({
-    data: document.getElementById('teaserTemplate').innerHTML
-  })
-  showTemplate = twig({
-    data: document.getElementById('showTemplate').innerHTML
-  })
-
   window.addEventListener('popstate', function (event) {
     if (event.state && 'scrollTop' in event.state) {
       popScrollTop = event.state.scrollTop
@@ -64,15 +61,31 @@ window.onload = function () {
 
   async.series([
     function (callback) {
+      getTemplate('teaserBody', function (err, result) {
+        if (err) {
+          alert('Kann Template "teaser" nicht laden! ' + err)
+          return
+        }
+
+        loadingIndicator.setValue(0.333)
+
+        teaserTemplate = twig({
+          data: result
+        })
+
+        callback()
+      })
+    },
+    function (callback) {
       Radkummerkasten.loadBezirksgrenzen(function (err, bezirke) {
         if (err) {
           alert('Kann Bezirksgrenzen nicht laden! ' + err)
           return
         }
 
-        loadingIndicator.setValue(0.5)
+        loadingIndicator.setValue(0.667)
 
-        var select = document.getElementById('form').elements.bezirk
+        var select = document.getElementById('filterOverview').elements.bezirk
 
         bezirke.forEach(function (bezirk) {
           var option = document.createElement('option')
@@ -98,7 +111,7 @@ window.onload = function () {
 
         loadingIndicator.setValue(1)
 
-        var select = document.getElementById('form').elements.category
+        var select = document.getElementById('filterOverview').elements.category
 
         categories.forEach(function (category) {
           var option = document.createElement('option')
@@ -132,8 +145,8 @@ window.onload = function () {
 
 window.update = function (reloadAll) {
   var entries = []
-  var content = document.getElementById('content')
-  var form = document.getElementById('form')
+  var content = document.getElementById('pageOverview')
+  var form = document.getElementById('filterOverview')
   pageOverviewLoaded = true
 
   var filter = {}
@@ -227,11 +240,16 @@ window.update = function (reloadAll) {
 window.openDownload = function () {
   var formDownload = document.getElementById('downloadOptions')
   formDownload.style.display = 'block'
+  updateDownloadForm()
 }
 
-function createDownload (fileType, data) {
-  var download = document.getElementById('download')
-  download.innerHTML = ''
+window.openShowDownload = function () {
+  var formDownload = document.getElementById('showDownloadOptions')
+  formDownload.style.display = 'block'
+}
+
+function createDownload (downloadDom, fileType, data) {
+  downloadDom.innerHTML = ''
 
   var contentType
   var extension
@@ -242,45 +260,88 @@ function createDownload (fileType, data) {
   } else if (fileType === 'geojson') {
     contentType = 'application/vnd.geo+json'
     extension = 'geojson'
+  } else if (fileType === 'html') {
+    contentType = 'text/html'
+    extension = 'html'
+  } else if (fileType === 'office') {
+    contentType = 'text/html'
+    extension = 'odt'
   }
 
-  var a = document.createElement('a')
-  a.href= 'data:' + contentType + ';charset=utf-8,' + encodeURI(data)
-  a.download = 'radkummerkasten.' + extension
-  a.appendChild(document.createTextNode('Hier herunterladen'))
-  a.onclick = function () {
-    document.getElementById('downloadOptions').style.display = 'none'
-  }
+  var blob = new Blob([ data ], { type: contentType + ";charset=utf-8" })
+  FileSaver.saveAs(blob, 'radkummerkasten.' + extension)
+  document.getElementById('downloadOptions').style.display = 'none'
+}
 
-  download.appendChild(a)
+window.updateDownloadForm = function () {
+  var formDownload = document.getElementById('downloadOptions')
+  var fileType = formDownload.elements.fileType.value
+
+  var divs = formDownload.getElementsByClassName('downloadOption')
+  for (var i = 0; i < divs.length; i++) {
+    var div = divs[i]
+
+    var t = div.getAttribute('downloadTypes')
+    if (t) {
+      t = t.split(',')
+      if (t.indexOf(fileType) === -1) {
+        div.style.display = 'none'
+      } else {
+        div.style.display = 'block'
+      }
+    }
+  }
 }
 
 window.submitDownloadForm = function () {
-  var form = document.getElementById('form')
-  var formDownload = document.getElementById('downloadOptions')
   var filter = {}
+  var downloadDom = document.getElementById('download')
 
-  if (form.elements.bezirk.value !== '*') {
-    filter.bezirk = [ form.elements.bezirk.value ]
-  }
-  if (form.elements.category.value !== '*') {
-    filter.category = [ form.elements.category.value ]
-  }
+  var formDownload = document.getElementById('downloadOptions')
+  var formFilter = document.getElementById('filter' + currentPage)
 
+  if ('filterId' in formFilter.elements) {
+    filter.id = formFilter.elements.filterId.value
+  }
+  if ('bezirk' in formFilter.elements && formFilter.elements.bezirk.value !== '*') {
+    filter.bezirk = [ formFilter.elements.bezirk.value ]
+  }
+  if ('category' in formFilter.elements && formFilter.elements.category.value !== '*') {
+    filter.category = [ formFilter.elements.category.value ]
+  }
   if (formDownload.elements.includeDetails.checked) {
     filter.includeDetails = true
   }
+  if (formDownload.elements.embedImgs.checked) {
+    filter.embedImgs = true
+  }
+  if (formDownload.elements.noMap.checked) {
+    filter.noMap = true
+  }
 
-  var download = document.getElementById('download')
-  download.innerHTML = 'Daten werden geladen, bitte warten ...'
+  downloadDom.innerHTML = 'Daten werden geladen, bitte warten ...'
 
   var fileType = formDownload.elements.fileType.value
   if (fileType === 'csv') {
-    createCsv(filter, concat(createDownload.bind(this, fileType)))
+    createCsv(filter, concat(createDownload.bind(this, downloadDom, fileType)))
   } else if (fileType === 'geojson') {
-    var downloadStream = concat(createDownload.bind(this, fileType))
+    var downloadStream = concat(createDownload.bind(this, downloadDom, fileType))
 
     createGeoJson(filter, downloadStream, function () {
+      downloadStream.end()
+    })
+  } else if (fileType === 'html') {
+    var downloadStream = concat(createDownload.bind(this, downloadDom, fileType))
+
+    // filter.embedImgs = true
+    createHTML(filter, downloadStream, function () {
+      downloadStream.end()
+    })
+  } else if (fileType === 'office') {
+    var downloadStream = concat(createDownload.bind(this, downloadDom, fileType))
+
+    filter.template = 'office'
+    createHTML(filter, downloadStream, function () {
       downloadStream.end()
     })
   }
@@ -289,10 +350,15 @@ window.submitDownloadForm = function () {
 }
 
 window.pageShow = function (id) {
+  currentPage = 'Show'
+  document.getElementById('menuOverview').style.display = 'none'
   document.getElementById('pageOverview').style.display = 'none'
+  var menu = document.getElementById('menuShow')
+  menu.style.display = 'block'
   var page = document.getElementById('pageShow')
-  page.innerHTML = ''
   page.style.display = 'block'
+  page.innerHTML = ''
+  document.getElementById('filterShow').elements.filterId.value = id
 
   loadingIndicator.setActive()
 
@@ -310,46 +376,12 @@ window.pageShow = function (id) {
         return
       }
 
-      page.innerHTML = showTemplate.render(entry)
-
-      if (document.getElementById('map')) {
-        var layers = {}
-
-        layers['OSM Default'] =
-          L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-              attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-              maxZoom: 19,
-              maxNativeZoom: 19
-          })
-
-        layers['OSM CycleMap'] =
-          L.tileLayer('//{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', {
-              attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, Tiles: <a href="http://www.thunderforest.com/">Andy Allan</a>',
-              maxZoom: 19,
-              maxNativeZoom: 18
-          })
-
-        layers['Radkummerkasten'] =
-          L.tileLayer('//radkummerkasten.at/map/{z}/{x}/{y}.png', {
-              attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, Tiles: <a href="http://radlkarte.at/">radlkarte.at</a>',
-              maxZoom: 19,
-              maxNativeZoom: 18
-          })
-        if (preferredLayer === null) {
-          preferredLayer = 'OSM Default'
+      entry.showHTML(
+        page,
+        entryOptions,
+        function (err, page) {
         }
-
-        var map = L.map('map', {
-          layers: layers[preferredLayer]
-        }).setView([ entry.lat, entry.lon ], 17)
-        L.control.layers(layers).addTo(map)
-
-	L.marker([ entry.lat, entry.lon ]).addTo(map)
-
-        map.on('baselayerchange', function (event) {
-          preferredLayer = event.name
-        })
-      }
+      )
     },
     function (err) {
       restoreScroll()
@@ -358,8 +390,11 @@ window.pageShow = function (id) {
 }
 
 window.pageOverview = function () {
-  document.getElementById('pageShow').style.display = 'none'
+  currentPage = 'Overview'
   document.getElementById('pageOverview').style.display = 'block'
+  document.getElementById('menuOverview').style.display = 'block'
+  document.getElementById('pageShow').style.display = 'none'
+  document.getElementById('menuShow').style.display = 'none'
 
   if (!pageOverviewLoaded) {
     update()

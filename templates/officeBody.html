@@ -1,0 +1,72 @@
+<h2>#{{ id }} {{ categoryName }}: {{ title }} ({{ bezirk }}. Bezirk)</h2>
+<p>
+<div class='map' style='{{ map.style }}' id='{{ map.id }}' scale='300' align='right' replaceDiv='true'></div>
+{{ likes }} Unterstützung(en)<br/>
+{{ comments|length}} Kommentar(e)<br/>
+Bezirk: {{ bezirk }}
+{% if bezirkRkk and bezirk != bezirkRkk %}
+<span class='error'>
+(Fehler: Laut Radkummerkasten {{ bezirkRkk }}. Bezirk).
+</span>
+{% endif %}
+<br/>
+Koordinaten: {{ lat|number_format(5) }}, {{ lon|number_format(5) }}
+</p>
+
+<p>
+<i>{{ user }} schrieb am {{ date }}:</i><br/>
+{{ text|nl2br }}
+</p>
+
+{% for comment in comments %}
+<p>
+<i>{{ comment.user }} schrieb am {{ comment.date }}:</i><br/>
+{{ comment.text|nl2br }}
+</p>
+{% endfor %}
+
+{% set col=0 %}
+<table width="100%" cellpadding="4" cellspacing="0" style="page-break-inside: avoid;">
+  <col width="128*">
+  <col width="128*">
+{% for attachment in attachments %}
+{% if col == 0 %}
+  <tr valign="top">
+{% endif %}
+{% set col=col+1 %}
+    <td width="50%">
+    <img class='attachment' src="{{ attachment.url }}" scale="314" />
+    Bereitgestellt von {{ user }} am {{ date }}
+    </td>
+{% if col == 2 %}
+  </tr>
+  {% set col=0 %}
+{% endif %}
+{% endfor %}
+
+{% for comment in comments %}
+  {% for attachment in comment.attachments %}
+    {% if col == 0 %}
+      <tr valign="top">
+    {% endif %}
+{% set col=col+1 %}
+        <td width="50%">
+        <img class='attachment' src="{{ attachment.url }}" scale="314" />
+        Bereitgestellt von {{ comment.user }} am {{ comment.date }}
+        </td>
+    {% if col == 2 %}
+      </tr>
+      {% set col=0 %}
+    {% endif %}
+  {% endfor %}
+{% endfor %}
+
+{% if col!=0 %}
+{% for col in col..1 %}
+  <td width="50%">
+  </td>
+{% endfor %}
+</tr>
+{% endif %}
+
+</table>
