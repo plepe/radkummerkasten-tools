@@ -55,7 +55,7 @@ args.details = true
 var filter = {}
 
 var filter = ArgHandler.compileFilter(args)
-filter.template = args.template + 'Template'
+filter.template = args.template
 filter.embedImgs = !!args.embed_images
 filter.noMap = typeof L === 'undefined' ? true : !!args.no_map
 

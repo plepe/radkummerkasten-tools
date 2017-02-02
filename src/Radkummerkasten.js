@@ -535,16 +535,16 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
  * @param {boolean} [options.noMap=false] Don't embed a map.
  * @param {number} [options.mapWidth] Force map width
  * @param {number} [options.mapHeight] Force map height
- * @param {string} [options.template="showTemplate"] Template to use for rendering
+ * @param {string} [options.template="show"] Template to use for rendering
  * @param {function} callback Called with resulting HTML data. Parameters: err, dom (the same as in the first parameter).
  */
 RadkummerkastenEntry.prototype.showHTML = function (dom, options, callback) {
-  var template = 'showTemplate'
+  var template = 'show'
   if (options.template) {
     template = options.template
   }
 
-  getTemplate(template, function (err, result) {
+  getTemplate(template + 'Body', function (err, result) {
     var showTemplate = twig({
       data: result
     })

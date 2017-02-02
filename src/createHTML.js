@@ -65,7 +65,7 @@ function process (filter, pipe, callback) {
 }
 
 module.exports = function (filter, pipe, callback) {
-  var template = 'showTemplate'
+  var template = 'show'
   if (filter.template) {
     template = filter.template
   }

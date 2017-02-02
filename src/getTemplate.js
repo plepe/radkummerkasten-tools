@@ -10,7 +10,7 @@ function getTemplate (id, callback) {
   if (typeof location !== 'undefined') {
     prefix = location.origin + location.pathname
   }
-  request.get(prefix + 'src/' + id + '.html',
+  request.get(prefix + 'templates/' + id + '.html',
     function (error, response, body) {
       if (!error && response.statusCode === 200) {
         templates[id] = body

@@ -324,7 +324,7 @@ window.submitDownloadForm = function () {
   } else if (fileType === 'office') {
     var downloadStream = concat(createDownload.bind(this, downloadDom, fileType))
 
-    filter.template = 'officeTemplate'
+    filter.template = 'office'
     createHTML(filter, downloadStream, function () {
       downloadStream.end()
     })
