@@ -6,6 +6,7 @@ Command Line Utilities
 ----------------------
 * `rkk-csv`: Exportiere die ausgewählten Einträge als CSV Datei.
 * `rkk-geojson`: Exportiere die ausgewählten Einträge als GeoJSON Datei.
+* `rkk-html`: Exportiere die ausgewählten Einträge als HTML Datei mit wählbarem Template.
 
 Mögliche Optionen für die utilities bekommt man bei Aufruf mit dem Parameter `-h`, z.b.: `rkk-csv -h`.
 
