@@ -28,7 +28,7 @@ function showEntry(entry, div, callback) {
     var data = JSON.parse(JSON.stringify(entry))
     data.baseUrl = Radkummerkasten.options.baseUrl
 
-    div.innerHTML = teaserTemplate.render(data)
+    div.innerHTML = teaserTemplate.render(data.properties)
 
     if (callback) {
       callback(err)

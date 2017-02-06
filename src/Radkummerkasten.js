@@ -177,11 +177,11 @@ Radkummerkasten._handleMarkers = function (options, featureCallback, finalCallba
       return
     }
 
-    if ('bezirk' in options && options.bezirk.indexOf('' + ob.bezirk) === -1) {
+    if ('bezirk' in options && options.bezirk.indexOf('' + ob.properties.bezirk) === -1) {
       return
     }
 
-    if ('category' in options && options.category.indexOf('' + ob.category) === -1) {
+    if ('category' in options && options.category.indexOf('' + ob.properties.category) === -1) {
       return
     }
 
@@ -373,12 +373,14 @@ Radkummerkasten.clearCache = function () {
  */
 function RadkummerkastenEntry (data) {
   this.id = data.id
-  this.lat = data.loc[0]
-  this.lon = data.loc[1]
-  this.status = data.options.status
-  this.category = data.options.survey
-  this.categoryName = categoryNames[data.options.survey]
-  this.bezirk = Radkummerkasten.getBezirk(this.lat, this.lon)
+  this.properties = {}
+  this.properties.id = data.id
+  this.properties.lat = data.loc[0]
+  this.properties.lon = data.loc[1]
+  this.properties.status = data.options.status
+  this.properties.category = data.options.survey
+  this.properties.categoryName = categoryNames[data.options.survey]
+  this.properties.bezirk = Radkummerkasten.getBezirk(this.properties.lat, this.properties.lon)
   this.hasDetails = false
 }
 
@@ -397,25 +399,9 @@ RadkummerkastenEntry.prototype.toGeoJSON = function () {
     type: 'Feature',
     geometry: {
       type: 'Point',
-      coordinates: [ this.lon, this.lat ]
+      coordinates: [ this.properties.lon, this.properties.lat ]
     },
-    properties: {
-      id: this.id,
-      bezirk: this.bezirk,
-      status: this.status,
-      category: this.category,
-      categoryName: this.categoryName
-    }
-  }
-
-  if (this.title) {
-    ret.properties.title = this.title
-    ret.properties.user = this.user
-    ret.properties.date = this.date
-    ret.properties.text = this.text
-    ret.properties.likes = this.likes
-    ret.properties.comments = this.comments
-    ret.properties.attachments = this.attachments
+    properties: this.properties
   }
 
   return ret
@@ -455,26 +441,26 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
         }
 
         m = data.htmlData.match(/^<div class="marker-entry"><h3><span class="survey">([^<]*):<\/span> ([^<]*)<\/h3>(.*)<div class=""><p><span class="author"><i>(.*) schrieb am (.*), (.*):<\/i><\/span><br \/>/)
-        this.attachments = []
+        this.properties.attachments = []
 
         if (m[3]) {
           var m1 = m[3].match(/<a href="([^"]*)" class="swipebox" title="([^"]*)"><img src/)
-          this.attachments.push({
+          this.properties.attachments.push({
             url: Radkummerkasten.options.baseUrl + m1[1],
             title: m1[2]
           })
         }
 
-        this.title = data.title
-        this.bezirkRkk = data.bezirk
-        this.user = m[4]
-        this.date = parseDate(m[6])
+        this.properties.title = data.title
+        this.properties.bezirkRkk = data.bezirk
+        this.properties.user = m[4]
+        this.properties.date = parseDate(m[6])
         var p = data.htmlData.indexOf('</p>')
-        this.text = fromHTML(data.htmlData.substr(m[0].length, p - m[0].length))
+        this.properties.text = fromHTML(data.htmlData.substr(m[0].length, p - m[0].length))
 
         var remainingHtmlData = data.htmlData.substr(p + 4).trim()
         while(m = remainingHtmlData.match(/^(?:<\/div><div class="images">)?<a href="([^"]*)" class="swipebox" title="([^"]*)">((?!<\/a>).)*<\/a>/)) {
-          this.attachments.push({
+          this.properties.attachments.push({
             url: Radkummerkasten.options.baseUrl + m[1],
             title: m[2]
           })
@@ -483,16 +469,16 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
         }
 
         m = remainingHtmlData.match(/^[^]*<\/div><p class="text-center"><button type="button" class="btn btn-zustimmen btn-nodecoration btn-default" >Finde ich auch <i class="glyphicon glyphicon-thumbs-up"><\/i> <span class="badge">([0-9]+)<\/span><\/button><\/p>/m)
-        this.likes = parseInt(m[1])
+        this.properties.likes = parseInt(m[1])
 
         remainingHtmlData = remainingHtmlData.substr(m[0].length)
-        this.comments = []
+        this.properties.comments = []
         var commentsHtmlData = remainingHtmlData.split(/<\/p>/g)
 
         for (var i = 0; i < commentsHtmlData.length; i++) {
           m = commentsHtmlData[i].match(/<div class=""><p><span class="author"><i>(.*) schrieb am (.*), (.*):<\/i><\/span><br \/>([^]*)$/m)
           if (m) {
-            this.comments.push({
+            this.properties.comments.push({
               user: m[1],
               date: parseDate(m[3]),
               text: fromHTML(m[4]),
@@ -506,7 +492,7 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
 
           var remainingHtmlData = commentsHtmlData[i + 1].trim()
           while(m = remainingHtmlData.match(/^(?:<\/div><div class="images">)?<a href="([^"]*)" class="swipebox" title="([^"]*)">((?!<\/a>).)*<\/a>/)) {
-            this.comments[this.comments.length - 1].attachments.push({
+            this.properties.comments[this.properties.comments.length - 1].attachments.push({
               url: Radkummerkasten.options.baseUrl + m[1],
               title: m[2]
             })
@@ -514,8 +500,8 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
             remainingHtmlData = remainingHtmlData.substr(m[0].length).trim()
           }
         }
-        this.commentsCount = this.comments.length
-        this.attachmentsCount = this.attachments.length
+        this.properties.commentsCount = this.properties.comments.length
+        this.properties.attachmentsCount = this.properties.attachments.length
 
         this.hasDetails = true
         callback(null, this)
@@ -567,7 +553,7 @@ RadkummerkastenEntry.prototype._showHTML = function (dom, options, showTemplate,
     options.mapData.style += 'height: ' + options.mapHeight + 'px;'
   }
 
-  var data = JSON.parse(JSON.stringify(this))
+  var data = JSON.parse(JSON.stringify(this.properties))
   data.map = options.mapData
   dom.innerHTML = showTemplate.render(data)
 
@@ -690,13 +676,13 @@ RadkummerkastenEntry.prototype._showHTMLinitMap = function (dom, options, callba
 
   var map = L.map(options.mapData.id, {
     layers: layers[options.preferredLayer]
-  }).setView([ this.lat, this.lon ], 17)
+  }).setView([ this.properties.lat, this.properties.lon ], 17)
   if (map.setSize && options.mapWidth !== 'auto') {
     map.setSize(options.mapWidth, options.mapHeight)
   }
   L.control.layers(layers).addTo(map)
 
-  L.marker([ this.lat, this.lon ]).addTo(map)
+  L.marker([ this.properties.lat, this.properties.lon ]).addTo(map)
 
   map.on('baselayerchange', function (event) {
     options.preferredLayer = event.name
