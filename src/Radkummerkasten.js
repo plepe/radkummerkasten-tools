@@ -555,19 +555,21 @@ RadkummerkastenEntry.prototype.showHTML = function (dom, options, callback) {
 }
 
 RadkummerkastenEntry.prototype._showHTML = function (dom, options, showTemplate, callback) {
-  this.map = {
+  options.mapData = {
     style: '',
     id: 'map-' + Math.random()
   }
 
   if (options.mapWidth) {
-    this.map.style += 'width: ' + options.mapWidth + 'px;'
+    options.mapData.style += 'width: ' + options.mapWidth + 'px;'
   }
   if (options.mapHeight) {
-    this.map.style += 'height: ' + options.mapHeight + 'px;'
+    options.mapData.style += 'height: ' + options.mapHeight + 'px;'
   }
 
-  dom.innerHTML = showTemplate.render(this)
+  var data = JSON.parse(JSON.stringify(this))
+  data.map = options.mapData
+  dom.innerHTML = showTemplate.render(data)
 
   var todo = []
   if (options.embedImgs) {
@@ -577,7 +579,7 @@ RadkummerkastenEntry.prototype._showHTML = function (dom, options, showTemplate,
   }
 
   if (options.noMap) {
-    var mapDom = document.getElementById(this.map.id)
+    var mapDom = document.getElementById(options.mapData.id)
     if (mapDom) {
       mapDom.parentNode.removeChild(mapDom)
     }
@@ -676,7 +678,7 @@ RadkummerkastenEntry.prototype._showHTMLnotIncludeImgs = function (dom, options,
 }
 
 RadkummerkastenEntry.prototype._showHTMLinitMap = function (dom, options, callback) {
-  if (!document.getElementById(this.map.id)) {
+  if (!document.getElementById(options.mapData.id)) {
     callback()
   }
 
@@ -686,7 +688,7 @@ RadkummerkastenEntry.prototype._showHTMLinitMap = function (dom, options, callba
 
   var layers = mapLayers({})
 
-  var map = L.map(this.map.id, {
+  var map = L.map(options.mapData.id, {
     layers: layers[options.preferredLayer]
   }).setView([ this.lat, this.lon ], 17)
   if (map.setSize && options.mapWidth !== 'auto') {
@@ -707,7 +709,7 @@ RadkummerkastenEntry.prototype._showHTMLinitMap = function (dom, options, callba
       img.width = dimensions.x
       img.height = dimensions.y
       img.src = canvas.toDataURL()
-      var mapDiv = document.getElementById(this.map.id)
+      var mapDiv = document.getElementById(options.mapData.id)
 
       if (mapDiv.hasAttribute('replaceDiv')) {
         var attrs = mapDiv.attributes
