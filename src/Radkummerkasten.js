@@ -1,5 +1,6 @@
 var request = require('request-xmlhttprequest')
 var async = require('async')
+var PouchDB = require('pouchdb')
 var parseDate = require('./parseDate')
 var getTemplate = require('./getTemplate')
 var fromHTML = require('./fromHTML')
@@ -18,6 +19,7 @@ var categoryNames = null
  * @constructor
  * @property {object} options - Configuration
  * @property {string} options.baseUrl - base URL of the radkummerkasten. Default: either http://www.radkummerkasten.at or https://www.radkummerkasten.at
+ * @property {string} [options.dbName='radkummerkasten'] name of the database to use. This can be a remote URL to a CouchDB.
  * @property {string} options.urlBezirksgrenzen - relative URL of the bezirksgrenzen GeoJSON
  * @property {string} options.urlMapMarkers - relative URL of the MapMarkers request
  * @property {string} options.urlMapEntry - relative URL of the MapEntry request. '{id}' will be replaced by the id of the map entry.
@@ -36,6 +38,11 @@ Radkummerkasten.init = function () {
   if (typeof this.options === 'undefined') {
     this.options = {}
   }
+
+  if (typeof this.options.dbName === 'undefined') {
+    this.options.dbName = 'radkummerkasten'
+  }
+  this.db = new PouchDB(this.options.dbName)
 
   if (typeof location === 'undefined') {
     this.options.baseUrl = 'https://www.radkummerkasten.at'
@@ -391,6 +398,7 @@ function RadkummerkastenEntry (data) {
   this.id = data.id
   this.properties = {}
   this.properties.id = data.id
+  this.properties._id = data.id + ''
   this.properties.lat = data.loc[0]
   this.properties.lon = data.loc[1]
   this.properties.status = data.options.status
@@ -434,13 +442,37 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
     options = {}
   }
 
-  if (!options.force && this.hasDetails) {
-    async.setImmediate(function () {
-      callback(null, this)
-    }.bind(this))
-    return
+  if (this.hasDetails) {
+    if (options.force) {
+      return this._getDetails(options, callback)
+    } else {
+      async.setImmediate(function () {
+        callback(null, this)
+      }.bind(this))
+      return
+    }
   }
 
+
+  // first try to load from PouchDB - even on force, as we need the revision id
+  Radkummerkasten.db.get(this.id + '', function (err, result) {
+    if (err && err.status === 404) {
+      this._getDetails(options, callback)
+    } else if (err) {
+      callback(err, null)
+    } else {
+      this.properties = result
+
+      if (options.force) {
+        this._getDetails(options, callback)
+      } else {
+        callback(null, this)
+      }
+    }
+  }.bind(this))
+}
+
+RadkummerkastenEntry.prototype._getDetails = function (options, callback) {
   request.get(Radkummerkasten.options.baseUrl + Radkummerkasten.options.urlMapEntry.replace('{id}', encodeURI(this.id)),
     function (error, response, body) {
       var m
@@ -520,7 +552,12 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
         this.properties.attachmentsCount = this.properties.attachments.length
 
         this.hasDetails = true
-        callback(null, this)
+
+        Radkummerkasten.db.put(this.properties, function (err, result) {
+          this.properties._rev = result.rev
+          callback(null, this)
+        }.bind(this))
+
         return
       }
 

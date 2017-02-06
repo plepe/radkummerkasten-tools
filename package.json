@@ -39,6 +39,7 @@
     "image-to-data-uri": "^1.1.0",
     "jsdom": "^9.9.1",
     "leaflet-image": "^0.4.0",
+    "pouchdb": "^6.1.1",
     "request-xmlhttprequest": "*"
   },
   "devDependencies": {
