@@ -405,6 +405,7 @@ function RadkummerkastenEntry (data) {
   this.properties.category = data.options.survey
   this.properties.categoryName = categoryNames[data.options.survey]
   this.properties.bezirk = Radkummerkasten.getBezirk(this.properties.lat, this.properties.lon)
+  this._properties = null // last version saved to PouchDB, stringified
   this.hasDetails = false
 }
 
@@ -462,6 +463,7 @@ RadkummerkastenEntry.prototype.getDetails = function (options, callback) {
       callback(err, null)
     } else {
       this.properties = result
+      this._properties = JSON.stringify(result)
 
       if (options.force) {
         this._getDetails(options, callback)
@@ -553,10 +555,15 @@ RadkummerkastenEntry.prototype._getDetails = function (options, callback) {
 
         this.hasDetails = true
 
-        Radkummerkasten.db.put(this.properties, function (err, result) {
-          this.properties._rev = result.rev
+        if (JSON.stringify(this.properties) === this._properties) {
+          // no need to update database
           callback(null, this)
-        }.bind(this))
+        } else {
+          Radkummerkasten.db.put(this.properties, function (err, result) {
+            this.properties._rev = result.rev
+            callback(null, this)
+          }.bind(this))
+        }
 
         return
       }
