@@ -265,7 +265,7 @@ function createDownload (downloadDom, fileType, data) {
     extension = 'html'
   } else if (fileType === 'office') {
     contentType = 'text/html'
-    extension = 'odt'
+    extension = 'html'
   }
 
   var blob = new Blob([ data ], { type: contentType + ";charset=utf-8" })
