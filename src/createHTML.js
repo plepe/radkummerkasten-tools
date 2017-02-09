@@ -20,6 +20,7 @@ function process (filter, pipe, callback) {
   if (filter.template) {
     renderParam.template = filter.template
   }
+  filter.includeDetails = true
 
   Radkummerkasten.getEntries(
     filter,
