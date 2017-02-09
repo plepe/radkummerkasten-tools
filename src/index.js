@@ -12,6 +12,7 @@ var hash = require('sheet-router/hash')
 var async = require('async')
 var loadingIndicator = require('simple-loading-indicator')
 var FileSaver = require('file-saver');
+var querystring = require('querystring')
 
 var teaserTemplate
 var pageOverviewLoaded = false
@@ -52,6 +53,7 @@ window.onload = function () {
     } else {
       popScrollTop = null
     }
+
   })
   window.addEventListener('scroll', function (event) {
     history.replaceState({ scrollTop: document.body.scrollTop }, '', location.hash)
@@ -131,37 +133,64 @@ window.onload = function () {
           pageShow(loc.substr(1))
         } else {
           pageOverview()
+          updateFormFromUrl()
+          update()
         }
       })
 
       if (location.hash.match(/^#[0-9]+$/)) {
         pageShow(location.hash.substr(1))
       } else {
+        updateFormFromUrl()
         update()
       }
     }
   ])
 }
 
-window.update = function (reloadAll) {
+function updateFormFromUrl () {
+  if (location.hash.match(/^#/)) {
+    var url = querystring.parse(location.hash.substr(1))
+    var form = document.getElementById('filterOverview')
+
+    if ('bezirk' in url) {
+      form.elements.bezirk.value = url.bezirk
+    }
+    if ('category' in url) {
+      form.elements.category.value = url.category
+    }
+  }
+}
+
+window.update = function (force, pushState) {
   var entries = []
   var content = document.getElementById('pageOverview')
   var form = document.getElementById('filterOverview')
   pageOverviewLoaded = true
 
+  var url = {}
   var filter = {}
   if (form.elements.bezirk.value !== '*') {
     filter.bezirk = [ form.elements.bezirk.value ]
+    url.bezirk = form.elements.bezirk.value
   }
   if (form.elements.category.value !== '*') {
     filter.category = [ form.elements.category.value ]
+    url.category = form.elements.category.value
   }
 
-  if (reloadAll) {
-    knownEntries = {}
-    content.innerHTML = ''
-  } else {
+  if (force) {
     filter.force = true
+  }
+
+  knownEntries = {}
+  content.innerHTML = ''
+
+  url = '#' + querystring.stringify(url)
+  if (pushState) {
+    history.pushState({ scrollTop: document.body.scrollTop }, '', url)
+  } else {
+    history.replaceState({ scrollTop: document.body.scrollTop }, '', url)
   }
 
   loadingIndicator.setActive()

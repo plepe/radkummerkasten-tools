@@ -23,7 +23,7 @@
 
 <div id='menu'>
 <div id='menuOverview'>
-<form id='filterOverview' onChange='return update(true)'>
+<form id='filterOverview' onChange='return update(false, true)'>
   <select name='bezirk'>
     <option value='*'>* Bezirk *</option>
   </select>
@@ -40,7 +40,7 @@
 </div>
 
 <a href='javascript:openDownload()'>Download</a> |
-<a href='javascript:update(false)'>Reload</a>
+<a href='javascript:update(true, false)'>Reload</a>
 
 <form id='downloadOptions' onSubmit='return submitDownloadForm()'>
   <div class='downloadOption'>
