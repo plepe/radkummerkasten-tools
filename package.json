@@ -15,6 +15,7 @@
     "build": "mkdir -p dist && npm run build-dist && npm run build-frontend && npm run build-test",
     "build-dist": "browserify index.js -o dist/radkummerkasten-tools.js",
     "build-frontend": "browserify -g browserify-css -t browserify-git-my-version src/index.js -o dist/index.js",
+    "watch-frontend": "watchify --debug -v -g browserify-css -t browserify-git-my-version src/index.js -o dist/index.js",
     "build-test": "browserify -g browserify-css test/*.js --debug -o dist/test.js"
   },
   "repository": {
@@ -51,7 +52,8 @@
     "simple-loading-indicator": "https://github.com/plepe/simple-loading-indicator",
     "standard": "^8.6.0",
     "twig": "^0.10.3",
-    "w3c-xmlhttprequest": "^2.1.2"
+    "w3c-xmlhttprequest": "^2.1.2",
+    "watchify": "^3.9.0"
   },
   "optionalDependencies": {
     "leaflet-headless": "^0.2.5"
