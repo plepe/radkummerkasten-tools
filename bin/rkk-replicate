@@ -1,0 +1,55 @@
+#!/usr/bin/env node
+var createHTML = require('../src/createHTML')
+var ArgHandler = require('../src/cliHandleArguments')
+var Radkummerkasten = require('../src/Radkummerkasten')
+global.XMLHttpRequest = require('w3c-xmlhttprequest').XMLHttpRequest
+var PouchDB = require('pouchdb')
+
+var parser = ArgHandler.init()
+parser.description = 'Lade Einträge aus dem Radkummerkasten und repliziere sie in eine CouchDB Datenbank.'
+
+parser.addArgument(
+  [ 'db-url' ],
+  {
+    help: 'URL zur CouchDB in die repliziert werden soll.',
+    type: 'string',
+  }
+)
+
+var args = ArgHandler.parseArgs()
+
+args.details = true
+
+var filter = {}
+
+var filter = ArgHandler.compileFilter(args)
+
+filter.includeDetails = true
+filter.force = true
+filter.forceDetails = true
+
+Radkummerkasten.set('dbName', args['db-url'])
+
+function run () {
+  var count = 0
+  Radkummerkasten.getEntries(
+    filter,
+    function (err, entry) {
+      if (err) {
+        throw (err)
+      }
+
+      console.log('synched ' + entry.id)
+      count++
+    },
+    function (err) {
+      if (err) {
+        throw (err)
+      }
+
+      console.log('Synchronisierung abgeschlossen. ' + count + ' Enträge.')
+    }
+  )
+}
+
+run()

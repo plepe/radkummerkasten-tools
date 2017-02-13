@@ -6,7 +6,8 @@
   "bin": {
     "rkk-csv": "bin/rkk-csv",
     "rkk-geojson": "bin/rkk-geojson",
-    "rkk-html": "bin/rkk-html"
+    "rkk-html": "bin/rkk-html",
+    "rkk-replicate": "bin/rkk-replicate"
   },
   "scripts": {
     "test": "mocha --bail",
