@@ -28,11 +28,14 @@ function Radkummerkasten () {
 Radkummerkasten.version = '__GIT_MY_VERSION__'
 
 Radkummerkasten.init = function () {
-  if (typeof this.options !== 'undefined') {
+  if (typeof this.isInit !== 'undefined') {
     return
   }
+  this.isInit = true
 
-  this.options = {}
+  if (typeof this.options === 'undefined') {
+    this.options = {}
+  }
 
   if (typeof location === 'undefined') {
     this.options.baseUrl = 'https://www.radkummerkasten.at'
@@ -47,6 +50,19 @@ Radkummerkasten.init = function () {
   this.options.urlMapEntry = '/ajax/?map&action=getMapEntry&marker={id}'
 
   this.cacheEntries = {}
+}
+
+/**
+ * set an option to a specific value
+ * @param {string} option Key of the option (e.g. 'dbName')
+ * @param {any} value Value to set for the option
+ */
+Radkummerkasten.set = function (option, value) {
+  if (typeof this.options === 'undefined') {
+    this.options = {}
+  }
+
+  this.options[option] = value
 }
 
 /**
