@@ -567,7 +567,10 @@ RadkummerkastenEntry.prototype._showHTML = function (dom, options, showTemplate,
     this.map.style += 'height: ' + options.mapHeight + 'px;'
   }
 
-  dom.innerHTML = showTemplate.render(this)
+  var data = JSON.parse(JSON.stringify(this))
+  data.options = Radkummerkasten.options
+
+  dom.innerHTML = showTemplate.render(data)
 
   var todo = []
   if (options.embedImgs) {
