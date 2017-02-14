@@ -392,6 +392,7 @@ Radkummerkasten.clearCache = function () {
  * @property {number} commentsCount - Count of comments (load details first)
  * @property {RadkummerkastenEntry.attachment[]} attachments - Attachments (load details first)
  * @property {number} attachmentsCount - Count of attachments (load details first)
+ * @property {string} lastUpdate - The entry in the current state was first seen at: ISO-8601 date.
  * @property {string[]} errors - List of errors which occured during loading
  */
 function RadkummerkastenEntry (data) {
@@ -559,6 +560,7 @@ RadkummerkastenEntry.prototype._getDetails = function (options, callback) {
           // no need to update database
           callback(null, this)
         } else {
+          this.properties.lastUpdate = new Date().toISOString()
           Radkummerkasten.db.put(this.properties, function (err, result) {
             this.properties._rev = result.rev
             callback(null, this)
