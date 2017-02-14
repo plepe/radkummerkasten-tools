@@ -20,6 +20,7 @@ var categoryNames = null
  * @property {object} options - Configuration
  * @property {string} options.baseUrl - base URL of the radkummerkasten. Default: either http://www.radkummerkasten.at or https://www.radkummerkasten.at
  * @property {string} [options.dbName='radkummerkasten'] name of the database to use. This can be a remote URL to a CouchDB.
+ * @property {string} [options.dbReplicateFrom] CouchDB to replicate from. If not defined, data will be directly loaded from Radkummerkasten.
  * @property {string} options.urlBezirksgrenzen - relative URL of the bezirksgrenzen GeoJSON
  * @property {string} options.urlMapMarkers - relative URL of the MapMarkers request
  * @property {string} options.urlMapEntry - relative URL of the MapEntry request. '{id}' will be replaced by the id of the map entry.
@@ -43,6 +44,10 @@ Radkummerkasten.init = function () {
     this.options.dbName = 'radkummerkasten'
   }
   this.db = new PouchDB(this.options.dbName)
+
+  if (typeof this.options.dbReplicateFrom !== 'undefined') {
+    this.db.replicate.from(this.options.dbReplicateFrom)
+  }
 
   if (typeof location === 'undefined') {
     this.options.baseUrl = 'https://www.radkummerkasten.at'
