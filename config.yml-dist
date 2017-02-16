@@ -12,3 +12,10 @@
 #urlBezirksgrenzen: /wp-content/plugins/radkummerkasten/js/data.wien.gv.at_bezirksgrenzen.json
 #urlMapMarkers: /ajax/?map&action=getMapMarkers
 #urlMapEntry: /ajax/?map&action=getMapEntry&marker={id}
+
+### Databases
+# Use local DB 'radkummerkasten' (IndexDB, WebSQL or LevelDB). This could also be a remote CouchDB URL, e.g. https://rkk.plepe.at/couchdb/radkummerkasten.
+#dbName: radkummerkasten
+
+# URL to remote CouchDB, e.g. https://rkk.plepe.at/couchdb/radkummerkasten. If undefined/none, the Radkummerkasten will be directly cloned to dbName.
+#dbReplicateFrom: none

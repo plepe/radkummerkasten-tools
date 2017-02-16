@@ -45,7 +45,7 @@ Radkummerkasten.init = function () {
   }
   this.db = new PouchDB(this.options.dbName)
 
-  if (typeof this.options.dbReplicateFrom !== 'undefined') {
+  if (typeof this.options.dbReplicateFrom !== 'undefined' && this.options.dbReplicateFrom !== 'none') {
     this.db.replicate.from(this.options.dbReplicateFrom)
   }
 
