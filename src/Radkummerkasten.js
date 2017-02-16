@@ -66,6 +66,14 @@ Radkummerkasten.set = function (option, value) {
 }
 
 /**
+ * set all configuration options at once
+ * @param {object} options Options for Radkummerkasten
+ */
+Radkummerkasten.setConfig = function (options) {
+  this.options = options
+}
+
+/**
  * @callback Radkummerkasten~featureCallback
  * @param {string|null} error - Error (or null, if there was no error)
  * @param {RadkummerkastenEntry} entry - an entry of Radkummerkasten
