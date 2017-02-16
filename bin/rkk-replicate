@@ -5,14 +5,24 @@ var Radkummerkasten = require('../src/Radkummerkasten')
 global.XMLHttpRequest = require('w3c-xmlhttprequest').XMLHttpRequest
 var PouchDB = require('pouchdb')
 
+var config = require('../src/loadConfig')
+
+if (typeof config.dbReplicateFrom !== 'undefined') {
+  config.dbName = config.dbReplicateFrom
+  delete config.dbReplicateFrom
+}
+
+Radkummerkasten.setConfig(config)
+
 var parser = ArgHandler.init()
 parser.description = 'Lade Einträge aus dem Radkummerkasten und repliziere sie in eine CouchDB Datenbank.'
 
 parser.addArgument(
-  [ 'db-url' ],
+  [ '--db-url' ],
   {
-    help: 'URL zur CouchDB in die repliziert werden soll.',
+    help: 'URL zur CouchDB in die repliziert werden soll. Standardmäßig entweder die Werte dbName oder dbReplicateFrom von der config.yml (welche auch immer eine remote CouchDB ist).',
     type: 'string',
+    nargs: 1
   }
 )
 
@@ -28,7 +38,9 @@ filter.includeDetails = true
 filter.force = true
 filter.forceDetails = true
 
-Radkummerkasten.set('dbName', args['db-url'])
+if ('db-url' in args) {
+  Radkummerkasten.set('dbName', args['db-url'])
+}
 
 function run () {
   var count = 0
