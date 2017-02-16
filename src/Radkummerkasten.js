@@ -697,6 +697,15 @@ RadkummerkastenEntry.prototype._showHTMLinitMap = function (dom, options, callba
   }
   L.control.layers(layers).addTo(map)
 
+  // enable wheel-mouse-zoom only when map is focussed.
+  map.scrollWheelZoom.disable()
+  map.on('focus', function() {
+    map.scrollWheelZoom.enable()
+  })
+  map.on('blur', function() {
+    map.scrollWheelZoom.disable()
+  })
+
   L.marker([ this.lat, this.lon ]).addTo(map)
 
   map.on('baselayerchange', function (event) {
