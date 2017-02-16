@@ -5,3 +5,10 @@
 # to change a value, just remove the leading '#'. You need to run 'npm run
 # build' after changing this file.
 
+### Base URL of the Radkummerkasten. http/https will be prefixed automatically.
+#baseUrl: //www.radkummerkasten.at
+
+### URLs at Radkummerkasten to read data
+#urlBezirksgrenzen: /wp-content/plugins/radkummerkasten/js/data.wien.gv.at_bezirksgrenzen.json
+#urlMapMarkers: /ajax/?map&action=getMapMarkers
+#urlMapEntry: /ajax/?map&action=getMapEntry&marker={id}
