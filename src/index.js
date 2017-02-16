@@ -27,16 +27,14 @@ window.knownEntries = {}
 const step = 20
 
 function showEntry(entry, div, callback) {
-  entry.getDetails({}, function (err) {
-    var data = JSON.parse(JSON.stringify(entry))
-    data.options = Radkummerkasten.options
+  var data = JSON.parse(JSON.stringify(entry))
+  data.options = Radkummerkasten.options
 
-    div.innerHTML = teaserTemplate.render(data.properties)
+  div.innerHTML = teaserTemplate.render(data.properties)
 
-    if (callback) {
-      callback(err)
-    }
-  })
+  if (callback) {
+    callback()
+  }
 }
 
 function restoreScroll() {
@@ -396,9 +394,7 @@ window.pageShow = function (id) {
 
   Radkummerkasten.getEntries(
     {
-      id: [ '' + id ],
-      includeDetails: true,
-      forceDetails: true
+      id: [ '' + id ]
     },
     function (err, entry) {
       loadingIndicator.setInactive()
