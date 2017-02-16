@@ -14,6 +14,9 @@ var loadingIndicator = require('simple-loading-indicator')
 var FileSaver = require('file-saver');
 var querystring = require('querystring')
 
+var config = require('../src/loadConfig')
+Radkummerkasten.setConfig(config)
+
 var teaserTemplate
 var pageOverviewLoaded = false
 var popScrollTop = null

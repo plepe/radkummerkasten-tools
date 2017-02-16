@@ -22,6 +22,8 @@ Um `radkummerkasten-tools` zu installieren, muss [Node.js](https://nodejs.org/) 
 git clone https://github.com/plepe/radkummerkasten-tools.git
 cd radkummerkasten-tools
 npm install
+cp config.yml-dist config.yml
+nano config.yml # change configuration according to your needs
 sudo npm link # mache cli tools systemweit verfügbar (optional)
 npm run build # generiere JS für die Webseite (optional)
 npm run doc # generiere documentation im verzeichnis doc/ (optional)

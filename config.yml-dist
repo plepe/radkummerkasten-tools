@@ -1,0 +1,7 @@
+# Configuration file for the radkummerkasten-tools. See config.yml-dist for the
+# most current version of this file.
+#
+# By default most/all configuration options are commented. If you want
+# to change a value, just remove the leading '#'. You need to run 'npm run
+# build' after changing this file.
+

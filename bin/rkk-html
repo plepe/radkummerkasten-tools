@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 var createHTML = require('../src/createHTML')
 var ArgHandler = require('../src/cliHandleArguments')
+
+var config = require('../src/loadConfig')
+Radkummerkasten.setConfig(config)
+
 var jsdom = require('jsdom').jsdom
 global.window = jsdom().defaultView
 global.document = jsdom(

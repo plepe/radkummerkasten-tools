@@ -14,8 +14,8 @@
     "doc": "jsdoc -d doc/ src/*.js",
     "build": "mkdir -p dist && npm run build-dist && npm run build-frontend && npm run build-test",
     "build-dist": "browserify index.js -o dist/radkummerkasten-tools.js",
-    "build-frontend": "browserify -g browserify-css -t browserify-git-my-version src/index.js -o dist/index.js",
-    "watch-frontend": "watchify --debug -v -g browserify-css -t browserify-git-my-version src/index.js -o dist/index.js",
+    "build-frontend": "browserify -g browserify-css -t browserify-git-my-version -t brfs src/index.js -o dist/index.js",
+    "watch-frontend": "watchify --debug -v -g browserify-css -t browserify-git-my-version -t brfs src/index.js -o dist/index.js",
     "build-test": "browserify -g browserify-css test/*.js --debug -o dist/test.js"
   },
   "repository": {
@@ -32,11 +32,13 @@
     "@turf/inside": "^3.7.0",
     "argparse": "^1.0.9",
     "async": "^2.1.4",
+    "brfs": "^1.4.3",
     "concat-stream": "^1.5.2",
     "csv-write-stream": "^2.0.0",
     "entities": "^1.1.1",
     "file-saver": "^1.3.3",
     "image-to-data-uri": "^1.1.0",
+    "js-yaml": "^3.8.1",
     "jsdom": "^9.9.1",
     "leaflet-image": "^0.4.0",
     "request-xmlhttprequest": "*"

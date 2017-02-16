@@ -2,6 +2,9 @@
 var createGeoJson = require('../src/createGeoJson')
 var ArgHandler = require('../src/cliHandleArguments')
 
+var config = require('../src/loadConfig')
+Radkummerkasten.setConfig(config)
+
 var parser = ArgHandler.init()
 parser.description = 'Lade Einträge aus dem Radkummerkasten und generiere eine GeoJSON Datei daraus.'
 
