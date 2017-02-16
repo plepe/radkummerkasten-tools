@@ -14,6 +14,9 @@ var loadingIndicator = require('simple-loading-indicator')
 var FileSaver = require('file-saver');
 var querystring = require('querystring')
 
+var config = require('../src/loadConfig')
+Radkummerkasten.setConfig(config)
+
 var teaserTemplate
 var pageOverviewLoaded = false
 var popScrollTop = null
@@ -26,7 +29,7 @@ const step = 20
 function showEntry(entry, div, callback) {
   entry.getDetails({}, function (err) {
     var data = JSON.parse(JSON.stringify(entry))
-    data.baseUrl = Radkummerkasten.options.baseUrl
+    data.options = Radkummerkasten.options
 
     div.innerHTML = teaserTemplate.render(data.properties)
 

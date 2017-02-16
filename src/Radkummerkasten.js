@@ -49,17 +49,31 @@ Radkummerkasten.init = function () {
     this.db.replicate.from(this.options.dbReplicateFrom)
   }
 
-  if (typeof location === 'undefined') {
-    this.options.baseUrl = 'https://www.radkummerkasten.at'
-  } else if (location.protocol === 'http:') {
-    this.options.baseUrl = 'http://www.radkummerkasten.at'
-  } else {
-    this.options.baseUrl = 'https://www.radkummerkasten.at'
+  if (typeof this.options.baseUrl === 'undefined') {
+    this.options.baseUrl = '//www.radkummerkasten.at'
   }
 
-  this.options.urlBezirksgrenzen = '/wp-content/plugins/radkummerkasten/js/data.wien.gv.at_bezirksgrenzen.json'
-  this.options.urlMapMarkers = '/ajax/?map&action=getMapMarkers'
-  this.options.urlMapEntry = '/ajax/?map&action=getMapEntry&marker={id}'
+  if (this.options.baseUrl.substr(0, 2) === '//') {
+    if (typeof location === 'undefined') {
+      this.options.baseUrl = 'https:' + this.options.baseUrl
+    } else if (location.protocol === 'http:') {
+      this.options.baseUrl = 'http:' + this.options.baseUrl
+    } else {
+      this.options.baseUrl = 'https:' + this.options.baseUrl
+    }
+  }
+
+  if (typeof this.options.urlBezirksgrenzen === 'undefined') {
+    this.options.urlBezirksgrenzen = '/wp-content/plugins/radkummerkasten/js/data.wien.gv.at_bezirksgrenzen.json'
+  }
+
+  if (typeof this.options.urlMapMarkers === 'undefined') {
+    this.options.urlMapMarkers = '/ajax/?map&action=getMapMarkers'
+  }
+
+  if (typeof this.options.urlMapEntry === 'undefined') {
+    this.options.urlMapEntry = '/ajax/?map&action=getMapEntry&marker={id}'
+  }
 
   this.cacheEntries = {}
 }
@@ -75,6 +89,15 @@ Radkummerkasten.set = function (option, value) {
   }
 
   this.options[option] = value
+}
+
+/**
+<<<<<<< HEAD
+ * set all configuration options at once
+ * @param {object} options Options for Radkummerkasten
+ */
+Radkummerkasten.setConfig = function (options) {
+  this.options = options
 }
 
 /**
@@ -621,7 +644,9 @@ RadkummerkastenEntry.prototype._showHTML = function (dom, options, showTemplate,
   }
 
   var data = JSON.parse(JSON.stringify(this.properties))
+  data.options = Radkummerkasten.options
   data.map = options.mapData
+
   dom.innerHTML = showTemplate.render(data)
 
   var todo = []

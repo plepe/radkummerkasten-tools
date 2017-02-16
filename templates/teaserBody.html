@@ -8,7 +8,7 @@
 {% if text|length > 200 %}{{ text|slice(0, 200)|nl2br }}...{% else %}{{ text|nl2br }}{% endif %}<br/>
 
 <p>
-<a target="radkummerkasten" href="{{ baseUrl }}/#marker-{{ id }}">Öffne im Radkummerkasten</a><br/>
+<a target="radkummerkasten" href="{{ options.baseUrl }}/#marker-{{ id }}">Öffne im Radkummerkasten</a><br/>
 {{ likes }} Unterstützung(en), {{ comments|length}} Kommentar(e)
 {% if bezirkRkk and bezirk != bezirkRkk %}
 <br/><span class='error'>
