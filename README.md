@@ -30,6 +30,33 @@ npm run build # generiere JS für die Webseite (optional)
 npm run doc # generiere documentation im verzeichnis doc/ (optional)
 ```
 
+CouchDB
+-------
+Wenn eine serverseitige CouchDB eingesetzt wird, dann muss der Webclient nicht
+die Daten aus dem Radkummerkasten clonen, sondern diese können mit dem
+'rkk-replicate' Skript am Server aktuell gehalten werden - die Webseite greift
+auf diese Daten dann nur zu.
+
+```sh
+sudo apt-get install couchdb
+```
+
+Die Datei `/etc/couchdb/local.ini` editieren:
+```
+[httpd]
+......... am ende des blocks .........
+enable_cors = true
+
+[cors]
+origins = *
+credentials = true
+```
+
+Wenn auf der Shell `rkk-replicate` ausgeführt wird, werden alle Daten aus dem Radkummerkasten eingelesen:
+```sh
+bin/rkk-replicate
+```
+
 API Usage
 =========
 Die `radkummerkasten-tools` stellen eine JavaScript API zur Verfügung, um auf
