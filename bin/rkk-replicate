@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 var createHTML = require('../src/createHTML')
 var ArgHandler = require('../src/cliHandleArguments')
-var Radkummerkasten = require('../src/Radkummerkasten')
+var RadkummerkastenCloner = require('../src/RadkummerkastenCloner')
 global.XMLHttpRequest = require('w3c-xmlhttprequest').XMLHttpRequest
 var PouchDB = require('pouchdb')
 
@@ -12,7 +12,7 @@ if (typeof config.dbReplicateFrom !== 'undefined') {
   delete config.dbReplicateFrom
 }
 
-Radkummerkasten.setConfig(config)
+RadkummerkastenCloner.setConfig(config)
 
 var parser = ArgHandler.init()
 parser.description = 'Lade Einträge aus dem Radkummerkasten und repliziere sie in eine CouchDB Datenbank.'
@@ -39,12 +39,12 @@ filter.force = true
 filter.forceDetails = true
 
 if ('db-url' in args) {
-  Radkummerkasten.set('dbName', args['db-url'])
+  RadkummerkastenCloner.set('dbName', args['db-url'])
 }
 
 function run () {
   var count = 0
-  Radkummerkasten.getEntries(
+  RadkummerkastenCloner.getEntries(
     filter,
     function (err, entry) {
       if (err) {
