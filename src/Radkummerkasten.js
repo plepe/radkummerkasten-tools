@@ -115,6 +115,7 @@ Radkummerkasten.setConfig = function (options) {
  * @param {number} options.offset - Skip the first n entries (default: 0)
  * @param {boolean} options.force=false - Force reload of list
  * @param {boolean} options.forceDetails=false - If a result already exists in cache, force reload anyway
+ * @param {string} [options.order=id] - Order results by one of the following criteria: 'id': newest entries first, 'likes': most likes first, 'lastComment': order by date of last comment (or creation of entry), 'lastUpdate': order by date of last visible change.
  * @param {Radkummerkasten~featureCallback} featureCallback - The featureCallback function will be called for each received entry.
  * @param {Radkummerkasten~finalCallback} [finalCallback] - The finalCallback will be called after the last entry.
  */
@@ -175,10 +176,34 @@ if (typeof options.bezirk === 'number') {
     filterFunPerComment.push('comment.user')
   }
 
-  filterFun.push('doc.id')
-  filterFunPerComment.push('doc.id')
-  param.startkey = filterValues.concat([ {} ])
-  param.endkey = filterValues
+  if (options.order === 'likes') {
+    filterFun.push('doc.likes')
+    filterFun.push('doc.lastUpdate')
+    filterFunPerComment.push('doc.likes')
+    filterFunPerComment.push('doc.lastUpdate')
+    param.startkey = filterValues.concat([ {}, {} ])
+    param.endkey = filterValues
+
+  } else if (options.order === 'lastComment') {
+    filterFun.push('doc.comments.length ? doc.comments[doc.comments.length - 1].date : doc.date')
+    filterFun.push('doc.lastUpdate')
+    filterFunPerComment.push('doc.comments.length ? doc.comments[doc.comments.length - 1].date : doc.date')
+    filterFunPerComment.push('doc.lastUpdate')
+    param.startkey = filterValues.concat([ {}, {} ])
+    param.endkey = filterValues
+
+  } else if (options.order === 'lastUpdate') {
+    filterFun.push('doc.lastUpdate')
+    filterFunPerComment.push('doc.lastUpdate')
+    param.startkey = filterValues.concat([ {} ])
+    param.endkey = filterValues
+
+  } else {
+    filterFun.push('doc.id')
+    filterFunPerComment.push('doc.id')
+    param.startkey = filterValues.concat([ {} ])
+    param.endkey = filterValues
+  }
 
   var fun = 'var r = [ ' + filterFun.join(', ') + ' ]\n'
   fun += 'emit(r)\n'
