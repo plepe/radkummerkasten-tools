@@ -110,6 +110,7 @@ Radkummerkasten.setConfig = function (options) {
  * @param {boolean} options.includeDetails=false - If true, for each entry the details will be loaded. Requires a separate http request for each entry.
  * @param {number} options.bezirk - Only include entries within the specified Bezirk or Bezirke.
  * @param {number|string} options.category - Only include entries of the specified categories (either numeric or string representation).
+ * @param {string} options.user - Only include entries, which were created by the specified user or by whom has been commented upon.
  * @param {number} options.limit - Only return the first n entries (after offset) (default: all)
  * @param {number} options.offset - Skip the first n entries (default: 0)
  * @param {boolean} options.force=false - Force reload of list
@@ -123,6 +124,7 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
   var filter = []
   var filterValues = []
   var filterFun = []
+  var filterFunPerComment = []
 
   var param = {
     descending: true
@@ -165,11 +167,35 @@ if (typeof options.bezirk === 'number') {
     filterValues.push(options.category)
   }
 
+  filterFunPerComment = filterFun.concat([])
+  if (typeof options.user !== 'undefined') {
+    filter.push('user')
+    filterFun.push('doc.user')
+    filterValues.push(options.user)
+    filterFunPerComment.push('comment.user')
+  }
+
   filterFun.push('doc.id')
+  filterFunPerComment.push('doc.id')
   param.startkey = filterValues.concat([ {} ])
   param.endkey = filterValues
 
-  var fun = new Function('doc', 'emit([ ' + filterFun.join(', ') + ' ])')
+  var fun = 'var r = [ ' + filterFun.join(', ') + ' ]\n'
+  fun += 'emit(r)\n'
+  fun += 'var done = [ JSON.stringify(r) ]\n'
+
+  if (filterFunPerComment.length) {
+    fun += 'for (var c = 0; c < doc.comments.length; c++) {\n'
+    fun += '  var comment = doc.comments[c]\n'
+    fun += '  r = [ ' + filterFunPerComment.join(', ') + ' ]\n'
+    fun += '  if (done.indexOf(JSON.stringify(r)) === -1) {\n'
+    fun += '    emit(r)\n'
+    fun += '    done.push(JSON.stringify(r))\n'
+    fun += '  }\n'
+    fun += '}\n'
+  }
+
+  fun = new Function('doc', fun)
   this.db.query(
     fun,
     param,
