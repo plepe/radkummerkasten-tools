@@ -108,8 +108,8 @@ Radkummerkasten.setConfig = function (options) {
  * @param {object} options - Options and filter the results by certain criteria
  * @param {number[]|number|string[]|string} [options.id] - Only include entries with the specified ids (list might be filtered further by other filters)
  * @param {boolean} options.includeDetails=false - If true, for each entry the details will be loaded. Requires a separate http request for each entry.
- * @param {number[]|number} options.bezirk - Only include entries within the specified Bezirk or Bezirke.
- * @param {number[]|number|string[]|string} options.category - Only include entries of the specified categories (either numeric or string representation).
+ * @param {number} options.bezirk - Only include entries within the specified Bezirk or Bezirke.
+ * @param {number|string} options.category - Only include entries of the specified categories (either numeric or string representation).
  * @param {number} options.limit - Only return the first n entries (after offset) (default: all)
  * @param {number} options.offset - Skip the first n entries (default: 0)
  * @param {boolean} options.force=false - Force reload of list
@@ -119,6 +119,10 @@ Radkummerkasten.setConfig = function (options) {
  */
 Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) {
   this.init()
+
+  var filter = []
+  var filterValues = []
+  var filterFun = []
 
   var param = {
     descending: true
@@ -132,7 +136,42 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
     param.skip = options.offset
   }
 
-  this.db.allDocs(
+if (typeof options.bezirk === 'number') {
+    filter.push('bezirk')
+    filterFun.push('doc.bezirk')
+    filterValues.push(options.bezirk)
+  }
+
+  if (typeof options.category === 'string') {
+    var category = null
+
+    for (k in categoryNames) {
+      if (categoryNames[k].toLowerCase() === options.category.toLowerCase()) {
+        category = k
+      }
+    }
+
+    if (category === null) {
+      finalCallback('Can\'t parse Category name: ' + options.category)
+      return
+    }
+
+    filter.push('category')
+    filterFun.push('doc.category')
+    filterValues.push(parseInt(category))
+  } else if (typeof options.category === 'number') {
+    filter.push('category')
+    filterFun.push('doc.category')
+    filterValues.push(options.category)
+  }
+
+  filterFun.push('doc.id')
+  param.startkey = filterValues.concat([ {} ])
+  param.endkey = filterValues
+
+  var fun = new Function('doc', 'emit([ ' + filterFun.join(', ') + ' ])')
+  this.db.query(
+    fun,
     param,
     this._getEntriesHandleResult.bind(this, options, featureCallback, finalCallback)
   )
