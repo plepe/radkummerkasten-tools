@@ -134,48 +134,50 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
 
   this.db.allDocs(
     param,
-    function (error, result) {
-      var ids = []
-      var toLoad = []
-
-      if (error) {
-        return finalCallback(error)
-      }
-
-      for (var i = 0; i < result.rows.length; i++) {
-        var id = result.rows[i].id
-        ids.push(id)
-
-        if (!(id in this.cacheEntries)) {
-          toLoad.push(id)
-        }
-      }
-
-      if (toLoad.length) {
-        this.db.allDocs(
-          {
-            keys: toLoad,
-            include_docs: true
-          },
-          function (error, result) {
-            if (error) {
-              return finalCallback(error)
-            }
-
-            for (var i = 0; i < result.rows.length; i++) {
-              var id = result.rows[i].id
-              var ob = new RadkummerkastenEntry(result.rows[i].doc)
-              this.cacheEntries[id] = ob
-            }
-
-            this._getEntriesDone(ids, options, featureCallback, finalCallback)
-          }.bind(this)
-        )
-      } else {
-        this._getEntriesDone(ids, options, featureCallback, finalCallback)
-      }
-    }.bind(this)
+    this._getEntriesHandleResult.bind(this, options, featureCallback, finalCallback)
   )
+}
+
+Radkummerkasten._getEntriesHandleResult = function (options, featureCallback, finalCallback, error, result) {
+  var ids = []
+  var toLoad = []
+
+  if (error) {
+    return finalCallback(error)
+  }
+
+  for (var i = 0; i < result.rows.length; i++) {
+    var id = result.rows[i].id
+    ids.push(id)
+
+    if (!(id in this.cacheEntries)) {
+      toLoad.push(id)
+    }
+  }
+
+  if (toLoad.length) {
+    this.db.allDocs(
+      {
+        keys: toLoad,
+        include_docs: true
+      },
+      function (error, result) {
+        if (error) {
+          return finalCallback(error)
+        }
+
+        for (var i = 0; i < result.rows.length; i++) {
+          var id = result.rows[i].id
+          var ob = new RadkummerkastenEntry(result.rows[i].doc)
+          this.cacheEntries[id] = ob
+        }
+
+        this._getEntriesDone(ids, options, featureCallback, finalCallback)
+      }.bind(this)
+    )
+  } else {
+    this._getEntriesDone(ids, options, featureCallback, finalCallback)
+  }
 }
 
 Radkummerkasten._getEntriesDone = function (ids, options, featureCallback, finalCallback) {
