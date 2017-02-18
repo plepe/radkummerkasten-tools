@@ -170,11 +170,11 @@ window.update = function (force, pushState) {
   var url = {}
   var filter = {}
   if (form.elements.bezirk.value !== '*') {
-    filter.bezirk = [ form.elements.bezirk.value ]
+    filter.bezirk = form.elements.bezirk.value
     url.bezirk = form.elements.bezirk.value
   }
   if (form.elements.category.value !== '*') {
-    filter.category = [ form.elements.category.value ]
+    filter.category = form.elements.category.value
     url.category = form.elements.category.value
   }
 
