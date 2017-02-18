@@ -207,7 +207,7 @@ if (typeof options.bezirk === 'number') {
 
   var fun = 'var r = [ ' + filterFun.join(', ') + ' ]\n'
   fun += 'emit(r)\n'
-  fun += 'done = [ JSON.stringify(r) ]\n'
+  fun += 'var done = [ JSON.stringify(r) ]\n'
 
   if (filterFunPerComment.length) {
     fun += 'for (var c = 0; c < doc.comments.length; c++) {\n'
