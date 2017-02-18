@@ -164,8 +164,6 @@ function updateFormFromUrl () {
 }
 
 window.update = function (force, pushState) {
-  var entries = []
-  var content = document.getElementById('pageOverview')
   var form = document.getElementById('filterOverview')
   pageOverviewLoaded = true
 
@@ -184,9 +182,6 @@ window.update = function (force, pushState) {
     filter.force = true
   }
 
-  knownEntries = {}
-  content.innerHTML = ''
-
   url = '#' + querystring.stringify(url)
   if (pushState) {
     history.pushState({ scrollTop: document.body.scrollTop }, '', url)
@@ -194,74 +189,55 @@ window.update = function (force, pushState) {
     history.replaceState({ scrollTop: document.body.scrollTop }, '', url)
   }
 
-  loadingIndicator.setActive()
+  overviewShowEntries(filter, 0)
+}
+
+function overviewShowEntries (filter, start) {
+  var content = document.getElementById('pageOverview')
+
+  if (start === 0) {
+    content.innerHTML = ''
+  }
+
+  filter.limit = step + 1
+  filter.offset = start
+
+  var count = 0
 
   Radkummerkasten.getEntries(
     filter,
     function (err, entry) {
-      if (!(entry.id in knownEntries)) {
-        entries.push(entry)
-        knownEntries[entry.id] = true
+      console.log(entry.id)
+
+      count++
+
+      if (count > step) {
+        // load more
+        var divLoadMore = document.createElement('div')
+        divLoadMore.className = 'loadMore'
+
+        var a = document.createElement('a')
+        a.appendChild(document.createTextNode('lade mehr Einträge'))
+        a.href = '#'
+        a.onclick = function () {
+          content.removeChild(divLoadMore)
+          overviewShowEntries(filter, start + step)
+
+          return false
+        }
+
+        divLoadMore.appendChild(a)
+        content.appendChild(divLoadMore)
+      } else {
+        var div = document.createElement('div')
+        div.className = 'entry'
+        content.appendChild(div)
+
+        showEntry(entry, div, function (err, result) {
+        })
       }
     },
     function (err) {
-      var willLoad = Math.min(entries.length, step)
-      var loaded = 0
-      loadingIndicator.setValue(1 / (willLoad + 1))
-
-      if (willLoad === 0) {
-        loadingIndicator.setInactive()
-      }
-
-      for (var i = Math.max(entries.length - step, 0); i < entries.length; i++) {
-        var div = document.createElement('div')
-        div.className = 'entry'
-        content.insertBefore(div, content.firstChild)
-
-        showEntry(entries[i], div, function (err, result) {
-          loaded++
-          loadingIndicator.setValue((loaded + 1) / (willLoad + 1))
-
-          if (loaded >= willLoad) {
-            loadingIndicator.setInactive()
-          }
-        })
-      }
-
-      var done = step
-
-      if (entries.length <= step) {
-        restoreScroll()
-        return
-      }
-
-      var divLoadMore = document.createElement('div')
-      divLoadMore.className = 'loadMore'
-
-      var a = document.createElement('a')
-      a.appendChild(document.createTextNode('lade mehr Einträge'))
-      a.href = '#'
-      a.onclick = function () {
-        for (var i = entries.length - done - 1; i >= Math.max(entries.length - done - step, 0); i--) {
-          var div = document.createElement('div')
-          div.className = 'entry'
-          content.insertBefore(div, divLoadMore)
-
-          showEntry(entries[i], div)
-        }
-
-        done += step
-
-        if (entries.length <= done) {
-          content.removeChild(divLoadMore)
-        }
-
-        return false
-      }
-
-      divLoadMore.appendChild(a)
-      content.appendChild(divLoadMore)
-
       restoreScroll()
     }
   )
