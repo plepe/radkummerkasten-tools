@@ -168,6 +168,10 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
     param.skip = options.offset
   }
 
+  if ('id' in options) {
+    return this.getEntriesById(options.id, options, featureCallback, finalCallback)
+  }
+
   if ('bezirk' in options) {
     filter.push('bezirk')
     filterFun.push('doc.bezirk')
@@ -258,6 +262,18 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
   fun = new Function('doc', fun)
   this.db.query(
     fun,
+    param,
+    this._getEntriesHandleResult.bind(this, options, featureCallback, finalCallback)
+  )
+}
+
+Radkummerkasten.getEntriesById = function (ids, options, featureCallback, finalCallback, error, result) {
+  var param = {
+    include_docs: true,
+    keys: Array.isArray(ids) ? ids : [ ids ]
+  }
+
+  this.db.allDocs(
     param,
     this._getEntriesHandleResult.bind(this, options, featureCallback, finalCallback)
   )
