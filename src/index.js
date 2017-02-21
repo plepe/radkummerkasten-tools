@@ -207,8 +207,6 @@ function overviewShowEntries (filter, start) {
   Radkummerkasten.getEntries(
     filter,
     function (err, entry) {
-      console.log(entry.id)
-
       count++
 
       if (count > step) {
