@@ -164,6 +164,14 @@ function updateFormFromUrl () {
 }
 
 window.update = function (force, pushState) {
+  if (force) {
+    Radkummerkasten.checkUpdate(_update.bind(this, force, pushState))
+  } else {
+    _update(force, pushState)
+  }
+}
+
+function _update (force, pushState) {
   var form = document.getElementById('filterOverview')
   pageOverviewLoaded = true
 
@@ -176,10 +184,6 @@ window.update = function (force, pushState) {
   if (form.elements.category.value !== '*') {
     filter.category = form.elements.category.value
     url.category = form.elements.category.value
-  }
-
-  if (force) {
-    filter.force = true
   }
 
   url = '#' + querystring.stringify(url)
