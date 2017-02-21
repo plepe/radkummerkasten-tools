@@ -45,8 +45,7 @@ Radkummerkasten.init = function () {
   this.dbConfig = new PouchDB(this.options.dbName + '-config')
 
   if (typeof this.options.dbReplicateFrom !== 'undefined' && this.options.dbReplicateFrom !== 'none') {
-    this.db.replicate.from(this.options.dbReplicateFrom)
-    this.dbConfig.replicate.from(this.options.dbReplicateFrom + '-config')
+    this.enableDbReplication()
   }
 
   if (typeof this.options.baseUrl === 'undefined') {
@@ -69,6 +68,34 @@ Radkummerkasten.init = function () {
 
   this.cacheEntries = {}
   this.parameter = {}
+}
+
+Radkummerkasten.enableDbReplication = function (completeCallback) {
+  this.dbRepl = this.db.replicate.from(this.options.dbReplicateFrom)
+  this.dbConfigRepl = this.dbConfig.replicate.from(this.options.dbReplicateFrom + '-config')
+
+  this.dbRepl.on('complete', function (info) {
+    if (completeCallback) {
+      completeCallback()
+      completeCallback = null
+    }
+  })
+}
+
+/**
+ * When DB replication is active, check for updates and call callback when sync
+ * is complete. When DB replication is not active, call the callback
+ * immediately.
+ */
+Radkummerkasten.checkUpdate = function (callback) {
+  if (this.dbRepl) {
+    this.dbRepl.cancel()
+    this.dbConfigRepl.cancel()
+
+    this.enableDbReplication(callback)
+  } else {
+    callback()
+  }
 }
 
 /**
