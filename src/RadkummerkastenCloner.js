@@ -78,6 +78,7 @@ RadkummerkastenCloner.init = function () {
   }
 
   this.cacheEntries = {}
+  this.parameter = {}
 }
 
 /**
@@ -278,22 +279,42 @@ RadkummerkastenCloner._handleMarkers = function (options, featureCallback, final
 }
 
 /**
- * load the this.bezirksgrenzen (district borders) from the server
+ * load the this.parameter.bezirk.values (district borders) from the server
  * @param {function} callback - Callback which should be called after loading. will be passed an error or null as first parameter and the list of districts as second (array of GeoJSON objects).
  */
 RadkummerkastenCloner.loadBezirksgrenzen = function (callback) {
   this.init()
 
   // already cached
-  if (this.bezirksgrenzen) {
+  if ('bezirk' in this.parameter) {
     async.setImmediate(function () {
-      callback(null, this.bezirksgrenzen)
-    })
+      callback(null, this.parameter.bezirk.values)
+    }.bind(this))
 
     return
   }
 
-  this.bezirksgrenzen = []
+  this.dbConfig.get('parameter-bezirk', function (err, result) {
+    if (err && err.status === 404) {
+      result = {
+        _id: 'parameter-bezirk',
+        id: 'bezirk',
+        title: 'Bezirk',
+        titlePlural: 'Bezirke',
+        values: []
+      }
+    } else if (err) {
+      return callback(err)
+    }
+
+    this.parameter.bezirk = result
+    this.parameter.bezirk.values = []
+    this._loadBezirksgrenzen1(callback)
+  }.bind(this))
+}
+
+RadkummerkastenCloner._loadBezirksgrenzen1 = function (callback) {
+  var oldData = JSON.stringify(this.parameter.bezirk)
 
   request.get(this.options.baseUrl + this.options.urlBezirksgrenzen,
     function (error, response, body) {
@@ -310,14 +331,26 @@ RadkummerkastenCloner.loadBezirksgrenzen = function (callback) {
         for (var i = 0; i < data.features.length; i++) {
           var feature = data.features[i]
 
-          this.bezirksgrenzen.push(feature)
+          this.parameter.bezirk.values.push(feature)
         }
 
-        this.bezirksgrenzen.sort(function (a, b) {
+        this.parameter.bezirk.values.sort(function (a, b) {
           return a.properties.BEZNR - b.properties.BEZNR
         })
 
-        callback(null, this.bezirksgrenzen)
+        if (JSON.stringify(this.parameter.bezirk) === oldData) {
+            callback(null, this.parameter.bezirk.values)
+        } else {
+          this.parameter.bezirk.lastUpdate = new Date().toISOString()
+          this.dbConfig.put(this.parameter.bezirk, function (err, result) {
+            if (err) {
+              return callback(err)
+            }
+
+            this.parameter.bezirk._rev = result.rev
+            callback(null, this.parameter.bezirk.values)
+          }.bind(this))
+        }
       } else {
         callback(error, null)
       }
@@ -332,17 +365,17 @@ RadkummerkastenCloner.loadBezirksgrenzen = function (callback) {
  * @return {number} - The resulting bezirk (or 0 if it is not in Vienna)
  */
 RadkummerkastenCloner.getBezirk = function (lat, lon) {
-  for (var i = 0; i < this.bezirksgrenzen.length; i++) {
+  for (var i = 0; i < this.parameter.bezirk.values.length; i++) {
     var r = turf.inside({
       type: 'Feature',
       geometry: {
         type: 'Point',
         coordinates: [ lon, lat ]
       }
-    }, this.bezirksgrenzen[i])
+    }, this.parameter.bezirk.values[i])
 
     if (r) {
-      return this.bezirksgrenzen[i].properties.BEZNR
+      return this.parameter.bezirk.values[i].properties.BEZNR
     }
   }
 

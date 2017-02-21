@@ -70,6 +70,7 @@ Radkummerkasten.init = function () {
   }
 
   this.cacheEntries = {}
+  this.parameter = {}
 }
 
 /**
@@ -286,8 +287,25 @@ Radkummerkasten._getEntriesDone = function (ids, options, featureCallback, final
  */
 Radkummerkasten.loadBezirksgrenzen = function (callback) {
   this.init()
-  console.log('TODO loadBezirksgrenzen() !!!')
-  callback(null, [])
+
+  // already cached
+  if (this.bezirksgrenzen) {
+    async.setImmediate(function () {
+      callback(null, this.bezirksgrenzen)
+    }.bind(this))
+
+    return
+  }
+
+  this.dbConfig.get('parameter-bezirk', function (err, result) {
+    if (err) {
+      return callback(err)
+    }
+
+    this.parameter.bezirk = result
+    this.bezirksgrenzen = result.values
+    callback(null, this.bezirksgrenzen)
+  }.bind(this))
 }
 
 /**
