@@ -43,6 +43,7 @@ if ('db-url' in args) {
 }
 
 var timestamp = new Date().toISOString()
+var updated = 0
 
 RadkummerkastenCloner.init()
 
@@ -58,6 +59,8 @@ RadkummerkastenCloner.dbConfig.get('status', function (err, result) {
   result.timestamp = timestamp
 
   RadkummerkastenCloner.dbConfig.put(result)
+
+  run()
 })
 
 function run () {
@@ -69,7 +72,11 @@ function run () {
         throw (err)
       }
 
-      console.log('synched ' + entry.id)
+      if (entry.properties.lastUpdate > timestamp) {
+        console.log('synched ' + entry.id)
+        updated++
+      }
+
       count++
     },
     function (err) {
@@ -77,9 +84,7 @@ function run () {
         throw (err)
       }
 
-      console.log('Synchronisierung abgeschlossen. ' + count + ' Enträge.')
+      console.log('Synchronisierung abgeschlossen. ' + updated + '/' + count + ' Enträge.')
     }
   )
 }
-
-run()
