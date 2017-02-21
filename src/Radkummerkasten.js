@@ -282,6 +282,51 @@ Radkummerkasten._getEntriesDone = function (ids, options, featureCallback, final
 }
 
 /**
+ * @typedef {object} Radkummerkasten.parameter
+ * @property {string} id - ID, e.g. 'bezirk'
+ * @property {string} title - Title, e.g. 'Bezirk'
+ * @property {string} titlePlural - Title in plural, e.g. 'Bezirke'
+ * @property {object[]} values - Values of the parameter
+ * @property {number|string} values.id - ID of the parameter value, e.g. 1
+ * @property {string} values.title - Title of the parameter, value, e.g. '1.,  Innere Stadt'
+ */
+
+/**
+ * load a parameter from database
+ * @param {string} id - ID of the parameter, e.g. 'bezirk'.
+ * @param {function} callback - Callback which should be called after loading. will be passed an error or null as first parameter and the list of districts as second (array of GeoJSON objects).
+ */
+Radkummerkasten.getParameter = function (id, callback) {
+  this.init()
+
+  // already cached
+  if (id in this.parameter) {
+    async.setImmediate(function () {
+      callback(null, this.parameter[id])
+    }.bind(this))
+
+    return
+  }
+
+  this.dbConfig.get('parameter-' + id, function (err, result) {
+    if (err) {
+      return callback(err)
+    }
+
+    this.parameter[id] = result
+    callback(null, this.parameter[id])
+  }.bind(this))
+}
+
+Radkummerkasten.listParameter = function (callback) {
+  this.init()
+
+  async.setImmediate(function () {
+    callback(null, [ 'bezirk' ])
+  })
+}
+
+/**
  * load the this.bezirksgrenzen (district borders) from the server
  * @param {function} callback - Callback which should be called after loading. will be passed an error or null as first parameter and the list of districts as second (array of GeoJSON objects).
  */
