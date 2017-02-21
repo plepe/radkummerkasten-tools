@@ -44,9 +44,11 @@ RadkummerkastenCloner.init = function () {
     this.options.dbName = 'radkummerkasten'
   }
   this.db = new PouchDB(this.options.dbName)
+  this.dbConfig = new PouchDB(this.options.dbName + '-config')
 
   if (typeof this.options.dbReplicateFrom !== 'undefined' && this.options.dbReplicateFrom !== 'none') {
     this.db.replicate.from(this.options.dbReplicateFrom)
+    this.dbConfig.replicate.from(this.options.dbReplicateFrom + '-config')
   }
 
   if (typeof this.options.baseUrl === 'undefined') {
