@@ -359,8 +359,14 @@ Radkummerkasten.loadBezirksgrenzen = function (callback) {
  */
 Radkummerkasten.categories = function (callback) {
   this.init()
-  console.log('TODO categories() !!!')
-  callback(null, [])
+
+  this.getParameter('category', function (err, result) {
+    if (err) {
+      return callback(err)
+    }
+
+    callback(null, result.values)
+  })
 }
 
 /**

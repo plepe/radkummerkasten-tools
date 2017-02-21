@@ -119,7 +119,7 @@ window.onload = function () {
         categories.forEach(function (category) {
           var option = document.createElement('option')
           option.value = category.id
-          option.appendChild(document.createTextNode(category.name))
+          option.appendChild(document.createTextNode(category.title))
           select.appendChild(option)
         })
 
