@@ -42,6 +42,24 @@ if ('db-url' in args) {
   RadkummerkastenCloner.set('dbName', args['db-url'])
 }
 
+var timestamp = new Date().toISOString()
+
+RadkummerkastenCloner.init()
+
+RadkummerkastenCloner.dbConfig.get('status', function (err, result) {
+  if (err && err.status === 404) {
+    result = {
+      _id: 'status'
+    }
+  } else if (err) {
+    throw(err)
+  }
+
+  result.timestamp = timestamp
+
+  RadkummerkastenCloner.dbConfig.put(result)
+})
+
 function run () {
   var count = 0
   RadkummerkastenCloner.getEntries(
