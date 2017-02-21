@@ -331,11 +331,15 @@ RadkummerkastenCloner._loadBezirksgrenzen1 = function (callback) {
         for (var i = 0; i < data.features.length; i++) {
           var feature = data.features[i]
 
+          feature.OGD_ID = feature.id
+          feature.id = feature.properties.BEZNR
+          feature.title = feature.properties.NAMEK_NUM
+
           this.parameter.bezirk.values.push(feature)
         }
 
         this.parameter.bezirk.values.sort(function (a, b) {
-          return a.properties.BEZNR - b.properties.BEZNR
+          return a.id - b.id
         })
 
         if (JSON.stringify(this.parameter.bezirk) === oldData) {
