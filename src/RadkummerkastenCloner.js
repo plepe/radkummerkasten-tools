@@ -131,7 +131,39 @@ RadkummerkastenCloner.setConfig = function (options) {
 RadkummerkastenCloner.getEntries = function (options, featureCallback, finalCallback) {
   this.init()
 
-  this.loadBezirksgrenzen(this._getEntries.bind(this, options, featureCallback, finalCallback))
+  async.parallel(
+    [
+      function (callback) {
+        this.loadBezirksgrenzen(callback)
+      }.bind(this),
+      function (callback) {
+        this.dbConfig.get('parameter-category', function (err, result) {
+          if (err && err.status === 404) {
+            result = {
+              _id: 'parameter-category',
+              id: 'category',
+              title: 'Kategorie',
+              titlePlural: 'Kategorien',
+              values: []
+            }
+          } else if (err) {
+            return callback(err)
+          }
+
+          this.parameter.category = result
+
+          callback()
+        }.bind(this))
+      }.bind(this)
+    ],
+    function (err) {
+      if (err) {
+        return finalCallback(err)
+      }
+
+      this._getEntries(options, featureCallback, finalCallback)
+    }.bind(this)
+  )
 }
 
 RadkummerkastenCloner._getEntries = function (options, featureCallback, finalCallback, error) {
@@ -158,9 +190,28 @@ RadkummerkastenCloner._getEntries = function (options, featureCallback, finalCal
         }
         var i
 
+        var oldCategories = JSON.stringify(this.parameter.category)
+        this.parameter.category.values = []
+
         categoryNames = {}
         for (var k in data.categories) {
           categoryNames[k] = data.categories[k].name
+
+          this.parameter.category.values.push({
+            id: parseInt(k),
+            title: data.categories[k].name
+          })
+        }
+
+        if (JSON.stringify(this.parameter.category) !== oldCategories) {
+          this.parameter.category.lastUpdate = new Date().toISOString()
+          this.dbConfig.put(this.parameter.category, function (err, result) {
+            if (err) {
+              console.error(err)
+            }
+
+            this.parameter.category._rev = result.rev
+          }.bind(this))
         }
 
         this.markers = data.markers
@@ -396,7 +447,7 @@ RadkummerkastenCloner.categories = function (callback) {
     for (var k in categoryNames) {
       ret.push({
         id: k,
-        name: categoryNames[k]
+        title: categoryNames[k]
       })
     }
     return ret
