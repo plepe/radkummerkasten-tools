@@ -12,8 +12,6 @@ var turf = {
 }
 var mapLayers = require('./mapLayers')
 
-var categoryNames = null
-
 /**
  * The interface to Radkummerkasten
  * @constructor
@@ -142,18 +140,24 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
     param.skip = options.offset
   }
 
-if (typeof options.bezirk === 'number') {
+  if ('bezirk' in options) {
     filter.push('bezirk')
     filterFun.push('doc.bezirk')
-    filterValues.push(options.bezirk)
+    filterValues.push(parseInt(options.bezirk))
   }
 
-  if (typeof options.category === 'string') {
+  if ('category' in options) {
     var category = null
 
-    for (k in categoryNames) {
-      if (categoryNames[k].toLowerCase() === options.category.toLowerCase()) {
-        category = k
+    if (parseInt(options.category) !== NaN) {
+      category = parseInt(options.category)
+    } else {
+      for (var i = 0 ; i < this.parameter.category.values.length; i++) {
+        var c = this.parameter.category.values[i]
+
+        if (c.title.toLowerCase() === options.category.toLowerCase()) {
+          category = c.id
+        }
       }
     }
 
