@@ -133,8 +133,10 @@ window.onload = function () {
         if (loc.match(/^#[0-9]+$/)) {
           pageShow(loc.substr(1))
         } else {
+          var scroll = popScrollTop
           pageOverview()
           updateFormFromUrl()
+          popScrollTop = scroll
           update()
         }
       })
