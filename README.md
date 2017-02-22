@@ -26,9 +26,11 @@ npm install
 cp config.yml-dist config.yml
 nano config.yml # change configuration according to your needs
 sudo npm link # mache cli tools systemweit verfügbar (optional)
-npm run build # generiere JS für die Webseite (optional)
+npm run build # generiere JS für die Webseite
 npm run doc # generiere documentation im verzeichnis doc/ (optional)
 ```
+
+Derzeit ist die Verwendung einer serverseitigen CouchDB notwendig. Siehe nächstes Kapitel.
 
 CouchDB
 -------
