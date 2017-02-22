@@ -4,6 +4,10 @@ var config
 
 try {
   config = yaml.safeLoad(fs.readFileSync('config.yml', 'utf8'))
+
+  if (config === null) {
+    config = {}
+  }
 } catch (e) {
   console.log(e)
 
