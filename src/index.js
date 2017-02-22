@@ -162,6 +162,9 @@ function updateFormFromUrl () {
     if ('category' in url) {
       form.elements.category.value = url.category
     }
+    if ('user' in url) {
+      form.elements.user.value = url.user
+    }
     if ('order' in url) {
       form.elements.order.value = url.order
     }
@@ -192,6 +195,10 @@ function _update (force, pushState) {
   }
   filter.order = form.elements.order.value
   url.order = form.elements.order.value
+  if (form.elements.user.value) {
+    filter.user = form.elements.user.value
+    url.user = form.elements.user.value
+  }
 
   url = '#' + querystring.stringify(url)
   if (pushState) {

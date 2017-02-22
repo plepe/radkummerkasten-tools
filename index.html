@@ -23,13 +23,14 @@
 
 <div id='menu'>
 <div id='menuOverview'>
-<form id='filterOverview' onChange='return update(false, true)'>
+<form id='filterOverview' onChange='return update(false, true)' onSubmit='return false;'>
   <select name='bezirk'>
     <option value='*'>* Bezirk *</option>
   </select>
   <select name='category'>
     <option value='*'>* Kategorie *</option>
   </select>
+  <input name='user' value='' placeholder='Autor (Eintrag, Kommentar)'/>
   <select name='order'>
     <option value='lastComment'>Neueste Kommentare bzw. Einträge zuerst</option>
     <option value='id'>Neueste Einträge zuerst</option>
