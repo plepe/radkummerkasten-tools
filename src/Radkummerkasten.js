@@ -216,6 +216,7 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
   }
 
   if (options.order === 'likes') {
+    filter.push('order=likes')
     filterFun.push('doc.likes')
     filterFun.push('doc.lastUpdate')
     filterFunPerComment.push('doc.likes')
@@ -224,6 +225,7 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
     param.endkey = filterValues
 
   } else if (options.order === 'lastComment') {
+    filter.push('order=lastComment')
     filterFun.push('doc.comments.length ? doc.comments[doc.comments.length - 1].date : doc.date')
     filterFun.push('doc.lastUpdate')
     filterFunPerComment.push('doc.comments.length ? doc.comments[doc.comments.length - 1].date : doc.date')
@@ -232,12 +234,14 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
     param.endkey = filterValues
 
   } else if (options.order === 'lastUpdate') {
+    filter.push('order=lastUpdate')
     filterFun.push('doc.lastUpdate')
     filterFunPerComment.push('doc.lastUpdate')
     param.startkey = filterValues.concat([ {} ])
     param.endkey = filterValues
 
   } else {
+    filter.push('order=id')
     filterFun.push('doc.id')
     filterFunPerComment.push('doc.id')
     param.startkey = filterValues.concat([ {} ])
@@ -259,12 +263,26 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
     fun += '}\n'
   }
 
-  fun = new Function('doc', fun)
-  this.db.query(
-    fun,
-    param,
-    this._getEntriesHandleResult.bind(this, options, featureCallback, finalCallback)
-  )
+  var ddoc = {
+    _id: '_design/' + filter.join('-'),
+    views: {
+      index: {
+        map: 'function (doc) {\n' + fun + '}'
+      }
+    }
+  }
+
+  this.db.put(ddoc, function (err) {
+    if (err && err.name !== 'conflict') {
+      return finalCallback(err)
+    }
+
+    this.db.query(
+      filter.join('-') + '/index',
+      param,
+      this._getEntriesHandleResult.bind(this, options, featureCallback, finalCallback)
+    )
+  }.bind(this))
 }
 
 Radkummerkasten.getEntriesById = function (ids, options, featureCallback, finalCallback, error, result) {
