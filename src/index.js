@@ -228,6 +228,16 @@ function _update (force, pushState) {
 
   var filter = buildFilter()
   overviewShowEntries(filter, 0)
+
+  // Update timestamp
+  Radkummerkasten.dbConfig.get('status', function (err, result) {
+    if (err) {
+      return
+    }
+
+    var domTs = document.getElementById('timestamp')
+    domTs.innerHTML = result.timestamp.substr(0, 16).replace('T', ' ')
+  })
 }
 
 function overviewShowEntries (filter, start) {
