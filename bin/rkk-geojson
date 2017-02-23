@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 var createGeoJson = require('../src/createGeoJson')
 var ArgHandler = require('../src/cliHandleArguments')
+var Radkummerkasten = require('../src/Radkummerkasten')
 
 var config = require('../src/loadConfig')
 Radkummerkasten.setConfig(config)
