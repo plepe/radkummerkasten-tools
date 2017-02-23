@@ -60,8 +60,17 @@ window.onload = function () {
     history.replaceState({ scrollTop: document.body.scrollTop }, '', location.hash)
   })
 
-  loadingIndicator.setActive()
+  Radkummerkasten.init()
 
+  if (Radkummerkasten.db._adapter !== 'http' && typeof Radkummerkasten.dbRepl === 'undefined') {
+    console.log('here')
+  } else {
+    onload2()
+  }
+}
+
+function onload2 () {
+  loadingIndicator.setActive()
   async.series([
     function (callback) {
       getTemplate('teaserBody', function (err, result) {
