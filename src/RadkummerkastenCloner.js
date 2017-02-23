@@ -622,7 +622,7 @@ RadkummerkastenClonerEntry.prototype._getDetails = function (options, callback) 
 
         this.properties.title = data.title
         this.properties.bezirkRkk = data.bezirk
-        this.properties.user = m[4]
+        this.properties.user = fromHTML(m[4])
         this.properties.date = parseDate(m[6])
         var p = data.htmlData.indexOf('</p>')
         this.properties.text = fromHTML(data.htmlData.substr(m[0].length, p - m[0].length))
@@ -648,7 +648,7 @@ RadkummerkastenClonerEntry.prototype._getDetails = function (options, callback) 
           m = commentsHtmlData[i].match(/<div class=""><p><span class="author"><i>(.*) schrieb am (.*), (.*):<\/i><\/span><br \/>([^]*)$/m)
           if (m) {
             this.properties.comments.push({
-              user: m[1],
+              user: fromHTML(m[1]),
               date: parseDate(m[3]),
               text: fromHTML(m[4]),
               attachments: []
