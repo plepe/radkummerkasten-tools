@@ -74,9 +74,20 @@ Radkummerkasten.enableDbReplication = function (completeCallback) {
   this.dbRepl = this.db.replicate.from(this.options.dbReplicateFrom)
   this.dbConfigRepl = this.dbConfig.replicate.from(this.options.dbReplicateFrom + '-config')
 
-  this.dbRepl.on('complete', function (info) {
+  async.parallel([
+    function (callback) {
+      this.dbRepl.on('complete', function (info) {
+        callback()
+      })
+    }.bind(this),
+    function (callback) {
+      this.dbConfigRepl.on('complete', function (info) {
+        callback()
+      })
+    }.bind(this)
+  ], function (err) {
     if (completeCallback) {
-      completeCallback()
+      completeCallback(err)
       completeCallback = null
     }
   })
