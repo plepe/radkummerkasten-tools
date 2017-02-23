@@ -344,13 +344,10 @@ window.submitDownloadForm = function () {
 
   if ('filterId' in formFilter.elements) {
     filter.id = formFilter.elements.filterId.value
+  } else {
+    filter = buildFilter()
   }
-  if ('bezirk' in formFilter.elements && formFilter.elements.bezirk.value !== '*') {
-    filter.bezirk = [ formFilter.elements.bezirk.value ]
-  }
-  if ('category' in formFilter.elements && formFilter.elements.category.value !== '*') {
-    filter.category = [ formFilter.elements.category.value ]
-  }
+
   if (formDownload.elements.includeDetails.checked) {
     filter.includeDetails = true
   }
