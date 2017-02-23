@@ -665,6 +665,8 @@ RadkummerkastenEntry.prototype._showHTMLinitMap = function (dom, options, callba
     options.preferredLayer = event.name
   })
 
+  var mapDiv = document.getElementById(options.mapData.id)
+
   if (options.embedMapAsImg) {
     leafletImage(map, function (err, canvas) {
       var img = document.createElement('img')
@@ -672,7 +674,6 @@ RadkummerkastenEntry.prototype._showHTMLinitMap = function (dom, options, callba
       img.width = dimensions.x
       img.height = dimensions.y
       img.src = canvas.toDataURL()
-      var mapDiv = document.getElementById(options.mapData.id)
 
       if (mapDiv.hasAttribute('replaceDiv')) {
         var attrs = mapDiv.attributes
