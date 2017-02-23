@@ -21,8 +21,7 @@ parser.addArgument(
   [ '--db-url' ],
   {
     help: 'URL zur CouchDB in die repliziert werden soll. Standardmäßig entweder die Werte dbName oder dbReplicateFrom von der config.yml (welche auch immer eine remote CouchDB ist).',
-    type: 'string',
-    nargs: 1
+    type: 'string'
   }
 )
 
@@ -38,8 +37,8 @@ filter.includeDetails = true
 filter.force = true
 filter.forceDetails = true
 
-if ('db-url' in args) {
-  RadkummerkastenCloner.set('dbName', args['db-url'])
+if ('db_url' in args && args.db_url)  {
+  RadkummerkastenCloner.set('dbName', args['db_url'])
 }
 
 var timestamp = new Date().toISOString()
