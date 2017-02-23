@@ -22,7 +22,7 @@ module.exports = function (filter, pipe) {
         throw (err)
       }
 
-      writer.write(entry)
+      writer.write(entry.properties)
     },
     function (err) {
       if (err) {
