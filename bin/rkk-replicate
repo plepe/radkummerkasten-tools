@@ -47,6 +47,8 @@ var updated = 0
 
 RadkummerkastenCloner.init()
 
+var status
+
 RadkummerkastenCloner.dbConfig.get('status', function (err, result) {
   if (err && err.status === 404) {
     result = {
@@ -56,9 +58,8 @@ RadkummerkastenCloner.dbConfig.get('status', function (err, result) {
     throw(err)
   }
 
+  status = result
   result.timestamp = timestamp
-
-  RadkummerkastenCloner.dbConfig.put(result)
 
   run()
 })
@@ -84,7 +85,9 @@ function run () {
         throw (err)
       }
 
-      console.log('Synchronisierung abgeschlossen. ' + updated + '/' + count + ' Enträge.')
+      RadkummerkastenCloner.dbConfig.put(status, function (err, result) {
+        console.log('Synchronisierung abgeschlossen. ' + updated + '/' + count + ' Enträge.')
+      })
     }
   )
 }
