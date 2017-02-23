@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 var ArgHandler = require('../src/cliHandleArguments')
 var createCsv = require('../src/createCsv')
+var Radkummerkasten = require('../src/Radkummerkasten')
 
 var config = require('../src/loadConfig')
 Radkummerkasten.setConfig(config)

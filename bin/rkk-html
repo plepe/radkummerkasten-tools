@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 var createHTML = require('../src/createHTML')
 var ArgHandler = require('../src/cliHandleArguments')
+var Radkummerkasten = require('../src/Radkummerkasten')
 
 var config = require('../src/loadConfig')
 Radkummerkasten.setConfig(config)
