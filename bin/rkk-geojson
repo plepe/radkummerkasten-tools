@@ -11,11 +11,6 @@ parser.description = 'Lade Einträge aus dem Radkummerkasten und generiere eine 
 
 var args = ArgHandler.parseArgs()
 
-var headers = [ 'id', 'category', 'status', 'lat', 'lon' ]
-if (args.details) {
-  headers = [ 'id', 'title', 'bezirk', 'user', 'date', 'category', 'status', 'likes', 'lat', 'lon', 'text', 'commentsCount' ]
-}
-
 var filter = {}
 
 var filter = ArgHandler.compileFilter(args)

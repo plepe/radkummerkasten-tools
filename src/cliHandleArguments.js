@@ -11,7 +11,7 @@ function init () {
   parser.addArgument(
     [ '-d', '--details' ],
     {
-      help: 'Lade außerdem die detailierten Daten für alle (passenden) Einträge (Achtung: Für jeden Eintrag muss eine Anfrage an den Server gestellt werden - das dauert).',
+      help: 'Zeige detailierte Daten für alle (passenden) Einträge.',
       nargs: 0
     }
   )
