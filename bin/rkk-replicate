@@ -1,0 +1,93 @@
+#!/usr/bin/env node
+var createHTML = require('../src/createHTML')
+var ArgHandler = require('../src/cliHandleArguments')
+var RadkummerkastenCloner = require('../src/RadkummerkastenCloner')
+global.XMLHttpRequest = require('w3c-xmlhttprequest').XMLHttpRequest
+var PouchDB = require('pouchdb')
+
+var config = require('../src/loadConfig')
+
+if (typeof config.dbReplicateFrom !== 'undefined') {
+  config.dbName = config.dbReplicateFrom
+  delete config.dbReplicateFrom
+}
+
+RadkummerkastenCloner.setConfig(config)
+
+var parser = ArgHandler.init()
+parser.description = 'Lade Einträge aus dem Radkummerkasten und repliziere sie in eine CouchDB Datenbank.'
+
+parser.addArgument(
+  [ '--db-url' ],
+  {
+    help: 'URL zur CouchDB in die repliziert werden soll. Standardmäßig entweder die Werte dbName oder dbReplicateFrom von der config.yml (welche auch immer eine remote CouchDB ist).',
+    type: 'string',
+    nargs: 1
+  }
+)
+
+var args = ArgHandler.parseArgs()
+
+args.details = true
+
+var filter = {}
+
+var filter = ArgHandler.compileFilter(args)
+
+filter.includeDetails = true
+filter.force = true
+filter.forceDetails = true
+
+if ('db-url' in args) {
+  RadkummerkastenCloner.set('dbName', args['db-url'])
+}
+
+var timestamp = new Date().toISOString()
+var updated = 0
+
+RadkummerkastenCloner.init()
+
+var status
+
+RadkummerkastenCloner.dbConfig.get('status', function (err, result) {
+  if (err && err.status === 404) {
+    result = {
+      _id: 'status'
+    }
+  } else if (err) {
+    throw(err)
+  }
+
+  status = result
+  result.timestamp = timestamp
+
+  run()
+})
+
+function run () {
+  var count = 0
+  RadkummerkastenCloner.getEntries(
+    filter,
+    function (err, entry) {
+      if (err) {
+        throw (err)
+      }
+
+      if (entry.properties.lastUpdate > timestamp) {
+        console.log('synched ' + entry.id)
+        updated++
+      }
+
+      count++
+    },
+    function (err) {
+      if (err) {
+        throw (err)
+      }
+
+      RadkummerkastenCloner.dbConfig.put(status, function (err, result) {
+        console.log('Synchronisierung abgeschlossen. ' + updated + '/' + count + ' Enträge.')
+      })
+    }
+  )
+}

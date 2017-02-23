@@ -7,6 +7,7 @@ Command Line Utilities
 * `rkk-csv`: Exportiere die ausgewählten Einträge als CSV Datei.
 * `rkk-geojson`: Exportiere die ausgewählten Einträge als GeoJSON Datei.
 * `rkk-html`: Exportiere die ausgewählten Einträge als HTML Datei mit wählbarem Template.
+* `rkk-replicate`: Synchronisiere die Daten des Radkummerkastens in eine Datenbank vom Typ 'CouchDB'.
 
 Mögliche Optionen für die utilities bekommt man bei Aufruf mit dem Parameter `-h`, z.b.: `rkk-csv -h`.
 
@@ -22,9 +23,40 @@ Um `radkummerkasten-tools` zu installieren, muss [Node.js](https://nodejs.org/) 
 git clone https://github.com/plepe/radkummerkasten-tools.git
 cd radkummerkasten-tools
 npm install
+cp config.yml-dist config.yml
+nano config.yml # change configuration according to your needs
 sudo npm link # mache cli tools systemweit verfügbar (optional)
-npm run build # generiere JS für die Webseite (optional)
+npm run build # generiere JS für die Webseite
 npm run doc # generiere documentation im verzeichnis doc/ (optional)
+```
+
+Derzeit ist die Verwendung einer serverseitigen CouchDB notwendig. Siehe nächstes Kapitel.
+
+CouchDB
+-------
+Wenn eine serverseitige CouchDB eingesetzt wird, dann muss der Webclient nicht
+die Daten aus dem Radkummerkasten clonen, sondern diese können mit dem
+'rkk-replicate' Skript am Server aktuell gehalten werden - die Webseite greift
+auf diese Daten dann nur zu.
+
+```sh
+sudo apt-get install couchdb
+```
+
+Die Datei `/etc/couchdb/local.ini` editieren:
+```
+[httpd]
+......... am ende des blocks .........
+enable_cors = true
+
+[cors]
+origins = *
+credentials = true
+```
+
+Wenn auf der Shell `rkk-replicate` ausgeführt wird, werden alle Daten aus dem Radkummerkasten eingelesen:
+```sh
+bin/rkk-replicate
 ```
 
 API Usage

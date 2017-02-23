@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 var ArgHandler = require('../src/cliHandleArguments')
 var createCsv = require('../src/createCsv')
+var Radkummerkasten = require('../src/Radkummerkasten')
+
+var config = require('../src/loadConfig')
+Radkummerkasten.setConfig(config)
 
 var parser = ArgHandler.init()
 parser.description = 'Lade Einträge aus dem Radkummerkasten und generiere eine CSV Datei daraus. Die Datei verwendet \',\' als Separator und UTF-8 als Encoding.'

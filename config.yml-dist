@@ -1,0 +1,21 @@
+# Configuration file for the radkummerkasten-tools. See config.yml-dist for the
+# most current version of this file.
+#
+# By default most/all configuration options are commented. If you want
+# to change a value, just remove the leading '#'. You need to run 'npm run
+# build' after changing this file.
+
+### Base URL of the Radkummerkasten. http/https will be prefixed automatically.
+#baseUrl: //www.radkummerkasten.at
+
+### URLs at Radkummerkasten to read data
+#urlBezirksgrenzen: /wp-content/plugins/radkummerkasten/js/data.wien.gv.at_bezirksgrenzen.json
+#urlMapMarkers: /ajax/?map&action=getMapMarkers
+#urlMapEntry: /ajax/?map&action=getMapEntry&marker={id}
+
+### Databases
+# Use local DB 'radkummerkasten' (IndexDB, WebSQL or LevelDB). This could also be a remote CouchDB URL, e.g. https://rkk.plepe.at/couchdb/radkummerkasten.
+#dbName: radkummerkasten
+
+# URL to remote CouchDB, e.g. https://rkk.plepe.at/couchdb/radkummerkasten. If undefined/none, the Radkummerkasten will be directly cloned to dbName.
+#dbReplicateFrom: none

@@ -2,7 +2,7 @@ var csvWriter = require('csv-write-stream')
 var Radkummerkasten = require('./Radkummerkasten')
 
 module.exports = function (filter, pipe) {
-  var headers = [ 'id', 'bezirk', 'category', 'categoryName', 'status', 'lat', 'lon' ]
+  var headers = [ 'id', 'title', 'bezirk', 'bezirkRkk', 'user', 'date', 'category', 'categoryName', 'status', 'likes', 'lat', 'lon' ]
   if (filter.includeDetails) {
     headers = [ 'id', 'title', 'bezirk', 'bezirkRkk', 'user', 'date', 'category', 'categoryName', 'status', 'likes', 'lat', 'lon', 'text', 'commentsCount', 'attachmentsCount' ]
   }
@@ -22,7 +22,7 @@ module.exports = function (filter, pipe) {
         throw (err)
       }
 
-      writer.write(entry)
+      writer.write(entry.properties)
     },
     function (err) {
       if (err) {

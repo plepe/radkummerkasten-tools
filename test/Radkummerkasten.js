@@ -137,7 +137,7 @@ describe('Radkummerkasten', function () {
         function (err, entry) {
           assert.equal(err, null, 'Error on featureCallback!')
           results.push(entry.id)
-          assert.equal(entry.bezirk, 15, 'Falscher Bezirk')
+          assert.equal(entry.properties.bezirk, 15, 'Falscher Bezirk')
         },
         function (err) {
           assert.deepEqual(results, [ 2 ], 'Wrong count of results') 
@@ -158,8 +158,8 @@ describe('Radkummerkasten', function () {
         function (err, entry) {
           assert.equal(err, null, 'Error on featureCallback!')
           results.push(entry.id)
-          assert.equal(entry.comments.length, 1, 'Wrong count of comments')
-          assert.equal(entry.comments[0].attachments.length, 2, 'Comment should have two attachments')
+          assert.equal(entry.properties.comments.length, 1, 'Wrong count of comments')
+          assert.equal(entry.properties.comments[0].attachments.length, 2, 'Comment should have two attachments')
         },
         function (err) {
           assert.deepEqual(results, [ 3 ], 'Wrong count of results')
@@ -180,8 +180,8 @@ describe('Radkummerkasten', function () {
         function (err, entry) {
           assert.equal(err, null, 'Error on featureCallback!')
           results.push(entry.id)
-          assert.equal(entry.comments.length, 0, 'Wrong count of comments')
-          assert.equal(entry.attachments.length, 3, 'Comment should have three attachments')
+          assert.equal(entry.properties.comments.length, 0, 'Wrong count of comments')
+          assert.equal(entry.properties.attachments.length, 3, 'Comment should have three attachments')
         },
         function (err) {
           assert.deepEqual(results, [ 4 ], 'Wrong count of results')

@@ -14,6 +14,9 @@ var loadingIndicator = require('simple-loading-indicator')
 var FileSaver = require('file-saver');
 var querystring = require('querystring')
 
+var config = require('../src/loadConfig')
+Radkummerkasten.setConfig(config)
+
 var teaserTemplate
 var pageOverviewLoaded = false
 var popScrollTop = null
@@ -24,16 +27,14 @@ window.knownEntries = {}
 const step = 20
 
 function showEntry(entry, div, callback) {
-  entry.getDetails({}, function (err) {
-    var data = JSON.parse(JSON.stringify(entry))
-    data.options = Radkummerkasten.options
+  var data = JSON.parse(JSON.stringify(entry))
+  data.options = Radkummerkasten.options
 
-    div.innerHTML = teaserTemplate.render(data)
+  div.innerHTML = teaserTemplate.render(data.properties)
 
-    if (callback) {
-      callback(err)
-    }
-  })
+  if (callback) {
+    callback()
+  }
 }
 
 function restoreScroll() {
@@ -118,7 +119,7 @@ window.onload = function () {
         categories.forEach(function (category) {
           var option = document.createElement('option')
           option.value = category.id
-          option.appendChild(document.createTextNode(category.name))
+          option.appendChild(document.createTextNode(category.title))
           select.appendChild(option)
         })
 
@@ -132,8 +133,10 @@ window.onload = function () {
         if (loc.match(/^#[0-9]+$/)) {
           pageShow(loc.substr(1))
         } else {
+          var scroll = popScrollTop
           pageOverview()
           updateFormFromUrl()
+          popScrollTop = scroll
           update()
         }
       })
@@ -159,33 +162,63 @@ function updateFormFromUrl () {
     if ('category' in url) {
       form.elements.category.value = url.category
     }
+    if ('user' in url) {
+      form.elements.user.value = url.user
+    }
+    if ('order' in url) {
+      form.elements.order.value = url.order
+    }
   }
 }
 
 window.update = function (force, pushState) {
-  var entries = []
-  var content = document.getElementById('pageOverview')
-  var form = document.getElementById('filterOverview')
-  pageOverviewLoaded = true
+  if (force) {
+    Radkummerkasten.checkUpdate(_update.bind(this, force, pushState))
+  } else {
+    _update(force, pushState)
+  }
+}
 
-  var url = {}
+function buildFilter () {
+  var form = document.getElementById('filterOverview')
   var filter = {}
+
   if (form.elements.bezirk.value !== '*') {
-    filter.bezirk = [ form.elements.bezirk.value ]
+    filter.bezirk = form.elements.bezirk.value
+  }
+  if (form.elements.category.value !== '*') {
+    filter.category = form.elements.category.value
+  }
+  filter.order = form.elements.order.value
+  if (form.elements.user.value) {
+    filter.user = form.elements.user.value
+  }
+
+  return filter
+}
+
+function buildUrl () {
+  var form = document.getElementById('filterOverview')
+  var url = {}
+
+  if (form.elements.bezirk.value !== '*') {
     url.bezirk = form.elements.bezirk.value
   }
   if (form.elements.category.value !== '*') {
-    filter.category = [ form.elements.category.value ]
     url.category = form.elements.category.value
   }
-
-  if (force) {
-    filter.force = true
+  url.order = form.elements.order.value
+  if (form.elements.user.value) {
+    url.user = form.elements.user.value
   }
 
-  knownEntries = {}
-  content.innerHTML = ''
+  return url
+}
 
+function _update (force, pushState) {
+  pageOverviewLoaded = true
+
+  var url = buildUrl()
   url = '#' + querystring.stringify(url)
   if (pushState) {
     history.pushState({ scrollTop: document.body.scrollTop }, '', url)
@@ -193,74 +226,64 @@ window.update = function (force, pushState) {
     history.replaceState({ scrollTop: document.body.scrollTop }, '', url)
   }
 
-  loadingIndicator.setActive()
+  var filter = buildFilter()
+  overviewShowEntries(filter, 0)
+
+  // Update timestamp
+  Radkummerkasten.dbConfig.get('status', function (err, result) {
+    if (err) {
+      return
+    }
+
+    var domTs = document.getElementById('timestamp')
+    domTs.innerHTML = result.timestamp.substr(0, 16).replace('T', ' ')
+  })
+}
+
+function overviewShowEntries (filter, start) {
+  var content = document.getElementById('pageOverview')
+
+  if (start === 0) {
+    content.innerHTML = ''
+  }
+
+  filter.limit = step + 1
+  filter.offset = start
+
+  var count = 0
 
   Radkummerkasten.getEntries(
     filter,
     function (err, entry) {
-      if (!(entry.id in knownEntries)) {
-        entries.push(entry)
-        knownEntries[entry.id] = true
+      count++
+
+      if (count > step) {
+        // load more
+        var divLoadMore = document.createElement('div')
+        divLoadMore.className = 'loadMore'
+
+        var a = document.createElement('a')
+        a.appendChild(document.createTextNode('lade mehr Einträge'))
+        a.href = '#'
+        a.onclick = function () {
+          content.removeChild(divLoadMore)
+          overviewShowEntries(filter, start + step)
+
+          return false
+        }
+
+        divLoadMore.appendChild(a)
+        content.appendChild(divLoadMore)
+      } else {
+        var div = document.createElement('div')
+        div.className = 'entry'
+        content.appendChild(div)
+
+        showEntry(entry, div, function (err, result) {
+        })
       }
     },
     function (err) {
-      var willLoad = Math.min(entries.length, step)
-      var loaded = 0
-      loadingIndicator.setValue(1 / (willLoad + 1))
-
-      if (willLoad === 0) {
-        loadingIndicator.setInactive()
-      }
-
-      for (var i = Math.max(entries.length - step, 0); i < entries.length; i++) {
-        var div = document.createElement('div')
-        div.className = 'entry'
-        content.insertBefore(div, content.firstChild)
-
-        showEntry(entries[i], div, function (err, result) {
-          loaded++
-          loadingIndicator.setValue((loaded + 1) / (willLoad + 1))
-
-          if (loaded >= willLoad) {
-            loadingIndicator.setInactive()
-          }
-        })
-      }
-
-      var done = step
-
-      if (entries.length <= step) {
-        restoreScroll()
-        return
-      }
-
-      var divLoadMore = document.createElement('div')
-      divLoadMore.className = 'loadMore'
-
-      var a = document.createElement('a')
-      a.appendChild(document.createTextNode('lade mehr Einträge'))
-      a.href = '#'
-      a.onclick = function () {
-        for (var i = entries.length - done - 1; i >= Math.max(entries.length - done - step, 0); i--) {
-          var div = document.createElement('div')
-          div.className = 'entry'
-          content.insertBefore(div, divLoadMore)
-
-          showEntry(entries[i], div)
-        }
-
-        done += step
-
-        if (entries.length <= done) {
-          content.removeChild(divLoadMore)
-        }
-
-        return false
-      }
-
-      divLoadMore.appendChild(a)
-      content.appendChild(divLoadMore)
-
       restoreScroll()
     }
   )
@@ -331,13 +354,10 @@ window.submitDownloadForm = function () {
 
   if ('filterId' in formFilter.elements) {
     filter.id = formFilter.elements.filterId.value
+  } else {
+    filter = buildFilter()
   }
-  if ('bezirk' in formFilter.elements && formFilter.elements.bezirk.value !== '*') {
-    filter.bezirk = [ formFilter.elements.bezirk.value ]
-  }
-  if ('category' in formFilter.elements && formFilter.elements.category.value !== '*') {
-    filter.category = [ formFilter.elements.category.value ]
-  }
+
   if (formDownload.elements.includeDetails.checked) {
     filter.includeDetails = true
   }
@@ -393,9 +413,7 @@ window.pageShow = function (id) {
 
   Radkummerkasten.getEntries(
     {
-      id: [ '' + id ],
-      includeDetails: true,
-      forceDetails: true
+      id: [ '' + id ]
     },
     function (err, entry) {
       loadingIndicator.setInactive()

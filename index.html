@@ -23,12 +23,19 @@
 
 <div id='menu'>
 <div id='menuOverview'>
-<form id='filterOverview' onChange='return update(false, true)'>
+<form id='filterOverview' onChange='return update(false, true)' onSubmit='return false;'>
   <select name='bezirk'>
     <option value='*'>* Bezirk *</option>
   </select>
   <select name='category'>
     <option value='*'>* Kategorie *</option>
+  </select>
+  <input name='user' value='' placeholder='Autor (Eintrag, Kommentar)'/>
+  <select name='order'>
+    <option value='lastComment'>Neueste Kommentare bzw. Einträge zuerst</option>
+    <option value='id'>Neueste Einträge zuerst</option>
+    <option value='likes'>Einträge mit den meisten Unterstützungen zuerst</option>
+    <option value='lastUpdate'>Einträge sortiert nach letzter Änderung</option>
   </select>
 </form>
 </div>
@@ -40,7 +47,7 @@
 </div>
 
 <a href='javascript:openDownload()'>Download</a> |
-<a href='javascript:update(true, false)'>Reload</a>
+<a href='javascript:update(true, false)'>Reload</a> (Stand: <span id='timestamp'></span>)
 
 <form id='downloadOptions' onSubmit='return submitDownloadForm()'>
   <div class='downloadOption'>
@@ -52,8 +59,8 @@
       <option value='office'>Office (HTML, optimiert für den Import in LibreOffice/OpenOffice)</option>
     </select>
   </div>
-  <div class='downloadOption' downloadTypes='csv,geojson'>
-    <input name='includeDetails' type='checkbox' />Lade Details für Einträge
+  <div class='downloadOption' downloadTypes='csv'>
+    <input name='includeDetails' type='checkbox' />Inkludiere Details für Einträge
   </div>
   <div class='downloadOption' downloadTypes='html,office'>
     <input name='embedImgs' type='checkbox' />Bilder einbetten

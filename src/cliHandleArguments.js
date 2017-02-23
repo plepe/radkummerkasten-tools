@@ -11,7 +11,7 @@ function init () {
   parser.addArgument(
     [ '-d', '--details' ],
     {
-      help: 'Lade außerdem die detailierten Daten für alle (passenden) Einträge (Achtung: Für jeden Eintrag muss eine Anfrage an den Server gestellt werden - das dauert).',
+      help: 'Zeige detailierte Daten für alle (passenden) Einträge.',
       nargs: 0
     }
   )
@@ -27,16 +27,14 @@ function init () {
   parser.addArgument(
     [ '-b', '--bezirk' ],
     {
-      help: 'Lade nur Einträge im angegebenen Bezirk, bzw. in den angegebenen Bezirken.',
-      nargs: '*'
+      help: 'Lade nur Einträge im angegebenen Bezirk.',
     }
   )
 
   parser.addArgument(
     [ '-k', '--kategorie' ],
     {
-      help: 'Lade nur Einträge der angegeben Kategorie(n). Diese können als nummerischer Wert oder Text angegeben werden.',
-      nargs: '*',
+      help: 'Lade nur Einträge der angegeben Kategorie.',
       dest: 'category'
     }
   )
@@ -76,10 +74,10 @@ function compileFilter (args) {
     filter.id = args.id
   }
   if (args.bezirk) {
-    filter.bezirk = args.bezirk
+    filter.bezirk = parseInt(args.bezirk)
   }
   if (args.category) {
-    filter.category = args.category
+    filter.category = parseInt(args.category) === NaN ? args.category : parseInt(args.category)
   }
   filter.includeDetails = !!args.details
 
