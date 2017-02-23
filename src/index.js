@@ -179,27 +179,46 @@ window.update = function (force, pushState) {
   }
 }
 
-function _update (force, pushState) {
+function buildFilter () {
   var form = document.getElementById('filterOverview')
-  pageOverviewLoaded = true
-
-  var url = {}
   var filter = {}
+
   if (form.elements.bezirk.value !== '*') {
     filter.bezirk = form.elements.bezirk.value
-    url.bezirk = form.elements.bezirk.value
   }
   if (form.elements.category.value !== '*') {
     filter.category = form.elements.category.value
-    url.category = form.elements.category.value
   }
   filter.order = form.elements.order.value
-  url.order = form.elements.order.value
   if (form.elements.user.value) {
     filter.user = form.elements.user.value
+  }
+
+  return filter
+}
+
+function buildUrl () {
+  var form = document.getElementById('filterOverview')
+  var url = {}
+
+  if (form.elements.bezirk.value !== '*') {
+    url.bezirk = form.elements.bezirk.value
+  }
+  if (form.elements.category.value !== '*') {
+    url.category = form.elements.category.value
+  }
+  url.order = form.elements.order.value
+  if (form.elements.user.value) {
     url.user = form.elements.user.value
   }
 
+  return url
+}
+
+function _update (force, pushState) {
+  pageOverviewLoaded = true
+
+  var url = buildUrl()
   url = '#' + querystring.stringify(url)
   if (pushState) {
     history.pushState({ scrollTop: document.body.scrollTop }, '', url)
@@ -207,6 +226,7 @@ function _update (force, pushState) {
     history.replaceState({ scrollTop: document.body.scrollTop }, '', url)
   }
 
+  var filter = buildFilter()
   overviewShowEntries(filter, 0)
 }
 
