@@ -13,6 +13,8 @@ var async = require('async')
 var loadingIndicator = require('simple-loading-indicator')
 var FileSaver = require('file-saver');
 var querystring = require('querystring')
+var moment = require('moment')
+require('moment/locale/de')
 
 var config = require('../src/loadConfig')
 Radkummerkasten.setConfig(config)
@@ -236,7 +238,8 @@ function _update (force, pushState) {
     }
 
     var domTs = document.getElementById('timestamp')
-    domTs.innerHTML = result.timestamp.substr(0, 16).replace('T', ' ')
+    var ts = moment(result.timestamp)
+    domTs.innerHTML = ts.format().substr(0, 16).replace('T', ' ')
   })
 }
 
