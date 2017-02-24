@@ -27,10 +27,10 @@ window.knownEntries = {}
 const step = 20
 
 function showEntry(entry, div, callback) {
-  var data = JSON.parse(JSON.stringify(entry))
+  var data = JSON.parse(JSON.stringify(entry.properties))
   data.options = Radkummerkasten.options
 
-  div.innerHTML = teaserTemplate.render(data.properties)
+  div.innerHTML = teaserTemplate.render(data)
 
   if (callback) {
     callback()
