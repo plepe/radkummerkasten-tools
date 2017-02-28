@@ -154,7 +154,7 @@ Radkummerkasten.setConfig = function (options) {
  * @param {number} options.offset - Skip the first n entries (default: 0)
  * @param {boolean} options.force=false - Force reload of list
  * @param {boolean} options.forceDetails=false - If a result already exists in cache, force reload anyway
- * @param {string} [options.order=id] - Order results by one of the following criteria: 'id': newest entries first, 'likes': most likes first, 'lastComment': order by date of last comment (or creation of entry), 'lastUpdate': order by date of last visible change.
+ * @param {string} [options.order=id] - Order results by one of the following criteria: 'id': newest entries first, 'likes': most likes first, 'lastComment': order by date of last comment (or creation of entry), 'lastUpdate': order by date of last visible change, 'commentsCount': most commented entries first.
  * @param {Radkummerkasten~featureCallback} featureCallback - The featureCallback function will be called for each received entry.
  * @param {Radkummerkasten~finalCallback} [finalCallback] - The finalCallback will be called after the last entry.
  */
@@ -231,6 +231,15 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
     filterFun.push('doc.likes')
     filterFun.push('doc.lastUpdate')
     filterFunPerComment.push('doc.likes')
+    filterFunPerComment.push('doc.lastUpdate')
+    param.startkey = filterValues.concat([ {}, {} ])
+    param.endkey = filterValues
+
+  } else if (options.order === 'commentsCount') {
+    filter.push('order=commentsCount')
+    filterFun.push('doc.commentsCount')
+    filterFun.push('doc.lastUpdate')
+    filterFunPerComment.push('doc.commentsCount')
     filterFunPerComment.push('doc.lastUpdate')
     param.startkey = filterValues.concat([ {}, {} ])
     param.endkey = filterValues
