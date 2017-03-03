@@ -1,6 +1,7 @@
 var request = require('request-xmlhttprequest')
 var async = require('async')
 var PouchDB = require('pouchdb')
+PouchDB.plugin(require('pouchdb-find'))
 var parseDate = require('./parseDate')
 var getTemplate = require('./getTemplate')
 var fromHTML = require('./fromHTML')

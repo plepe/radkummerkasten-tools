@@ -43,6 +43,7 @@
     "jsdom": "^9.9.1",
     "leaflet-image": "^0.4.0",
     "pouchdb": "^6.1.1",
+    "pouchdb-find": "^0.10.5",
     "request-xmlhttprequest": "*"
   },
   "devDependencies": {
