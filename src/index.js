@@ -72,7 +72,7 @@ window.onload = function () {
           return
         }
 
-        loadingIndicator.setValue(0.333)
+        loadingIndicator.setValue(0.25)
 
         teaserTemplate = twig({
           data: result
@@ -88,7 +88,7 @@ window.onload = function () {
           return
         }
 
-        loadingIndicator.setValue(0.667)
+        loadingIndicator.setValue(0.5)
 
         var select = document.getElementById('filterOverview').elements.bezirk
 
@@ -114,7 +114,7 @@ window.onload = function () {
           return
         }
 
-        loadingIndicator.setValue(1)
+        loadingIndicator.setValue(0.75)
 
         var select = document.getElementById('filterOverview').elements.category
 
@@ -125,6 +125,12 @@ window.onload = function () {
           select.appendChild(option)
         })
 
+        callback()
+      })
+    },
+    function (callback) {
+      Radkummerkasten.checkUpdate(function () {
+        loadingIndicator.setValue(1)
         callback()
       })
     },
