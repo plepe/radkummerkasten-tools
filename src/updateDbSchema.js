@@ -1,6 +1,10 @@
 var Radkummerkasten = require('./RadkummerkastenCloner')
 
-var currentSchema = 0
+var currentSchema = 1
+
+function update0to1 (doc) {
+  doc.lastCommentDate = doc.comments.length ? doc.comments[doc.comments.length - 1].date : doc.date
+}
 
 function updateDbSchema (status, callback) {
   var schema = 'schema' in status ? status.schema : 0

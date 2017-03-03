@@ -510,6 +510,7 @@ RadkummerkastenCloner.clearCache = function () {
  * @property {number} commentsCount - Count of comments (load details first)
  * @property {RadkummerkastenClonerEntry.attachment[]} attachments - Attachments (load details first)
  * @property {number} attachmentsCount - Count of attachments (load details first)
+ * @property {string} lastCommentDate - Date of the last comment, or if not commented the date of creation.
  * @property {string} lastUpdate - The entry in the current state was first seen at: ISO-8601 date.
  * @property {string[]} errors - List of errors which occured during loading
  */
@@ -671,6 +672,7 @@ RadkummerkastenClonerEntry.prototype._getDetails = function (options, callback) 
         }
         this.properties.commentsCount = this.properties.comments.length
         this.properties.attachmentsCount = this.properties.attachments.length
+        this.properties.lastCommentDate = this.properties.comments.length ? this.properties.comments[this.properties.comments.length - 1].date : this.properties.date
 
         this.hasDetails = true
 
