@@ -2,6 +2,7 @@
 var createHTML = require('../src/createHTML')
 var ArgHandler = require('../src/cliHandleArguments')
 var RadkummerkastenCloner = require('../src/RadkummerkastenCloner')
+var updateDbSchema = require('../src/updateDbSchema')
 global.XMLHttpRequest = require('w3c-xmlhttprequest').XMLHttpRequest
 var PouchDB = require('pouchdb')
 
@@ -60,7 +61,7 @@ RadkummerkastenCloner.dbConfig.get('status', function (err, result) {
   status = result
   result.timestamp = timestamp
 
-  run()
+  updateDbSchema(status, run)
 })
 
 function run () {
