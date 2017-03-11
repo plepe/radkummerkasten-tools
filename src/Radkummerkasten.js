@@ -300,6 +300,10 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
 
   this.db.get('_design/' + filter.join('-'),
     function (err, result) {
+      if (err && err.status !== 404) {
+        return finalCallback(err)
+      }
+
       if (JSON.stringify(result.views) === JSON.stringify(ddoc.views)) {
         // query function is still the same - don't update
         this.dbQueryFunctionsChecked[filter.join('-')] = true
