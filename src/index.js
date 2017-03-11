@@ -264,6 +264,12 @@ function overviewShowEntries (filter, start) {
   Radkummerkasten.getEntries(
     filter,
     function (err, entry) {
+      if (err) {
+        alert(err)
+        restoreScroll()
+        return
+      }
+
       count++
 
       if (count > step) {
@@ -293,6 +299,10 @@ function overviewShowEntries (filter, start) {
       }
     },
     function (err) {
+      if (err) {
+        alert(err)
+      }
+
       restoreScroll()
     }
   )
