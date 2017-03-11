@@ -260,13 +260,17 @@ function overviewShowEntries (filter, start) {
   filter.offset = start
 
   var count = 0
+  loadingIndicator.setActive()
 
   Radkummerkasten.getEntries(
     filter,
     function (err, entry) {
+      loadingIndicator.setValue(count / step)
+
       if (err) {
         alert(err)
         restoreScroll()
+        loadingIndicator.setInactive()
         return
       }
 
@@ -303,6 +307,8 @@ function overviewShowEntries (filter, start) {
         alert(err)
       }
 
+      loadingIndicator.setValue(1)
+      loadingIndicator.setInactive()
       restoreScroll()
     }
   )
