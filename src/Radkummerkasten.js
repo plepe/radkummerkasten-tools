@@ -304,14 +304,16 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
         return finalCallback(err)
       }
 
-      if (JSON.stringify(result.views) === JSON.stringify(ddoc.views)) {
+      if (result && JSON.stringify(result.views) === JSON.stringify(ddoc.views)) {
         // query function is still the same - don't update
         this.dbQueryFunctionsChecked[filter.join('-')] = true
 
         run.call(this)
       } else {
-        // query function needs update
-        ddoc._rev = result._rev
+        if (result) {
+          // query function needs update
+          ddoc._rev = result._rev
+        }
 
         this.db.put(ddoc, function (err) {
           if (err) {
