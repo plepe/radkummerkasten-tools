@@ -166,6 +166,7 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
   var filterValues = []
   var filterFun = []
   var filterFunPerComment = []
+  var needPerComment = false
 
   var param = {
     descending: true,
@@ -225,6 +226,7 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
     filterFun.push('doc.user')
     filterValues.push(options.user)
     filterFunPerComment.push('comment.user')
+    needPerComment = true
   }
 
   if (options.order === 'likes') {
@@ -273,7 +275,7 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
   fun += 'emit(r)\n'
   fun += 'var done = [ JSON.stringify(r) ]\n'
 
-  if (filterFunPerComment.length) {
+  if (needPerComment) {
     fun += 'for (var c = 0; c < doc.comments.length; c++) {\n'
     fun += '  var comment = doc.comments[c]\n'
     fun += '  r = [ ' + filterFunPerComment.join(', ') + ' ]\n'
