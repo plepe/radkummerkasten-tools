@@ -142,8 +142,19 @@ window.onload = function () {
           pageShow(loc.substr(1))
         } else {
           var scroll = popScrollTop
-          pageOverview()
-          updateFormFromUrl()
+          var url = updateFormFromUrl()
+	  if ('page' in url) {
+	    var page = 'page' + url.page
+
+	    if (page in window) {
+	      window[page]()
+	    } else {
+	      alert('Seite "' + url.page + '" nicht gefunden!')
+	      pageOverview()
+	    }
+	  } else {
+	    pageOverview()
+	  }
           popScrollTop = scroll
           update()
         }
@@ -176,7 +187,11 @@ function updateFormFromUrl () {
     if ('order' in url) {
       form.elements.order.value = url.order
     }
+
+    return url
   }
+
+  return {}
 }
 
 window.update = function (force, pushState) {
