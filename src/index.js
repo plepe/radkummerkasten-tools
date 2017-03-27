@@ -201,6 +201,12 @@ function buildFilter () {
   if (form.elements.user.value) {
     filter.user = form.elements.user.value
   }
+  if (form.elements.date_start.value || form.elements.date_end.value) {
+    filter.date = [
+      form.elements.date_start.value ? form.elements.date_start.value : null,
+      form.elements.date_end.value ? form.elements.date_end.value : null
+    ]
+  }
 
   return filter
 }
