@@ -92,3 +92,17 @@ img#logo {
     max-width: 100%;
   }
 }
+
+body #pageOverview,
+body #pageShow,
+body #menuOverview,
+body #menuShow
+{
+  display: none;
+}
+
+body.pageOverview #pageOverview,
+body.pageShow #pageShow
+{
+  display: block;
+}

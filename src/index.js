@@ -425,12 +425,9 @@ window.submitDownloadForm = function () {
 
 window.pageShow = function (id) {
   currentPage = 'Show'
-  document.getElementById('menuOverview').style.display = 'none'
-  document.getElementById('pageOverview').style.display = 'none'
+  document.body.className = 'pageShow'
   var menu = document.getElementById('menuShow')
-  menu.style.display = 'block'
   var page = document.getElementById('pageShow')
-  page.style.display = 'block'
   page.innerHTML = ''
   document.getElementById('filterShow').elements.filterId.value = id
 
@@ -462,11 +459,8 @@ window.pageShow = function (id) {
 }
 
 window.pageOverview = function () {
+  document.body.className = 'pageOverview'
   currentPage = 'Overview'
-  document.getElementById('pageOverview').style.display = 'block'
-  document.getElementById('menuOverview').style.display = 'block'
-  document.getElementById('pageShow').style.display = 'none'
-  document.getElementById('menuShow').style.display = 'none'
 
   if (!pageOverviewLoaded) {
     update()
