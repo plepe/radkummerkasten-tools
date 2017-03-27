@@ -25,6 +25,7 @@ var popScrollTop = null
 var preferredLayer = null
 var entryOptions = {}
 var currentPage = 'Overview'
+var filterOverview = null
 window.knownEntries = {}
 const step = 20
 
@@ -48,6 +49,9 @@ function restoreScroll() {
 }
 
 window.onload = function () {
+  var bezirkValues = {}
+  var categoryValues = {}
+
   document.getElementById('version').appendChild(document.createTextNode(Radkummerkasten.version))
 
   window.addEventListener('popstate', function (event) {
@@ -88,21 +92,14 @@ window.onload = function () {
           return
         }
 
-        loadingIndicator.setValue(0.5)
-
-        var select = document.getElementById('filterOverview').elements.bezirk
-
         bezirke.forEach(function (bezirk) {
-          var option = document.createElement('option')
-          option.value = bezirk.properties.BEZNR
-          option.appendChild(document.createTextNode(bezirk.properties.NAMEK_NUM))
-          select.appendChild(option)
+          bezirkValues[bezirk.properties.BEZNR] = bezirk.properties.NAMEK_NUM
         })
+        bezirkValues[0] = 'außerhalb Wien'
+        console.log(bezirkValues)
 
-        var option = document.createElement('option')
-        option.value = 0
-        option.appendChild(document.createTextNode('außerhalb Wien'))
-        select.appendChild(option)
+
+        loadingIndicator.setValue(0.5)
 
         callback()
       })
@@ -116,13 +113,8 @@ window.onload = function () {
 
         loadingIndicator.setValue(0.75)
 
-        var select = document.getElementById('filterOverview').elements.category
-
         categories.forEach(function (category) {
-          var option = document.createElement('option')
-          option.value = category.id
-          option.appendChild(document.createTextNode(category.title))
-          select.appendChild(option)
+          categoryValues[category.id] = category.title
         })
 
         callback()
@@ -136,6 +128,70 @@ window.onload = function () {
     },
     function (callback) {
       loadingIndicator.setInactive()
+
+      filterOverview = new form(
+        null,
+        {
+          'bezirk': {
+            'type': 'select',
+            'name': 'Bezirk',
+            'values': bezirkValues
+          },
+          'category': {
+            'type': 'select',
+            'name': 'Kategorie',
+            'values': categoryValues
+          },
+          'user': {
+            'type': 'text',
+            'name': 'Autor',
+            'desc': 'Eintrag oder Kommentar; verwende ganzen sichtbaren Namen, z.B. "Max M."'
+          },
+          'date': {
+            'type': 'array',
+            'name': 'Erstellungsdatum',
+            'desc': 'von/bis (JJJJ-MM-DD)',
+            'default': 2,
+            'min': 2,
+            'max': 2,
+            'order': false,
+            'removeable': false,
+            'def': {
+              'type': 'date'
+            }
+          },
+          'lastUpdate': {
+            'type': 'array',
+            'name': 'Letzte Änderung',
+            'desc': 'von/bis (JJJJ-MM-DD)',
+            'default': 2,
+            'min': 2,
+            'max': 2,
+            'order': false,
+            'removeable': false,
+            'def': {
+              'type': 'date'
+            }
+          },
+          'order': {
+            'type': 'select',
+            'name': 'Sortierung',
+            'default': 'lastComment',
+            'values': {
+              'lastComment': 'Neueste Kommentare bzw. Einträge zuerst',
+              'id': 'Neueste Einträge zuerst',
+              'likes': 'Einträge mit den meisten Unterstützungen zuerst',
+              'commentsCount': 'Einträge mit den meisten Kommentaren zuerst',
+              'lastUpdate': 'Einträge sortiert nach letzter Änderung'
+            }
+          }
+        }
+      )
+
+      filterOverview.show(document.getElementById('filterOverview'))
+      filterOverview.onchange = function () {
+        return update(false, true)
+      }
 
       hash(function (loc) {
         if (loc.match(/^#[0-9]+$/)) {
@@ -162,20 +218,8 @@ window.onload = function () {
 function updateFormFromUrl () {
   if (location.hash.match(/^#/)) {
     var url = querystring.parse(location.hash.substr(1))
-    var form = document.getElementById('filterOverview')
 
-    if ('bezirk' in url) {
-      form.elements.bezirk.value = url.bezirk
-    }
-    if ('category' in url) {
-      form.elements.category.value = url.category
-    }
-    if ('user' in url) {
-      form.elements.user.value = url.user
-    }
-    if ('order' in url) {
-      form.elements.order.value = url.order
-    }
+    filterOverview.set_data(url)
   }
 }
 
@@ -188,45 +232,26 @@ window.update = function (force, pushState) {
 }
 
 function buildFilter () {
-  var form = document.getElementById('filterOverview')
-  var filter = {}
+  var r = filterOverview.get_data()
+  var result = {}
 
-  if (form.elements.bezirk.value !== '*') {
-    filter.bezirk = form.elements.bezirk.value
-  }
-  if (form.elements.category.value !== '*') {
-    filter.category = form.elements.category.value
-  }
-  filter.order = form.elements.order.value
-  if (form.elements.user.value) {
-    filter.user = form.elements.user.value
-  }
-  if (form.elements.date_start.value || form.elements.date_end.value) {
-    filter.date = [
-      form.elements.date_start.value ? form.elements.date_start.value : null,
-      form.elements.date_end.value ? form.elements.date_end.value : null
-    ]
+  for (var k in r) {
+    if (k === 'date') {
+      if (r[k][0] || r[k][1]) {
+        result[k] = [ r[k][0], r[k][1] ]
+      }
+    } else if (r[k] !== null) {
+      result[k] = r[k]
+    }
   }
 
-  return filter
+  return result
 }
 
 function buildUrl () {
-  var form = document.getElementById('filterOverview')
-  var url = {}
+  var result = buildFilter()
 
-  if (form.elements.bezirk.value !== '*') {
-    url.bezirk = form.elements.bezirk.value
-  }
-  if (form.elements.category.value !== '*') {
-    url.category = form.elements.category.value
-  }
-  url.order = form.elements.order.value
-  if (form.elements.user.value) {
-    url.user = form.elements.user.value
-  }
-
-  return url
+  return result
 }
 
 function _update (force, pushState) {
@@ -315,6 +340,7 @@ function overviewShowEntries (filter, start) {
 
       loadingIndicator.setValue(1)
       loadingIndicator.setInactive()
+      filterOverview.set_orig_data(filter)
       restoreScroll()
     }
   )

@@ -31,25 +31,7 @@
 
 <div id='menu'>
 <div id='menuOverview'>
-<form id='filterOverview' onChange='return update(false, true)' onSubmit='return false;'>
-  <select name='bezirk'>
-    <option value='*'>* Bezirk *</option>
-  </select>
-  <select name='category'>
-    <option value='*'>* Kategorie *</option>
-  </select>
-  <input name='user' value='' placeholder='Autor (Eintrag, Kommentar)'/>
-  <span name='date'>
-    <input name='date_start' value='' placeholder='Erstellungsdatum von (YYYY-MM-DD)'/>
-    <input name='date_end' value='' placeholder='Erstellungsdatum bis (YYYY-MM-DD)'/>
-  </span>
-  <select name='order'>
-    <option value='lastComment'>Neueste Kommentare bzw. Einträge zuerst</option>
-    <option value='id'>Neueste Einträge zuerst</option>
-    <option value='likes'>Einträge mit den meisten Unterstützungen zuerst</option>
-    <option value='commentsCount'>Einträge mit den meisten Kommentaren zuerst</option>
-    <option value='lastUpdate'>Einträge sortiert nach letzter Änderung</option>
-  </select>
+<form id='filterOverview' onSubmit='return false;'>
 </form>
 </div>
 
