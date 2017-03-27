@@ -473,6 +473,11 @@ window.pageShow = function (id) {
   )
 }
 
+window.pageMap = function () {
+  document.body.className = 'pageMap'
+  currentPage = 'Map'
+}
+
 window.pageOverview = function () {
   document.body.className = 'pageOverview'
   currentPage = 'Overview'

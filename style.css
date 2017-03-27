@@ -95,6 +95,7 @@ img#logo {
 
 body #pageOverview,
 body #pageShow,
+body #pageMap,
 body #menuOverview,
 body #menuShow
 {
@@ -102,7 +103,8 @@ body #menuShow
 }
 
 body.pageOverview #pageOverview,
-body.pageShow #pageShow
+body.pageShow #pageShow,
+body.pageMap #pageMap
 {
   display: block;
 }
