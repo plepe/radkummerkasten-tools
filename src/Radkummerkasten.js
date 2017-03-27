@@ -152,6 +152,7 @@ Radkummerkasten.setConfig = function (options) {
  * @param {number|string} options.category - Only include entries of the specified categories (either numeric or string representation).
  * @param {string} options.user - Only include entries, which were created by the specified user or by whom has been commented upon.
  * @param {array} date - filter by date. array first entry is start date, array second entry is end date. If any of these dates is null, no filtering occures in this respect.
+ * @param {array} lastUpdate - filter by lastUpdate. array first entry is start date, array second entry is end date. If any of these dates is null, no filtering occures in this respect.
  * @param {number} options.limit - Only return the first n entries (after offset) (default: all)
  * @param {number} options.offset - Skip the first n entries (default: 0)
  * @param {boolean} options.force=false - Force reload of list
@@ -183,7 +184,7 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
   }
 
   options.needLimitOffset = false
-  if ('date' in options) {
+  if ('date' in options || 'lastUpdate' in options) {
     delete param.limit
     delete param.offset
     options.needLimitOffset = true
@@ -382,6 +383,11 @@ Radkummerkasten._getEntriesHandleResult = function (options, featureCallback, fi
     if (options.date && options.date[0] && ob.properties.date < options.date[0])
       continue
     if (options.date && options.date[1] && ob.properties.date > options.date[1])
+      continue
+
+    if (options.lastUpdate && options.lastUpdate[0] && ob.properties.lastUpdate < options.lastUpdate[0])
+      continue
+    if (options.lastUpdate && options.lastUpdate[1] && ob.properties.lastUpdate > options.lastUpdate[1])
       continue
 
     ids.push(id)
