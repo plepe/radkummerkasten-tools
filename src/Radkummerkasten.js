@@ -151,6 +151,7 @@ Radkummerkasten.setConfig = function (options) {
  * @param {number} options.bezirk - Only include entries within the specified Bezirk or Bezirke.
  * @param {number|string} options.category - Only include entries of the specified categories (either numeric or string representation).
  * @param {string} options.user - Only include entries, which were created by the specified user or by whom has been commented upon.
+ * @param {array} date - filter by date. array first entry is start date, array second entry is end date. If any of these dates is null, no filtering occures in this respect.
  * @param {number} options.limit - Only return the first n entries (after offset) (default: all)
  * @param {number} options.offset - Skip the first n entries (default: 0)
  * @param {boolean} options.force=false - Force reload of list
@@ -179,6 +180,13 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
 
   if (typeof options.offset !== 'undefined') {
     param.skip = options.offset
+  }
+
+  options.needLimitOffset = false
+  if ('date' in options) {
+    delete param.limit
+    delete param.offset
+    options.needLimitOffset = true
   }
 
   if ('id' in options) {
@@ -361,13 +369,28 @@ Radkummerkasten._getEntriesHandleResult = function (options, featureCallback, fi
 
   for (var i = 0; i < result.rows.length; i++) {
     var id = result.rows[i].id
-    ids.push(id)
+    var ob
 
     if (!(id in this.cacheEntries) ||
         (this.cacheEntries[id].properties._rev !== result.rows[i].doc.rev)) {
-      var ob = new RadkummerkastenEntry(result.rows[i].doc)
+      ob = new RadkummerkastenEntry(result.rows[i].doc)
       this.cacheEntries[id] = ob
+    } else {
+      ob = this.cacheEntries[id]
     }
+
+    if (options.date && options.date[0] && ob.properties.date < options.date[0])
+      continue
+    if (options.date && options.date[1] && ob.properties.date > options.date[1])
+      continue
+
+    ids.push(id)
+  }
+
+  if ('needLimitOffset' in options && options.needLimitOffset) {
+    var start = 'offset' in options ? options.offset : 0
+    var end = 'limit' in options ? options.limit + start : ids.length
+    ids = ids.slice(start, end)
   }
 
   this._getEntriesDone(ids, options, featureCallback, finalCallback)
