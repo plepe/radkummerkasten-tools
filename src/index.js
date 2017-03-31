@@ -183,6 +183,11 @@ window.onload = function () {
               'lastUpdate': 'Einträge sortiert nach letzter Änderung'
             }
           }
+        },
+        {
+          'type': 'filters',
+          'button:add_element': 'Filter hinzufügen / Sortierung ändern',
+          'order': false
         }
       )
 
