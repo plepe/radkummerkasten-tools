@@ -147,31 +147,29 @@ window.onload = function () {
             'name': 'Autor',
             'desc': 'Eintrag oder Kommentar; verwende ganzen sichtbaren Namen, z.B. "Max M."'
           },
-          'date': {
-            'type': 'array',
-            'name': 'Erstellungsdatum',
-            'desc': 'von/bis (JJJJ-MM-DD)',
-            'default': 2,
-            'min': 2,
-            'max': 2,
-            'order': false,
-            'removeable': false,
-            'def': {
-              'type': 'date'
-            }
+          'dateStart': {
+            'type': 'date',
+            'name': 'Erstellungsdatum ab',
           },
-          'lastUpdate': {
-            'type': 'array',
-            'name': 'Letzte Änderung',
-            'desc': 'von/bis (JJJJ-MM-DD)',
-            'default': 2,
-            'min': 2,
-            'max': 2,
-            'order': false,
-            'removeable': false,
-            'def': {
-              'type': 'date'
-            }
+          'dateEnd': {
+            'type': 'date',
+            'name': 'Erstellungsdatum bis',
+          },
+          'lastCommentDateStart': {
+            'type': 'date',
+            'name': 'Erstellt oder zuletzt kommentiert ab',
+          },
+          'lastCommentDateEnd': {
+            'type': 'date',
+            'name': 'Erstellt oder zuletzt kommentiert bis',
+          },
+          'lastUpdateStart': {
+            'type': 'date',
+            'name': 'Letzte Änderung ab',
+          },
+          'lastUpdateEnd': {
+            'type': 'date',
+            'name': 'Letzte Änderung bis',
           },
           'order': {
             'type': 'select',

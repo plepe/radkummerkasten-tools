@@ -151,8 +151,12 @@ Radkummerkasten.setConfig = function (options) {
  * @param {number} options.bezirk - Only include entries within the specified Bezirk or Bezirke.
  * @param {number|string} options.category - Only include entries of the specified categories (either numeric or string representation).
  * @param {string} options.user - Only include entries, which were created by the specified user or by whom has been commented upon.
- * @param {array} date - filter by date. array first entry is start date, array second entry is end date. If any of these dates is null, no filtering occures in this respect.
- * @param {array} lastUpdate - filter by lastUpdate. array first entry is start date, array second entry is end date. If any of these dates is null, no filtering occures in this respect.
+ * @param {string} dateStart - filter by date. Include all entries which were created at or after dateStart. Expected format: ISO8601 date (e.g. 2017-03-21).
+ * @param {string} dateEnd - filter by date. Include all entries which were created before or at dateEnd. Expected format: ISO8601 date (e.g. 2017-03-21).
+ * @param {string} lastUpdateStart - filter by lastUpdate. Include all entries which were updated at or after lastUpdateStart. Expected format: ISO8601 datetime (e.g. 2017-03-21 or 2017-03-21T20:00:00Z).
+ * @param {string} lastUpdateEnd - filter by lastUpdate. Include all entries which were updated before or at lastUpdateEnd. Expected format: ISO8601 datetime (e.g. 2017-03-21 or 2017-03-21T20:00:00Z).
+ * @param {string} lastCommentDateStart - filter by lastCommentDate. Include all entries which were created or commented at or after lastCommentDateStart. Expected format: ISO8601 date (e.g. 2017-03-21).
+ * @param {string} lastCommentDateEnd - filter by lastCommentDate. Include all entries which where created or commented before or at lastCommentDateEnd. Expected format: ISO8601 date (e.g. 2017-03-21).
  * @param {number} options.limit - Only return the first n entries (after offset) (default: all)
  * @param {number} options.offset - Skip the first n entries (default: 0)
  * @param {boolean} options.force=false - Force reload of list
@@ -184,7 +188,9 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
   }
 
   options.needLimitOffset = false
-  if ('date' in options || 'lastUpdate' in options) {
+  if ('dateStart' in options || 'dateEnd' in options ||
+      'lastUpdateStart' in options || 'lastUpdateEnd' in options ||
+      'lastCommentDateStart' in options || 'lastCommentDateEnd' in options) {
     delete param.limit
     delete param.offset
     options.needLimitOffset = true
@@ -380,15 +386,14 @@ Radkummerkasten._getEntriesHandleResult = function (options, featureCallback, fi
       ob = this.cacheEntries[id]
     }
 
-    if (options.date && options.date[0] && ob.properties.date < options.date[0])
+    if ((options.dateStart && ob.properties.date < options.dateStart) ||
+        (options.dateEnd && ob.properties.date > options.dateEnd) ||
+        (options.lastUpdateStart && ob.properties.lastUpdate < options.lastUpdateStart) ||
+        (options.lastUpdateEnd && ob.properties.lastUpdate > options.lastUpdateEnd) ||
+        (options.lastCommentDateStart && ob.properties.lastCommentDate < options.lastCommentDateStart) ||
+        (options.lastCommentDateEnd && ob.properties.lastCommentDate > options.lastCommentDateEnd)) {
       continue
-    if (options.date && options.date[1] && ob.properties.date > options.date[1])
-      continue
-
-    if (options.lastUpdate && options.lastUpdate[0] && ob.properties.lastUpdate < options.lastUpdate[0])
-      continue
-    if (options.lastUpdate && options.lastUpdate[1] && ob.properties.lastUpdate > options.lastUpdate[1])
-      continue
+    }
 
     ids.push(id)
   }
