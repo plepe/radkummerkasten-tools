@@ -19,10 +19,14 @@ INSTALLATION
 ============
 Um `radkummerkasten-tools` zu installieren, muss [Node.js](https://nodejs.org/) installiert sein. Dann:
 
+Um die Webseite zu verwenden, braucht man (derzeit) auch PHP.
+
 ```sh
 git clone https://github.com/plepe/radkummerkasten-tools.git
 cd radkummerkasten-tools
 npm install
+git submodule init
+git submodule update
 cp config.yml-dist config.yml
 nano config.yml # change configuration according to your needs
 sudo npm link # mache cli tools systemweit verfügbar (optional)
