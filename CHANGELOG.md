@@ -1,3 +1,6 @@
+## Version 0.6.1, 2017-04-03
+* Bugfixes
+
 ## Version 0.6.0, 2017-04-02
 * Neu designes User Interface für Filter / Sortierung
 * Neue Filter: Erstellungsdatum, Erstellt oder zuletzt kommentiert, Letzte Änderung (allerdings verwenden sie einen Workaround, da das mit der Datenbank derzeit nicht funktioniert; langsam)

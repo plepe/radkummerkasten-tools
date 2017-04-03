@@ -1,6 +1,6 @@
 {
   "name": "radkummerkasten-tools",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Tools um Abfragen an den radkummerkasten.at zu stellen",
   "main": "index.js",
   "bin": {
