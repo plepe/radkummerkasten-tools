@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <title>radkummerkasten-tools</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?<?=$modulekit['version']?>" />
   <link rel="stylesheet" href="node_modules/leaflet/dist/leaflet.css"/>
   <style>
 .leaflet-popup-content {
@@ -18,7 +18,7 @@
   font-size: 8px;
 }
   </style>
-  <script src="dist/index.js"></script>
+  <script src="dist/index.js?<?=$modulekit['version']?>"></script>
   <script src="node_modules/leaflet/dist/leaflet.js"></script>
   <?php print modulekit_to_javascript(); /* pass modulekit configuration to JavaScript */ ?>
   <?php print modulekit_include_js(); /* prints all js-includes */ ?>
