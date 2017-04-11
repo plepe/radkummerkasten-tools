@@ -257,6 +257,19 @@ function buildUrl () {
   return result
 }
 
+function updateTimestamp () {
+  // Update timestamp
+  Radkummerkasten.dbConfig.get('status', function (err, result) {
+    if (err) {
+      return
+    }
+
+    var domTs = document.getElementById('timestamp')
+    var ts = moment(result.timestamp)
+    domTs.innerHTML = ts.format().substr(0, 16).replace('T', ' ')
+  })
+}
+
 function _update (force, pushState) {
   pageOverviewLoaded = true
 
@@ -271,16 +284,7 @@ function _update (force, pushState) {
   var filter = buildFilter()
   overviewShowEntries(filter, 0)
 
-  // Update timestamp
-  Radkummerkasten.dbConfig.get('status', function (err, result) {
-    if (err) {
-      return
-    }
-
-    var domTs = document.getElementById('timestamp')
-    var ts = moment(result.timestamp)
-    domTs.innerHTML = ts.format().substr(0, 16).replace('T', ' ')
-  })
+  updateTimestamp()
 }
 
 function overviewShowEntries (filter, start) {
@@ -494,6 +498,8 @@ window.pageShow = function (id) {
       restoreScroll()
     }
   )
+
+  updateTimestamp()
 }
 
 window.pageOverview = function () {
