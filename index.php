@@ -41,8 +41,8 @@
 </form>
 </div>
 
-<a href='javascript:openDownload()'>Download</a> |
-<a href='javascript:update(true, false)'>Reload</a> (Stand: <span id='timestamp'></span>)
+<a href='javascript:openDownload()'>Exportieren</a> |
+<a href='javascript:update(true, false)'>Neu laden</a> (Stand: <span id='timestamp'></span>)
 
 <form id='downloadOptions' onSubmit='return submitDownloadForm()'>
   <div class='downloadOption'>
@@ -63,7 +63,7 @@
   <div class='downloadOption' downloadTypes='html,office'>
     <input name='noMap' type='checkbox' />Keine Karte inkludieren
   </div>
-  <input type='submit' value='Generiere Download' />
+  <input type='submit' value='Generiere Datei' />
   <span id='download'></span>
 </form>
 
