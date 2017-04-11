@@ -14,6 +14,7 @@ var loadingIndicator = require('simple-loading-indicator')
 var FileSaver = require('file-saver');
 var querystring = require('querystring')
 var moment = require('moment')
+var scrollingElement = require('scrollingelement')
 require('moment/locale/de')
 
 var config = require('../src/loadConfig')
@@ -42,7 +43,7 @@ function showEntry(entry, div, callback) {
 
 function restoreScroll() {
   if (popScrollTop !== null) {
-    document.body.scrollTop = popScrollTop
+    document.scrollingElement.scrollTop = popScrollTop
   }
 
   popScrollTop = null
@@ -60,10 +61,9 @@ window.onload = function () {
     } else {
       popScrollTop = null
     }
-
   })
   window.addEventListener('scroll', function (event) {
-    history.replaceState({ scrollTop: document.body.scrollTop }, '', location.hash)
+    history.replaceState({ scrollTop: document.scrollingElement.scrollTop }, '', location.hash)
   })
 
   loadingIndicator.setActive()
