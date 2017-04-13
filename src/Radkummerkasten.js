@@ -355,9 +355,19 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
 }
 
 Radkummerkasten.getEntriesById = function (ids, options, featureCallback, finalCallback, error, result) {
+  if (!Array.isArray(ids)) {
+    ids = [ ids ]
+  }
+
+  for (var i = 0; i < ids.length; i++) {
+    if (typeof ids[i] === 'number') {
+      ids[i] = ids[i].toString()
+    }
+  }
+
   var param = {
     include_docs: true,
-    keys: Array.isArray(ids) ? ids : [ ids ]
+    keys: ids
   }
 
   this.db.allDocs(
