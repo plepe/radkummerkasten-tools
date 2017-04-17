@@ -236,25 +236,22 @@ window.update = function (force, pushState) {
 
 function buildFilter () {
   var r = filterOverview.get_data()
-  var result = {}
 
-  for (var k in r) {
-    if (k === 'date') {
-      if (r[k][0] || r[k][1]) {
-        result[k] = [ r[k][0], r[k][1] ]
-      }
-    } else if (r[k] !== null) {
-      result[k] = r[k]
-    }
+  if (r === null) {
+    return {}
   }
 
-  return result
+  return r
 }
 
 function buildUrl () {
-  var result = buildFilter()
+  var r = filterOverview.get_data()
 
-  return result
+  if (r === null) {
+    return {}
+  }
+
+  return r
 }
 
 function updateTimestamp () {
