@@ -238,7 +238,11 @@ function buildFilter () {
   var r = filterOverview.get_data()
 
   if (r === null) {
-    return {}
+    r = {}
+  }
+
+  if (!('order' in r)) {
+    r.order = 'lastComment'
   }
 
   return r
