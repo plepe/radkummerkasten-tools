@@ -96,8 +96,6 @@ window.onload = function () {
           bezirkValues[bezirk.properties.BEZNR] = bezirk.properties.NAMEK_NUM
         })
         bezirkValues[0] = 'außerhalb Wien'
-        console.log(bezirkValues)
-
 
         loadingIndicator.setValue(0.5)
 
