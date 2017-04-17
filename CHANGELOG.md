@@ -1,3 +1,6 @@
+## Version 0.6.3, 2017-04-17
+* Standardsortierung wieder 'Neueste Kommentare bzw. Einträge zuerst'
+
 ## Version 0.6.2, 2017-04-11
 * Menü ist jetzt auf deutsch (Exportieren, Neu laden)
 
