@@ -9,7 +9,7 @@
 
 <p>
 <a target="radkummerkasten" href="{{ options.baseUrl }}/#marker-{{ id }}">Öffne im Radkummerkasten</a><br/>
-{{ likes }} Unterstützung(en), {{ comments|length}} Kommentar(e)
+{{ likes }} Unterstützung(en), {{ comments|length - 1 }} Kommentar(e)
 {% if bezirkRkk and bezirk != bezirkRkk %}
 <br/><span class='error'>
 Fehler: Laut Radkummerkasten ist der Eintrag im Bezirk {{ bezirkRkk }}.
