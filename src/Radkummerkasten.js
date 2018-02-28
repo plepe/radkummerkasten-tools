@@ -38,15 +38,15 @@ Radkummerkasten.init = function () {
     this.options = {}
   }
 
-  if (typeof this.options.dbName === 'undefined') {
-    this.options.dbName = 'radkummerkasten'
-  }
-  this.db = new PouchDB(this.options.dbName)
-  this.dbConfig = new PouchDB(this.options.dbName + '-config')
+//  if (typeof this.options.dbName === 'undefined') {
+//    this.options.dbName = 'radkummerkasten'
+//  }
+//  this.db = new PouchDB(this.options.dbName)
+//  this.dbConfig = new PouchDB(this.options.dbName + '-config')
 
-  if (typeof this.options.dbReplicateFrom !== 'undefined' && this.options.dbReplicateFrom !== 'none') {
-    this.enableDbReplication()
-  }
+//  if (typeof this.options.dbReplicateFrom !== 'undefined' && this.options.dbReplicateFrom !== 'none') {
+//    this.enableDbReplication()
+//  }
 
   if (typeof this.options.baseUrl === 'undefined') {
     this.options.baseUrl = '//www.radkummerkasten.at'
@@ -62,9 +62,9 @@ Radkummerkasten.init = function () {
     }
   }
 
-  if (typeof this.options.urlBezirksgrenzen === 'undefined') {
-    this.options.urlBezirksgrenzen = '/wp-content/plugins/radkummerkasten/js/data.wien.gv.at_bezirksgrenzen.json'
-  }
+//  if (typeof this.options.urlBezirksgrenzen === 'undefined') {
+//    this.options.urlBezirksgrenzen = '/wp-content/plugins/radkummerkasten/js/data.wien.gv.at_bezirksgrenzen.json'
+//  }
 
   this.cacheEntries = {}
   this.parameter = {}
@@ -315,6 +315,7 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
     return run.call(this)
   }
 
+  /*
   this.db.get('_design/' + filter.join('-'),
     function (err, result) {
       if (err && err.status !== 404) {
@@ -344,7 +345,24 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
       }
     }.bind(this)
   )
+  */
 
+  var xhr = new XMLHttpRequest()
+  xhr.onload = function() {
+    let err, data
+
+    if (xhr.status === 200) {
+      data = JSON.parse(xhr.response)
+    } else {
+      err = 'Status ' + xhr.status
+    }
+
+    this._getEntriesHandleResult(options, featureCallback, finalCallback, err, data)
+  }.bind(this)
+  xhr.open('GET', 'db.php')
+  xhr.send()
+
+  /*
   function run() {
     this.db.query(
       filter.join('-') + '/index',
@@ -352,9 +370,12 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
       this._getEntriesHandleResult.bind(this, options, featureCallback, finalCallback)
     )
   }
+  */
 }
 
 Radkummerkasten.getEntriesById = function (ids, options, featureCallback, finalCallback, error, result) {
+  let toLoad = []
+
   if (!Array.isArray(ids)) {
     ids = [ ids ]
   }
@@ -363,17 +384,35 @@ Radkummerkasten.getEntriesById = function (ids, options, featureCallback, finalC
     if (typeof ids[i] === 'number') {
       ids[i] = ids[i].toString()
     }
+
+    if (!(ids[i] in this.cacheEntries)) {
+      toLoad.push(ids[i])
+    }
   }
 
-  var param = {
-    include_docs: true,
-    keys: ids
+  if (toLoad.length) {
+    var xhr = new XMLHttpRequest()
+    xhr.onload = function() {
+      let err, data
+
+      if (xhr.status === 200) {
+        data = JSON.parse(xhr.response)
+
+        for (var k in data) {
+          this.cacheEntries[data[k].id] = new RadkummerkastenEntry(data[k])
+        }
+      } else {
+        err = 'Status ' + xhr.status
+      }
+
+      this._getEntriesDone(ids, options, featureCallback, finalCallback)
+    }.bind(this)
+    xhr.open('GET', 'db.php?id=' + toLoad.join(','))
+    xhr.send()
+    return
   }
 
-  this.db.allDocs(
-    param,
-    this._getEntriesHandleResult.bind(this, options, featureCallback, finalCallback)
-  )
+  this._getEntriesDone(ids, options, featureCallback, finalCallback)
 }
 
 Radkummerkasten._getEntriesHandleResult = function (options, featureCallback, finalCallback, error, result) {
@@ -384,34 +423,27 @@ Radkummerkasten._getEntriesHandleResult = function (options, featureCallback, fi
     return finalCallback(error)
   }
 
-  for (var i = 0; i < result.rows.length; i++) {
-    var id = result.rows[i].id
+  for (var i = 0; i < result.length; i++) {
+    var id = result[i].id
+    ids.push(id)
     var ob
 
-    if (!(id in this.cacheEntries) ||
-        (this.cacheEntries[id].properties._rev !== result.rows[i].doc.rev)) {
-      ob = new RadkummerkastenEntry(result.rows[i].doc)
-      this.cacheEntries[id] = ob
+    if (!(id in this.cacheEntries)) {
+//        (this.cacheEntries[id].properties.ts !== result.rows[i].doc.ts)) {
+      toLoad.push(id)
     } else {
       ob = this.cacheEntries[id]
     }
-
-    if ((options.dateStart && ob.properties.date < options.dateStart) ||
-        (options.dateEnd && ob.properties.date > options.dateEnd) ||
-        (options.lastUpdateStart && ob.properties.lastUpdate < options.lastUpdateStart) ||
-        (options.lastUpdateEnd && ob.properties.lastUpdate > options.lastUpdateEnd) ||
-        (options.lastCommentDateStart && ob.properties.lastCommentDate < options.lastCommentDateStart) ||
-        (options.lastCommentDateEnd && ob.properties.lastCommentDate > options.lastCommentDateEnd)) {
-      continue
-    }
-
-    ids.push(id)
   }
 
-  if ('needLimitOffset' in options && options.needLimitOffset) {
-    var start = 'offset' in options ? options.offset : 0
-    var end = 'limit' in options ? options.limit + start : ids.length
-    ids = ids.slice(start, end)
+  if (toLoad.length) {
+    this.getEntriesById(toLoad, options,
+      function () {},
+      function () {
+        this._getEntriesDone(ids, options, featureCallback, finalCallback)
+      }.bind(this)
+    )
+    return
   }
 
   this._getEntriesDone(ids, options, featureCallback, finalCallback)
@@ -578,7 +610,7 @@ RadkummerkastenEntry.prototype.toGeoJSON = function () {
     type: 'Feature',
     geometry: {
       type: 'Point',
-      coordinates: [ this.properties.lon, this.properties.lat ]
+      coordinates: [ this.properties.lng, this.properties.lat ]
     },
     properties: this.properties
   }
@@ -751,7 +783,7 @@ RadkummerkastenEntry.prototype._showHTMLinitMap = function (dom, options, callba
 
   var map = L.map(options.mapData.id, {
     layers: layers[options.preferredLayer]
-  }).setView([ this.properties.lat, this.properties.lon ], 17)
+  }).setView([ this.properties.lat, this.properties.lng ], 17)
   if (map.setSize && options.mapWidth !== 'auto') {
     map.setSize(options.mapWidth, options.mapHeight)
   }
@@ -766,7 +798,7 @@ RadkummerkastenEntry.prototype._showHTMLinitMap = function (dom, options, callba
     map.scrollWheelZoom.disable()
   })
 
-  L.marker([ this.properties.lat, this.properties.lon ]).addTo(map)
+  L.marker([ this.properties.lat, this.properties.lng ]).addTo(map)
 
   map.on('baselayerchange', function (event) {
     options.preferredLayer = event.name

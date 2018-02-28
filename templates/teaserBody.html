@@ -1,11 +1,11 @@
-<h3><a href='#{{ id }}'>#{{ id }} {{ categoryName }}: {{ title }} ({{ bezirk }}. Bezirk)</a></h3>
+<h3><a href='#{{ id }}'>#{{ id }} {{ categoryName }}: {{ address }} ({{ postcode}} {{ city }})</a></h3>
 {% if attachments|length > 0 %}
-<img src="{{ attachments[0].url }}">
+<img src="{{ options.attachmentBaseUrl}}/{{ attachments[0].file }}">
 {% endif %}
 
 <p>
-<i>{{ user }} schrieb am {{ date }}:</i><br/>
-{% if text|length > 200 %}{{ text|slice(0, 200)|nl2br }}...{% else %}{{ text|nl2br }}{% endif %}<br/>
+<i>{{ comments[0].firstname }} {{ comments[0].name }} schrieb am {{ date }}:</i><br/>
+{% if comments[0].message|length > 200 %}{{ comments[0].message|slice(0, 200)|nl2br }}...{% else %}{{ comments[0].message|nl2br }}{% endif %}<br/>
 
 <p>
 <a target="radkummerkasten" href="{{ options.baseUrl }}/#marker-{{ id }}">Öffne im Radkummerkasten</a><br/>

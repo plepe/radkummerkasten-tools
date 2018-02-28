@@ -86,6 +86,8 @@ window.onload = function () {
       })
     },
     function (callback) {
+      callback()
+      return
       Radkummerkasten.loadBezirksgrenzen(function (err, bezirke) {
         if (err) {
           alert('Kann Bezirksgrenzen nicht laden! ' + err)
@@ -103,6 +105,8 @@ window.onload = function () {
       })
     },
     function (callback) {
+      callback()
+      return
       Radkummerkasten.categories(function (err, categories) {
         if (err) {
           alert('Kann Kategorien nicht laden! ' + err)
@@ -257,6 +261,7 @@ function buildUrl () {
 }
 
 function updateTimestamp () {
+  return
   // Update timestamp
   Radkummerkasten.dbConfig.get('status', function (err, result) {
     if (err) {
