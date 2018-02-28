@@ -78,5 +78,5 @@ if (array_key_exists('id', $_REQUEST)) {
   }
   print "\n}";
 } else {
-  print json_readable_encode(load_overview());
+  print json_readable_encode(load_overview($_REQUEST));
 }

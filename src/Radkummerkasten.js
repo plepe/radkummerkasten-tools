@@ -1,5 +1,6 @@
 var request = require('request-xmlhttprequest')
 var async = require('async')
+var queryString = require('query-string')
 var PouchDB = require('pouchdb')
 var parseDate = require('./parseDate')
 var getTemplate = require('./getTemplate')
@@ -359,7 +360,7 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
 
     this._getEntriesHandleResult(options, featureCallback, finalCallback, err, data)
   }.bind(this)
-  xhr.open('GET', 'db.php')
+  xhr.open('GET', 'db.php?' + queryString.stringify(options))
   xhr.send()
 
   /*
