@@ -1,7 +1,11 @@
 <h3><a href='#{{ id }}'>#{{ id }} {{ categoryName }}: {{ address }} ({{ postcode}} {{ city }})</a></h3>
-{% if attachments|length > 0 %}
-<img src="{{ options.attachmentBaseUrl}}/{{ attachments[0].file }}">
-{% endif %}
+{% set attachmentDone = false %}
+{% for comment in comments if attachmentDone == false %}
+  {% if comment.attachments|length > 0 %}
+    <img src="{{ options.attachmentBaseUrl}}/{{ comment.attachments[0].file }}">
+    {% set attachmentDone = true %}
+  {% endif %}
+{% endfor %}
 
 <p>
 <i>{{ comments[0].firstname }} {{ comments[0].name }} schrieb am {{ date }}:</i><br/>
