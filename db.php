@@ -54,12 +54,93 @@ function load_entry ($id, $anonym=true) {
   return $result;
 }
 
-function load_overview () {
+function load_overview ($options, $anonym=true) {
   global $db;
   $result = array();
 
+  $limit = '';
+  if (array_key_exists('limit', $options) && preg_match("/^\d+$/", $options['limit'])) {
+    $limit = "limit {$options['limit']}";
+  }
+
+  $offset = '';
+  if (array_key_exists('offset', $options) && preg_match("/^\d+$/", $options['offset'])) {
+    $offset = "offset {$options['offset']}";
+  }
+
+  $select[] = '(select date from map_comments where map_comments.marker=map_markers.id order by date desc limit 1) lastCommentDate';
+
+  if (array_key_exists('dateStart', $options) && $options['dateStart']) {
+    $where[] = 'date>=' . $db->quote($options['dateStart']);
+  }
+
+  if (array_key_exists('dateEnd', $options) && $options['dateEnd']) {
+    $where[] = 'date<=' . $db->quote($options['dateEnd']);
+  }
+
+  if (array_key_exists('postcode', $options) && $options['postcode']) {
+    $select[] = 'postcode';
+    $where[] = 'postcode=' . $db->quote($options['postcode']);
+  }
+
+  if (array_key_exists('survey', $options) && $options['survey']) {
+    $where[] = 'survey=' . $db->quote($options['survey']);
+  }
+
+  if (array_key_exists('lastCommentDateStart', $options) && $options['lastCommentDateStart']) {
+    $where[] = 'lastCommentDate>=' . $db->quote($options['lastCommentDateStart']);
+  }
+
+  if (array_key_exists('lastCommentDateEnd', $options) && $options['lastCommentDateEnd']) {
+    $where[] = 'lastCommentDate<=' . $db->quote($options['lastCommentDateEnd']);
+  }
+
+  if (array_key_exists('user', $options) && $options['user']) {
+    if ($anonym) {
+      $userq = "concat(firstname, ' ', substr(name, 1, 1), '.')";
+    }
+    else {
+      $userq = "concat(firstname, ' ', name)";
+    }
+
+    $select[] = "(select {$userq} user from map_comments where map_comments.marker=map_markers.id and {$userq} like " . $db->quote("%{$options['user']}%") . 'limit 1) _matchUser';
+    $where[] = "_matchUser is not null";
+  }
+
+  switch ($options['order'] ?? 'lastComment') {
+    case 'id':
+      $order = 'order by id desc';
+      break;
+    case 'likes':
+      $select[] = 'likes';
+      $order = 'order by likes desc';
+      break;
+    case 'commentsCount':
+      $order = 'order by commentsCount desc';
+      break;
+    case 'lastComment':
+    default:
+      $order = 'order by lastCommentDate desc';
+  }
+
+  if (sizeof($select)) {
+    $select = ', ' . implode(', ', $select);
+  }
+  else {
+    $select = '';
+  }
+
+  if (sizeof($where)) {
+    $where = 'where ' . implode(' and ', $where);
+  }
+  else {
+    $where = '';
+  }
+
   // base data
-  $res = $db->query('select id, comments as commentsCount, lat, lng, survey from map_markers order by commentsCount desc');
+  $query = "select * from (select id, date, comments as commentsCount, lat, lng, survey $select from map_markers) t {$where} {$order} {$limit} {$offset}";
+  //print $query;
+  $res = $db->query($query);
   return $res->fetchAll();
 }
 

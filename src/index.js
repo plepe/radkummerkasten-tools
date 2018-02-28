@@ -159,11 +159,11 @@ window.onload = function () {
           },
           'lastCommentDateStart': {
             'type': 'date',
-            'name': 'Erstellt oder zuletzt kommentiert ab',
+            'name': 'Zuletzt kommentiert ab',
           },
           'lastCommentDateEnd': {
             'type': 'date',
-            'name': 'Erstellt oder zuletzt kommentiert bis',
+            'name': 'Zuletzt kommentiert bis',
           },
           'lastUpdateStart': {
             'type': 'date',
