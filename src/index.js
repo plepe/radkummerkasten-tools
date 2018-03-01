@@ -3,6 +3,7 @@ var createCsv = require('../src/createCsv')
 var createGeoJson = require('../src/createGeoJson')
 var createHTML = require('../src/createHTML')
 var getTemplate = require('../src/getTemplate')
+var httpGetJSON = require('./httpGetJSON')
 
 var csvWriter = require('csv-write-stream')
 var concat = require('concat-stream')
@@ -30,6 +31,13 @@ var filterOverview = null
 window.knownEntries = {}
 const step = 20
 
+var postcodes = {}
+var postcodeValues = {}
+var surveys = {}
+var surveyValues = {}
+var states = {}
+var statusValues = {}
+
 function showEntry(entry, div, callback) {
   var data = JSON.parse(JSON.stringify(entry.properties))
   data.options = Radkummerkasten.options
@@ -50,13 +58,6 @@ function restoreScroll() {
 }
 
 window.onload = function () {
-  var postcodes = {}
-  var postcodeValues = {}
-  var surveys = {}
-  var surveyValues = {}
-  var states = {}
-  var statusValues = {}
-
   document.getElementById('version').appendChild(document.createTextNode(Radkummerkasten.version))
 
   window.addEventListener('popstate', function (event) {
@@ -240,8 +241,12 @@ window.onload = function () {
       }
 
       hash(function (loc) {
+        let m
+
         if (loc.match(/^#[0-9]+$/)) {
           pageShow(loc.substr(1))
+        } else if (m = loc.match(/^#([0-9]+)\/edit$/)) {
+          pageEdit(m[1])
         } else {
           var scroll = popScrollTop
           pageOverview()
@@ -253,6 +258,8 @@ window.onload = function () {
 
       if (location.hash.match(/^#[0-9]+$/)) {
         pageShow(location.hash.substr(1))
+      } else if (m = location.hash.match(/^#([0-9]+)\/edit$/)) {
+        pageEdit(m[1])
       } else {
         updateFormFromUrl()
         update()
@@ -538,6 +545,83 @@ window.pageShow = function (id) {
         function (err, page) {
         }
       )
+    },
+    function (err) {
+      restoreScroll()
+    }
+  )
+
+  updateTimestamp()
+}
+
+window.pageEdit = function (id) {
+  currentPage = 'Show'
+  document.getElementById('menuOverview').style.display = 'none'
+  document.getElementById('pageOverview').style.display = 'none'
+  var menu = document.getElementById('menuShow')
+  menu.style.display = 'block'
+  var page = document.getElementById('pageShow')
+  page.style.display = 'block'
+  page.innerHTML = ''
+  document.getElementById('filterShow').elements.filterId.value = id
+
+  loadingIndicator.setActive()
+
+  var formNode = document.createElement('form')
+  page.appendChild(formNode)
+
+  Radkummerkasten.getEntries(
+    {
+      id: [ '' + id ]
+    },
+    function (err, entry) {
+      loadingIndicator.setInactive()
+
+      if (err) {
+        alert(err)
+        return
+      }
+
+      var formEdit = new form('edit',
+        {
+          'postcode': {
+            'type': 'select',
+            'name': 'Postcode',
+            'values': postcodeValues
+          },
+          'status': {
+            'type': 'select',
+            'name': 'Status',
+            'values': statusValues
+          },
+          'survey': {
+            'type': 'select',
+            'name': 'Kategorie',
+            'values': surveyValues
+          }
+        }
+      )
+
+      formEdit.set_data(entry.properties)
+
+      formEdit.show(formNode)
+      let submit = document.createElement('input')
+      submit.type = 'submit'
+      submit.value = 'Speichern'
+      formNode.appendChild(submit)
+
+      formNode.onsubmit = function () {
+        httpGetJSON('PUT', 'db.php?id=' + encodeURIComponent(id), JSON.stringify(formEdit.get_data()), function (err, result) {
+          if (err) {
+            alert('Fehler: ' + err)
+          } else {
+            delete Radkummerkasten.cacheEntries[id]
+            location.hash = '#' + id
+          }
+        })
+
+        return false
+      }
     },
     function (err) {
       restoreScroll()
