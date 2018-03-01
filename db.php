@@ -87,6 +87,11 @@ function load_overview ($options, $anonym=true) {
     $where[] = 'survey=' . $db->quote($options['survey']);
   }
 
+  if (array_key_exists('status', $options) && $options['status']) {
+    $select[] = 'status';
+    $where[] = 'status=' . $db->quote($options['status']);
+  }
+
   if (array_key_exists('lastCommentDateStart', $options) && $options['lastCommentDateStart']) {
     $where[] = 'lastCommentDate>=' . $db->quote($options['lastCommentDateStart']);
   }

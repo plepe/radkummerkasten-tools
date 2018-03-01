@@ -334,6 +334,22 @@ Radkummerkasten.surveys = function (callback) {
 }
 
 /**
+ * get list of states
+ * @param {function} callback - Will be called with 'err' (which should be null) and an object with the categories. [ { 'id': categoryId, 'name': categoryName }, ... ]
+ */
+Radkummerkasten.states = function (callback) {
+  this.init()
+
+  this.getParameter('states', function (err, result) {
+    if (err) {
+      return callback(err)
+    }
+
+    callback(null, result)
+  })
+}
+
+/**
  * clear the cache of the map entries
  */
 Radkummerkasten.clearCache = function () {

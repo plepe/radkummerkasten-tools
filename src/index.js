@@ -54,6 +54,8 @@ window.onload = function () {
   var postcodeValues = {}
   var surveys = {}
   var surveyValues = {}
+  var states = {}
+  var statusValues = {}
 
   document.getElementById('version').appendChild(document.createTextNode(Radkummerkasten.version))
 
@@ -78,6 +80,13 @@ window.onload = function () {
         return { id: value, name: value }
       }
     }
+    else if (args[0] === 'states') {
+      if (value in states) {
+        return states[value]
+      } else {
+        return { id: value, name: value }
+      }
+    }
   })
 
   async.series([
@@ -88,7 +97,7 @@ window.onload = function () {
           return
         }
 
-        loadingIndicator.setValue(0.25)
+        loadingIndicator.setValue(0.2)
 
         teaserTemplate = Twig.twig({
           data: result
@@ -110,7 +119,7 @@ window.onload = function () {
         })
         postcodeValues[0] = 'außerhalb Wien'
 
-        loadingIndicator.setValue(0.5)
+        loadingIndicator.setValue(0.4)
 
         callback()
       })
@@ -122,11 +131,28 @@ window.onload = function () {
           return
         }
 
-        loadingIndicator.setValue(0.75)
+        loadingIndicator.setValue(0.6)
 
         result.forEach(function (survey) {
           surveys[survey.id] = survey
           surveyValues[survey.id] = survey.name
+        })
+
+        callback()
+      })
+    },
+    function (callback) {
+      Radkummerkasten.states(function (err, result) {
+        if (err) {
+          alert('Kann Stati nicht laden! ' + err)
+          return
+        }
+
+        loadingIndicator.setValue(0.8)
+
+        result.forEach(function (state) {
+          states[state.id] = state
+          statusValues[state.id] = state.name
         })
 
         callback()
@@ -148,6 +174,11 @@ window.onload = function () {
             'type': 'select',
             'name': 'Postcode',
             'values': postcodeValues
+          },
+          'status': {
+            'type': 'select',
+            'name': 'Status',
+            'values': statusValues
           },
           'survey': {
             'type': 'select',

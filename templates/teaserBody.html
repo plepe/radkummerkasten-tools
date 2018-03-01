@@ -13,7 +13,7 @@
 
 <p>
 <a target="radkummerkasten" href="{{ options.baseUrl }}/#marker-{{ id }}">Öffne im Radkummerkasten</a><br/>
-{{ likes }} Unterstützung(en), {{ comments|length - 1 }} Kommentar(e)
+{{ status|parameter('states').name }}, {{ likes }} Unterstützung(en), {{ comments|length - 1 }} Kommentar(e)
 {% if postcodeCoordinate and postcode != postcodeCoordinate %}
 <br/><span class='error'>
 Möglicher Fehler: Koordinate liegt im Bereich {{ postcodeCoordinate }}.

@@ -61,6 +61,9 @@ function load_overview ($id, $anonym=true) {
   if ($id === 'survey') {
     $query = 'select map_surveys.id, map_surveys.name as name, map_surveys.subtitle, map_surveys.startdate, map_surveys.enddate, map_surveys.active, map_surveys.commenting, map_surveys.public, map_icons.file, map_icons.shadow, map_icons.width, map_icons.height, map_icons.anchorX, map_icons.anchorY, map_icons.popupX, map_icons.popupY from map_surveys left join map_icons on map_surveys.category=map_icons.id';
   }
+  else if ($id === 'states') {
+    $query = 'select * from map_marker_state';
+  }
 
   // base data
   //print $query;
