@@ -309,7 +309,7 @@ Radkummerkasten.loadPostcodes = function (callback) {
     this.postcodes = []
     for (var k in result.features) {
       let feature = result.features[k]
-      feature.id = '1' + feature.properties.BEZ + '0'
+      feature.id = feature.properties.DISTRICT_CODE
 
       this.postcodes.push(feature)
     }
