@@ -19,9 +19,9 @@ Koordinaten: {{ lat|number_format(5) }}, {{ lng|number_format(5) }}
 {{ comments|length - 1 }} Kommentar(e)<br/>
 Adresse: {{ street }} {{ housenumber }}<br/>
 PLZ: {{ postcode }} {{ city }}
-{% if bezirkRkk and bezirk != bezirkRkk %}
+{% if postcodeCoordinate and postcode != postcodeCoordinate %}
 <span class='error'>
-(Fehler: Laut Radkummerkasten {{ bezirkRkk }}. Bezirk).
+(Möglicher Fehler: Koordinate liegt im Bereich {{ postcodeCoordinate }})
 </span>
 {% endif %}
 <br/>

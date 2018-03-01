@@ -173,6 +173,22 @@ Radkummerkasten.getEntriesById = function (ids, options, featureCallback, finalC
     httpGetJSON('GET', 'db.php?id=' + toLoad.join(','), null,
       function (err, data) {
         for (var k in data) {
+
+          // check bezirk
+          for (var i = 0; i < this.postcodes.length; i++) {
+            var r = turf.inside({
+              type: 'Feature',
+              geometry: {
+                type: 'Point',
+                coordinates: [ data[k].lng, data[k].lat ]
+              }
+            }, this.postcodes[i])
+
+            if (r) {
+              data[k].postcodeCoordinate = this.postcodes[i].id
+            }
+          }
+
           this.cacheEntries[data[k].id] = new RadkummerkastenEntry(data[k])
         }
 
