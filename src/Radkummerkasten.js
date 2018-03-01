@@ -576,7 +576,7 @@ RadkummerkastenEntry.prototype._showHTMLnotIncludeImgs = function (dom, options,
 
 RadkummerkastenEntry.prototype._showHTMLinitMap = function (dom, options, callback) {
   if (!document.getElementById(options.mapData.id)) {
-    callback()
+    return callback()
   }
 
   if (!options.preferredLayer) {
