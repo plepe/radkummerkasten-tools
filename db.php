@@ -149,20 +149,55 @@ function load_overview ($options, $anonym=true) {
   return $res->fetchAll();
 }
 
+function update_data ($id, $data) {
+  global $db;
+
+  $may_update = array('survey', 'postcode', 'status', 'visible');
+  $set = array();
+
+  // check if we are allowed to update data
+  foreach ($data as $k => $d) {
+    if (!in_array($k, $may_update)) {
+      return false;
+    }
+
+    $set[] = $db->quoteIdent($k) . '=' . $db->quote($d);
+  }
+
+  $db->query('update map_markers set ' . implode(', ', $set) . ' where id=' . $db->quote($id));
+
+  return true;
+}
+
 Header("Content-type: text/plain; charset=utf8");
 
-if (array_key_exists('id', $_REQUEST)) {
-  $ids = explode(',', $_REQUEST['id']);
-  print "{\n";
-  foreach ($ids as $i => $id) {
-    print $i === 0 ? '' : ",\n";
+switch ($_SERVER['REQUEST_METHOD']) {
+  case 'GET':
+    if (array_key_exists('id', $_REQUEST)) {
+      $ids = explode(',', $_REQUEST['id']);
+      print "{\n";
+      foreach ($ids as $i => $id) {
+        print $i === 0 ? '' : ",\n";
 
-    if (preg_match("/^\d+$/", $id)) {
-      print "\"{$id}\": ";
-      print json_readable_encode(load_entry($id));
+        if (preg_match("/^\d+$/", $id)) {
+          print "\"{$id}\": ";
+          print json_readable_encode(load_entry($id));
+        }
+      }
+      print "\n}";
+    } else {
+      print json_readable_encode(load_overview($_REQUEST));
     }
-  }
-  print "\n}";
-} else {
-  print json_readable_encode(load_overview($_REQUEST));
+    break;
+  case 'PUT':
+    $ids = explode(',', $_REQUEST['id']);
+    $data = json_decode(file_get_contents('php://input'),true);
+
+    foreach ($ids as $i => $id) {
+      $result[$id] = update_data($id, $data);
+    }
+
+    print json_readable_encode($result);
+
+    break;
 }
