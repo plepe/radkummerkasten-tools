@@ -50,7 +50,8 @@ function restoreScroll() {
 }
 
 window.onload = function () {
-  var bezirkValues = {}
+  var postcodes = {}
+  var postcodeValues = {}
   var surveys = {}
   var surveyValues = {}
 
@@ -97,18 +98,17 @@ window.onload = function () {
       })
     },
     function (callback) {
-      callback()
-      return
-      Radkummerkasten.loadBezirksgrenzen(function (err, bezirke) {
+      Radkummerkasten.loadPostcodes(function (err, result) {
         if (err) {
-          alert('Kann Bezirksgrenzen nicht laden! ' + err)
+          alert('Kann Postcodes nicht laden! ' + err)
           return
         }
 
-        bezirke.forEach(function (bezirk) {
-          bezirkValues[bezirk.properties.BEZNR] = bezirk.properties.NAMEK_NUM
+        postcodes = result
+        postcodes.forEach(function (postcode) {
+          postcodeValues[postcode.id] = postcode.properties.NAMEK_NUM
         })
-        bezirkValues[0] = 'außerhalb Wien'
+        postcodeValues[0] = 'außerhalb Wien'
 
         loadingIndicator.setValue(0.5)
 
@@ -144,10 +144,10 @@ window.onload = function () {
       filterOverview = new form(
         null,
         {
-          'bezirk': {
+          'postcode': {
             'type': 'select',
-            'name': 'Bezirk',
-            'values': bezirkValues
+            'name': 'Postcode',
+            'values': postcodeValues
           },
           'survey': {
             'type': 'select',

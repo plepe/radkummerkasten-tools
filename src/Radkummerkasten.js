@@ -277,26 +277,27 @@ Radkummerkasten.listParameter = function (callback) {
  * load the this.bezirksgrenzen (district borders) from the server
  * @param {function} callback - Callback which should be called after loading. will be passed an error or null as first parameter and the list of districts as second (array of GeoJSON objects).
  */
-Radkummerkasten.loadBezirksgrenzen = function (callback) {
+Radkummerkasten.loadPostcodes = function (callback) {
   this.init()
 
   // already cached
-  if (this.bezirksgrenzen) {
+  if (this.postcodes) {
     async.setImmediate(function () {
-      callback(null, this.bezirksgrenzen)
+      callback(null, this.postcodes)
     }.bind(this))
 
     return
   }
 
-  this.dbConfig.get('parameter-bezirk', function (err, result) {
-    if (err) {
-      return callback(err)
-    }
+  httpGetJSON('GET', this.options.urlBezirksgrenzen, null, function (err, result) {
+    this.postcodes = []
+    for (var k in result.features) {
+      let feature = result.features[k]
+      feature.id = '1' + feature.properties.BEZ + '0'
 
-    this.parameter.bezirk = result
-    this.bezirksgrenzen = result.values
-    callback(null, this.bezirksgrenzen)
+      this.postcodes.push(feature)
+    }
+    callback(null, this.postcodes)
   }.bind(this))
 }
 
