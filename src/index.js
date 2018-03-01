@@ -567,6 +567,9 @@ window.pageEdit = function (id) {
 
   loadingIndicator.setActive()
 
+  var pageTop = document.createElement('div')
+  page.appendChild(pageTop)
+
   var formNode = document.createElement('form')
   page.appendChild(formNode)
 
@@ -581,6 +584,15 @@ window.pageEdit = function (id) {
         alert(err)
         return
       }
+
+      entry.showHTML(
+        pageTop,
+        {
+          template: 'edit'
+        },
+        function (err, page) {
+        }
+      )
 
       var formEdit = new form('edit',
         {
