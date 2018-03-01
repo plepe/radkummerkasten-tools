@@ -1,7 +1,6 @@
 var request = require('request-xmlhttprequest')
 var async = require('async')
 var queryString = require('query-string')
-var PouchDB = require('pouchdb')
 var parseDate = require('./parseDate')
 var getTemplate = require('./getTemplate')
 var fromHTML = require('./fromHTML')
@@ -40,16 +39,6 @@ Radkummerkasten.init = function () {
     this.options = {}
   }
 
-//  if (typeof this.options.dbName === 'undefined') {
-//    this.options.dbName = 'radkummerkasten'
-//  }
-//  this.db = new PouchDB(this.options.dbName)
-//  this.dbConfig = new PouchDB(this.options.dbName + '-config')
-
-//  if (typeof this.options.dbReplicateFrom !== 'undefined' && this.options.dbReplicateFrom !== 'none') {
-//    this.enableDbReplication()
-//  }
-
   if (typeof this.options.baseUrl === 'undefined') {
     this.options.baseUrl = '//www.radkummerkasten.at'
   }
@@ -70,30 +59,6 @@ Radkummerkasten.init = function () {
 
   this.cacheEntries = {}
   this.parameter = {}
-  this.dbQueryFunctionsChecked = {}
-}
-
-Radkummerkasten.enableDbReplication = function (completeCallback) {
-  this.dbRepl = this.db.replicate.from(this.options.dbReplicateFrom)
-  this.dbConfigRepl = this.dbConfig.replicate.from(this.options.dbReplicateFrom + '-config')
-
-  async.parallel([
-    function (callback) {
-      this.dbRepl.on('complete', function (info) {
-        callback()
-      })
-    }.bind(this),
-    function (callback) {
-      this.dbConfigRepl.on('complete', function (info) {
-        callback()
-      })
-    }.bind(this)
-  ], function (err) {
-    if (completeCallback) {
-      completeCallback(err)
-      completeCallback = null
-    }
-  })
 }
 
 /**
@@ -102,14 +67,9 @@ Radkummerkasten.enableDbReplication = function (completeCallback) {
  * immediately.
  */
 Radkummerkasten.checkUpdate = function (callback) {
-  if (this.dbRepl) {
-    this.dbRepl.cancel()
-    this.dbConfigRepl.cancel()
+  // TODO
 
-    this.enableDbReplication(callback)
-  } else {
-    callback()
-  }
+  callback()
 }
 
 /**
@@ -177,177 +137,12 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
   var needPerComment = false
 
   var param = {
-    descending: true,
-    include_docs: true
-  }
-
-  if (typeof options.limit !== 'undefined') {
-    param.limit = options.limit
-  }
-
-  if (typeof options.offset !== 'undefined') {
-    param.skip = options.offset
-  }
-
-  options.needLimitOffset = false
-  if ('dateStart' in options || 'dateEnd' in options ||
-      'lastUpdateStart' in options || 'lastUpdateEnd' in options ||
-      'lastCommentDateStart' in options || 'lastCommentDateEnd' in options) {
-    delete param.limit
-    delete param.offset
-    options.needLimitOffset = true
+    descending: true
   }
 
   if ('id' in options) {
     return this.getEntriesById(options.id, options, featureCallback, finalCallback)
   }
-
-  if ('bezirk' in options) {
-    filter.push('bezirk')
-    filterFun.push('doc.bezirk')
-    filterValues.push(parseInt(options.bezirk))
-  }
-
-  if ('category' in options) {
-    var category = null
-
-    if (parseInt(options.category) !== NaN) {
-      category = parseInt(options.category)
-    } else {
-      for (var i = 0 ; i < this.parameter.category.values.length; i++) {
-        var c = this.parameter.category.values[i]
-
-        if (c.title.toLowerCase() === options.category.toLowerCase()) {
-          category = c.id
-        }
-      }
-    }
-
-    if (category === null) {
-      finalCallback('Can\'t parse Category name: ' + options.category)
-      return
-    }
-
-    filter.push('category')
-    filterFun.push('doc.category')
-    filterValues.push(parseInt(category))
-  } else if (typeof options.category === 'number') {
-    filter.push('category')
-    filterFun.push('doc.category')
-    filterValues.push(options.category)
-  }
-
-  filterFunPerComment = filterFun.concat([])
-  if (typeof options.user !== 'undefined') {
-    filter.push('user')
-    filterFun.push('doc.user')
-    filterValues.push(options.user)
-    filterFunPerComment.push('comment.user')
-    needPerComment = true
-  }
-
-  if (options.order === 'likes') {
-    filter.push('order=likes')
-    filterFun.push('doc.likes')
-    filterFun.push('doc.lastUpdate')
-    filterFunPerComment.push('doc.likes')
-    filterFunPerComment.push('doc.lastUpdate')
-    param.startkey = filterValues.concat([ {}, {} ])
-    param.endkey = filterValues
-
-  } else if (options.order === 'commentsCount') {
-    filter.push('order=commentsCount')
-    filterFun.push('doc.commentsCount')
-    filterFun.push('doc.lastUpdate')
-    filterFunPerComment.push('doc.commentsCount')
-    filterFunPerComment.push('doc.lastUpdate')
-    param.startkey = filterValues.concat([ {}, {} ])
-    param.endkey = filterValues
-
-  } else if (options.order === 'lastComment') {
-    filter.push('order=lastComment')
-    filterFun.push('doc.comments.length ? doc.comments[doc.comments.length - 1].date : doc.date')
-    filterFun.push('doc.lastUpdate')
-    filterFunPerComment.push('doc.comments.length ? doc.comments[doc.comments.length - 1].date : doc.date')
-    filterFunPerComment.push('doc.lastUpdate')
-    param.startkey = filterValues.concat([ {}, {} ])
-    param.endkey = filterValues
-
-  } else if (options.order === 'lastUpdate') {
-    filter.push('order=lastUpdate')
-    filterFun.push('doc.lastUpdate')
-    filterFunPerComment.push('doc.lastUpdate')
-    param.startkey = filterValues.concat([ {} ])
-    param.endkey = filterValues
-
-  } else {
-    filter.push('order=id')
-    filterFun.push('doc.id')
-    filterFunPerComment.push('doc.id')
-    param.startkey = filterValues.concat([ {} ])
-    param.endkey = filterValues
-  }
-
-  var fun = 'var r = [ ' + filterFun.join(', ') + ' ]\n'
-  fun += 'emit(r)\n'
-  fun += 'var done = [ JSON.stringify(r) ]\n'
-
-  if (needPerComment) {
-    fun += 'for (var c = 0; c < doc.comments.length; c++) {\n'
-    fun += '  var comment = doc.comments[c]\n'
-    fun += '  r = [ ' + filterFunPerComment.join(', ') + ' ]\n'
-    fun += '  if (done.indexOf(JSON.stringify(r)) === -1) {\n'
-    fun += '    emit(r)\n'
-    fun += '    done.push(JSON.stringify(r))\n'
-    fun += '  }\n'
-    fun += '}\n'
-  }
-
-  var ddoc = {
-    _id: '_design/' + filter.join('-'),
-    views: {
-      index: {
-        map: 'function (doc) {\n' + fun + '}'
-      }
-    }
-  }
-
-  // we already checked the query function - we can run immediately
-  if (filter.join('-') in this.dbQueryFunctionsChecked) {
-    return run.call(this)
-  }
-
-  /*
-  this.db.get('_design/' + filter.join('-'),
-    function (err, result) {
-      if (err && err.status !== 404) {
-        return finalCallback(err)
-      }
-
-      if (result && JSON.stringify(result.views) === JSON.stringify(ddoc.views)) {
-        // query function is still the same - don't update
-        this.dbQueryFunctionsChecked[filter.join('-')] = true
-
-        run.call(this)
-      } else {
-        if (result) {
-          // query function needs update
-          ddoc._rev = result._rev
-        }
-
-        this.db.put(ddoc, function (err) {
-          if (err) {
-            return finalCallback(err)
-          }
-
-          this.dbQueryFunctionsChecked[filter.join('-')] = true
-
-          run.call(this)
-        }.bind(this))
-      }
-    }.bind(this)
-  )
-  */
 
   httpGetJSON(
     'GET', 'db.php?' + queryString.stringify(options), null,
@@ -355,16 +150,6 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
       this._getEntriesHandleResult(options, featureCallback, finalCallback, err, data)
     }.bind(this)
   )
-
-  /*
-  function run() {
-    this.db.query(
-      filter.join('-') + '/index',
-      param,
-      this._getEntriesHandleResult.bind(this, options, featureCallback, finalCallback)
-    )
-  }
-  */
 }
 
 Radkummerkasten.getEntriesById = function (ids, options, featureCallback, finalCallback, error, result) {
