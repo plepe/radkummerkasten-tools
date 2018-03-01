@@ -12,6 +12,7 @@ var turf = {
   inside: require('@turf/inside')
 }
 var mapLayers = require('./mapLayers')
+var httpGetJSON = require('./httpGetJSON')
 
 /**
  * The interface to Radkummerkasten
@@ -348,20 +349,12 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
   )
   */
 
-  var xhr = new XMLHttpRequest()
-  xhr.onload = function() {
-    let err, data
-
-    if (xhr.status === 200) {
-      data = JSON.parse(xhr.response)
-    } else {
-      err = 'Status ' + xhr.status
-    }
-
-    this._getEntriesHandleResult(options, featureCallback, finalCallback, err, data)
-  }.bind(this)
-  xhr.open('GET', 'db.php?' + queryString.stringify(options))
-  xhr.send()
+  httpGetJSON(
+    'GET', 'db.php?' + queryString.stringify(options), null,
+    function (err, data) {
+      this._getEntriesHandleResult(options, featureCallback, finalCallback, err, data)
+    }.bind(this)
+  )
 
   /*
   function run() {
@@ -392,24 +385,16 @@ Radkummerkasten.getEntriesById = function (ids, options, featureCallback, finalC
   }
 
   if (toLoad.length) {
-    var xhr = new XMLHttpRequest()
-    xhr.onload = function() {
-      let err, data
-
-      if (xhr.status === 200) {
-        data = JSON.parse(xhr.response)
-
+    httpGetJSON('GET', 'db.php?id=' + toLoad.join(','), null,
+      function (err, data) {
         for (var k in data) {
           this.cacheEntries[data[k].id] = new RadkummerkastenEntry(data[k])
         }
-      } else {
-        err = 'Status ' + xhr.status
-      }
 
-      this._getEntriesDone(ids, options, featureCallback, finalCallback)
-    }.bind(this)
-    xhr.open('GET', 'db.php?id=' + toLoad.join(','))
-    xhr.send()
+        this._getEntriesDone(ids, options, featureCallback, finalCallback)
+      }.bind(this)
+    )
+
     return
   }
 
