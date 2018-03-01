@@ -51,7 +51,7 @@ function restoreScroll() {
 
 window.onload = function () {
   var bezirkValues = {}
-  var categoryValues = {}
+  var surveyValues = {}
 
   document.getElementById('version').appendChild(document.createTextNode(Radkummerkasten.version))
 
@@ -105,9 +105,7 @@ window.onload = function () {
       })
     },
     function (callback) {
-      callback()
-      return
-      Radkummerkasten.categories(function (err, categories) {
+      Radkummerkasten.surveys(function (err, surveys) {
         if (err) {
           alert('Kann Kategorien nicht laden! ' + err)
           return
@@ -115,8 +113,8 @@ window.onload = function () {
 
         loadingIndicator.setValue(0.75)
 
-        categories.forEach(function (category) {
-          categoryValues[category.id] = category.title
+        surveys.forEach(function (survey) {
+          surveyValues[survey.id] = survey.name
         })
 
         callback()
@@ -139,10 +137,10 @@ window.onload = function () {
             'name': 'Bezirk',
             'values': bezirkValues
           },
-          'category': {
+          'survey': {
             'type': 'select',
             'name': 'Kategorie',
-            'values': categoryValues
+            'values': surveyValues
           },
           'user': {
             'type': 'text',

@@ -1,4 +1,4 @@
-<h3><a href='#{{ id }}'>#{{ id }} {{ categoryName }}: {{ address }} ({{ postcode}} {{ city }})</a></h3>
+<h3><a href='#{{ id }}'>#{{ id }} {{ survey }}: {{ address }} ({{ postcode}} {{ city }})</a></h3>
 {% set attachmentDone = false %}
 {% for comment in comments if attachmentDone == false %}
   {% if comment.attachments|length > 0 %}

@@ -255,7 +255,7 @@ Radkummerkasten.getParameter = function (id, callback) {
     return
   }
 
-  this.dbConfig.get('parameter-' + id, function (err, result) {
+  httpGetJSON('GET', 'parameter.php?table=' + id, null, function (err, result) {
     if (err) {
       return callback(err)
     }
@@ -301,18 +301,18 @@ Radkummerkasten.loadBezirksgrenzen = function (callback) {
 }
 
 /**
- * get list of categories
+ * get list of surveys
  * @param {function} callback - Will be called with 'err' (which should be null) and an object with the categories. [ { 'id': categoryId, 'name': categoryName }, ... ]
  */
-Radkummerkasten.categories = function (callback) {
+Radkummerkasten.surveys = function (callback) {
   this.init()
 
-  this.getParameter('category', function (err, result) {
+  this.getParameter('survey', function (err, result) {
     if (err) {
       return callback(err)
     }
 
-    callback(null, result.values)
+    callback(null, result)
   })
 }
 
