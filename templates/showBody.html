@@ -1,4 +1,4 @@
-<h2>#{{ id }} {{ categoryName }}: {{ address }} ({{ postcode }} {{ city }})</h2>
+<h2>#{{ id }} {{ survey|parameter('survey').name }}: {{ address }} ({{ postcode }} {{ city }})</h2>
 <div class='attachments'>
 <div class='map' style='{{ map.style }}' id='{{ map.id }}'></div>
 Koordinaten: {{ lat|number_format(5) }}, {{ lng|number_format(5) }}

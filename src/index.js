@@ -7,7 +7,7 @@ var getTemplate = require('../src/getTemplate')
 var csvWriter = require('csv-write-stream')
 var concat = require('concat-stream')
 var stream = require('stream')
-var twig = require('twig').twig
+var Twig = require('twig')
 var hash = require('sheet-router/hash')
 var async = require('async')
 var loadingIndicator = require('simple-loading-indicator')
@@ -51,6 +51,7 @@ function restoreScroll() {
 
 window.onload = function () {
   var bezirkValues = {}
+  var surveys = {}
   var surveyValues = {}
 
   document.getElementById('version').appendChild(document.createTextNode(Radkummerkasten.version))
@@ -68,6 +69,16 @@ window.onload = function () {
 
   loadingIndicator.setActive()
 
+  Twig.extendFilter('parameter', function (value, args) {
+    if (args[0] === 'survey') {
+      if (value in surveys) {
+        return surveys[value]
+      } else {
+        return { id: value, name: value }
+      }
+    }
+  })
+
   async.series([
     function (callback) {
       getTemplate('teaserBody', function (err, result) {
@@ -78,7 +89,7 @@ window.onload = function () {
 
         loadingIndicator.setValue(0.25)
 
-        teaserTemplate = twig({
+        teaserTemplate = Twig.twig({
           data: result
         })
 
@@ -105,7 +116,7 @@ window.onload = function () {
       })
     },
     function (callback) {
-      Radkummerkasten.surveys(function (err, surveys) {
+      Radkummerkasten.surveys(function (err, result) {
         if (err) {
           alert('Kann Kategorien nicht laden! ' + err)
           return
@@ -113,7 +124,8 @@ window.onload = function () {
 
         loadingIndicator.setValue(0.75)
 
-        surveys.forEach(function (survey) {
+        result.forEach(function (survey) {
+          surveys[survey.id] = survey
           surveyValues[survey.id] = survey.name
         })
 
