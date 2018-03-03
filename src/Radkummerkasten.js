@@ -424,6 +424,19 @@ RadkummerkastenEntry.prototype.toGeoJSON = function () {
   return ret
 }
 
+RadkummerkastenEntry.prototype.save = function (data, callback) {
+  httpGetJSON(
+    'PUT', 'db.php?id=' + encodeURIComponent(this.id), JSON.stringify(data),
+    function (err, result) {
+      if (!err) {
+        delete this.master.cacheEntries[this.id]
+      }
+
+      callback(err, result)
+    }.bind(this)
+  )
+}
+
 /**
  * show object
  * @param {object} dom

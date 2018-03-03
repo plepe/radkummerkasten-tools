@@ -623,11 +623,10 @@ window.pageEdit = function (id) {
       formNode.appendChild(submit)
 
       formNode.onsubmit = function () {
-        httpGetJSON('PUT', 'db.php?id=' + encodeURIComponent(id), JSON.stringify(formEdit.get_data()), function (err, result) {
+        entry.save(formEdit.get_data(), function (err, result) {
           if (err) {
             alert('Fehler: ' + err)
           } else {
-            delete Radkummerkasten.cacheEntries[id]
             location.hash = '#' + id
           }
         })
