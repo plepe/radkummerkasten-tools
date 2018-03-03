@@ -349,10 +349,18 @@ function _update (force, pushState) {
 }
 
 function overviewShowEntries (filter, start) {
-  var content = document.getElementById('pageOverview')
+  var oldContent, content
 
   if (start === 0) {
-    content.innerHTML = ''
+    oldContent = document.getElementById('pageOverview')
+    content = document.createElement('div')
+    oldContent.parentNode.insertBefore(content, oldContent)
+    content.id = 'pageOverview'
+    oldList = oldContent.entryDivList || {}
+    content.entryDivList = {}
+  } else {
+    oldList = {}
+    content = document.getElementById('pageOverview')
   }
 
   filter.limit = step + 1
@@ -393,9 +401,18 @@ function overviewShowEntries (filter, start) {
         divLoadMore.appendChild(a)
         content.appendChild(divLoadMore)
       } else {
-        var div = document.createElement('div')
-        div.className = 'entry'
+        var div
+
+        if (entry.id in oldList) {
+          div = oldList[entry.id]
+          div.innerHTML = ''
+        } else {
+          div = document.createElement('div')
+          div.className = 'entry'
+        }
+
         content.appendChild(div)
+        content.entryDivList[entry.id] = div
 
         showEntry(entry, div, function (err, result) {
         })
@@ -404,6 +421,10 @@ function overviewShowEntries (filter, start) {
     function (err) {
       if (err) {
         alert(err)
+      }
+
+      if (start === 0) {
+        oldContent.parentNode.removeChild(oldContent)
       }
 
       loadingIndicator.setValue(1)
