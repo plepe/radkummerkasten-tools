@@ -38,11 +38,17 @@ var surveyValues = {}
 var states = {}
 var statusValues = {}
 
+var loadForms = require('./loadForms')
+
 function showEntry(entry, div, callback) {
   var data = JSON.parse(JSON.stringify(entry.properties))
   data.options = Radkummerkasten.options
 
   div.innerHTML = teaserTemplate.render(data)
+
+  loadForms(div, entry, {
+    "status": statusValues
+  })
 
   if (callback) {
     callback()
@@ -543,6 +549,9 @@ window.pageShow = function (id) {
         page,
         entryOptions,
         function (err, page) {
+          loadForms(page, entry, {
+            "status": statusValues
+          })
         }
       )
     },

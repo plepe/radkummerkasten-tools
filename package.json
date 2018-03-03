@@ -42,6 +42,7 @@
     "js-yaml": "^3.8.1",
     "jsdom": "^9.9.1",
     "leaflet-image": "^0.4.0",
+    "lodash": "^4.17.5",
     "query-string": "^5.1.0",
     "request-xmlhttprequest": "*"
   },

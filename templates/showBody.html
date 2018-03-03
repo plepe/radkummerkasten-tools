@@ -17,7 +17,7 @@ Koordinaten: {{ lat|number_format(5) }}, {{ lng|number_format(5) }}
 <br/>
 
 <p>
-Status: {{ status|parameter('states').name }}<br/>
+Status: <span class='form-select' name='status' value="{{ status }}">{{ status|parameter('states').name }}</span><br/>
 {{ likes }} Unterstützung(en)<br/>
 {{ comments|length - 1 }} Kommentar(e)<br/>
 Adresse: {{ street }} {{ housenumber }}<br/>
