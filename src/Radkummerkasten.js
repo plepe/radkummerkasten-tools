@@ -189,7 +189,9 @@ Radkummerkasten.getEntriesById = function (ids, options, featureCallback, finalC
             }
           }
 
-          this.cacheEntries[data[k].id] = new RadkummerkastenEntry(data[k])
+          var ob = new RadkummerkastenEntry(data[k])
+          ob.master = this
+          this.cacheEntries[data[k].id] = ob
         }
 
         this._getEntriesDone(ids, options, featureCallback, finalCallback)
