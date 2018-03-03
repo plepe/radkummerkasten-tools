@@ -1,8 +1,10 @@
 var loadingIndicator = require('simple-loading-indicator')
+var EventEmitter = require('events')
 var _ = require('lodash')
 
 function loadForms (div, entry, fieldValues) {
   var spans = div.getElementsByTagName('span')
+  var emitter = new EventEmitter()
 
   _.forEach(spans, function (span) {
     var element = null
@@ -37,12 +39,16 @@ function loadForms (div, entry, fieldValues) {
             if (err) {
               alert(err)
             }
+
+            emitter.emit('save')
           }
         )
 
       }.bind(element)
     }
   })
+
+  return emitter
 }
 
 module.exports = loadForms

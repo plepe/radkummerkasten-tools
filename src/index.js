@@ -46,8 +46,11 @@ function showEntry(entry, div, callback) {
 
   div.innerHTML = teaserTemplate.render(data)
 
-  loadForms(div, entry, {
+  var formEmitter = loadForms(div, entry, {
     "status": statusValues
+  })
+  formEmitter.on('save', function () {
+    update(false, true)
   })
 
   if (callback) {
@@ -549,8 +552,12 @@ window.pageShow = function (id) {
         page,
         entryOptions,
         function (err, page) {
-          loadForms(page, entry, {
+          var formEmitter = loadForms(page, entry, {
             "status": statusValues
+          })
+
+          formEmitter.on('save', function () {
+            update(false, true)
           })
         }
       )
