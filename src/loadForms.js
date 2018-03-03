@@ -9,6 +9,11 @@ function loadForms (div, entry, fieldValues) {
   _.forEach(spans, function (span) {
     var element = null
 
+    if (!span) {
+      // how can this happen?
+      return
+    }
+
     if (span.className == 'form-select') {
       var element = document.createElement('select')
       element.name = span.getAttribute('name')
