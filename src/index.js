@@ -348,7 +348,7 @@ function _update (force, pushState) {
   updateTimestamp()
 }
 
-function overviewShowEntries (filter, start) {
+function overviewShowEntries (filter, start, callback) {
   var oldContent, content
 
   if (start === 0) {
@@ -392,8 +392,9 @@ function overviewShowEntries (filter, start) {
         a.appendChild(document.createTextNode('lade mehr Einträge'))
         a.href = '#'
         a.onclick = function () {
-          content.removeChild(divLoadMore)
-          overviewShowEntries(filter, start + step)
+          overviewShowEntries(filter, start + step, function () {
+            divLoadMore.parentNode.removeChild(divLoadMore)
+          })
 
           return false
         }
@@ -431,6 +432,10 @@ function overviewShowEntries (filter, start) {
       loadingIndicator.setInactive()
       filterOverview.set_orig_data(filter)
       restoreScroll()
+
+      if (callback) {
+        callback()
+      }
     }
   )
 }
