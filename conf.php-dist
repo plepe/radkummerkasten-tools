@@ -5,3 +5,18 @@ $dbconf = array(
   'username' => 'username',
   'password' => 'password',
 );
+
+$auth_config=array(
+  'domains'=>array(
+    // specify your domains here. These are just examples.
+    'radkummerkasten'=>array(
+      'type'    => "wordpress",
+      'name'    => 'Radkummerkasten',
+      'path'    => '/var/www/html',
+    ),
+  ),
+  'groups'=>array(
+    'admin'=>array('user1@default', 'user2@default'),
+  ),
+  #'require-group' => "admin",
+);

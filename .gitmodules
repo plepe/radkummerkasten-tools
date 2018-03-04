@@ -13,3 +13,6 @@
 [submodule "lib/modulekit/PDOext"]
 	path = lib/modulekit/PDOext
 	url = https://github.com/plepe/PDOext.git
+[submodule "lib/modulekit/auth"]
+	path = lib/modulekit/auth
+	url = https://github.com/plepe/modulekit-auth.git
