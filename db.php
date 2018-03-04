@@ -1,5 +1,7 @@
 <?php include "conf.php"; /* load a local configuration */ ?>
 <?php include "modulekit/loader.php"; /* loads all php-includes */ ?>
+<?php session_start(); ?>
+<?php $auth = new Auth(); ?>
 <?php
 $dbconf[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES utf8";
 $db = new PDOext($dbconf);
@@ -169,6 +171,8 @@ function update_data ($id, $data) {
   return true;
 }
 
+$rights = rights($auth);
+
 Header("Content-type: text/plain; charset=utf8");
 
 switch ($_SERVER['REQUEST_METHOD']) {
@@ -181,12 +185,12 @@ switch ($_SERVER['REQUEST_METHOD']) {
 
         if (preg_match("/^\d+$/", $id)) {
           print "\"{$id}\": ";
-          print json_readable_encode(load_entry($id));
+          print json_readable_encode(load_entry($id, $rights['anonym']));
         }
       }
       print "\n}";
     } else {
-      print json_readable_encode(load_overview($_REQUEST));
+      print json_readable_encode(load_overview($_REQUEST, $rights['anonym']));
     }
     break;
   case 'PUT':
