@@ -1,0 +1,7 @@
+<?php
+$dbconf = array(
+  'type' => 'mysql',
+  'dbname' => 'radkummerkasten',
+  'username' => 'username',
+  'password' => 'password',
+);
