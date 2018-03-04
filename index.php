@@ -2,9 +2,7 @@
 <?php include "modulekit/loader.php"; /* loads all php-includes */ ?>
 <?php session_start(); ?>
 <?php call_hooks("init"); /* initialize submodules */ ?>
-<?php
-$auth = new Auth();
-?>
+<?php $auth = new Auth(); ?>
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -30,6 +28,7 @@ $auth = new Auth();
   <?php print_add_html_headers(); /* print additional html headers */ ?>
 </head>
 <body>
+<?php print auth_user_menu() ?>
 
 <h1><a href='#'>Radkummerkasten</a></h1>
 
