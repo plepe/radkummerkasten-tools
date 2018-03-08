@@ -180,7 +180,7 @@ Radkummerkasten.getEntriesById = function (ids, options, featureCallback, finalC
               type: 'Feature',
               geometry: {
                 type: 'Point',
-                coordinates: [ data[k].lng, data[k].lat ]
+                coordinates: [ parseFloat(data[k].lng), parseFloat(data[k].lat) ]
               }
             }, this.postcodes[i])
 
