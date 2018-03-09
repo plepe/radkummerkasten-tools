@@ -196,11 +196,10 @@ function update_data_struct ($entries, $struct) {
   return $queries;
 }
 
-function update_data ($id, $data) {
+function update_data ($data) {
   global $db;
 
-  $data['id'] = $id;
-  $queries = update_data_struct(array($data), array(
+  $queries = update_data_struct($data, array(
     'may_update' => array('survey', 'postcode', 'status', 'visible'),
     'table' => 'map_markers',
     'sub_tables' => array(
@@ -246,13 +245,10 @@ switch ($_SERVER['REQUEST_METHOD']) {
       print json_readable_encode(load_overview($_REQUEST, $rights['anonym']));
     }
     break;
-  case 'PUT':
-    $ids = explode(',', $_REQUEST['id']);
+  case 'POST':
     $data = json_decode(file_get_contents('php://input'),true);
 
-    foreach ($ids as $i => $id) {
-      $result[$id] = update_data($id, $data);
-    }
+    $result = update_data($data);
 
     print json_readable_encode($result);
 
