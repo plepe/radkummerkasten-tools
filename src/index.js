@@ -636,8 +636,7 @@ window.pageEdit = function (id) {
         }
       )
 
-      var formEdit = new form('edit',
-        {
+      var def = {
           'survey': {
             'type': 'select',
             'name': 'Kategorie',
@@ -778,7 +777,10 @@ window.pageEdit = function (id) {
             }
           }
         }
-      )
+
+      check_form_rights(def, rights.marker_rights)
+
+      var formEdit = new form('edit', def)
 
       formEdit.show(formNode)
       formEdit.set_data(entry.properties)
@@ -806,6 +808,20 @@ window.pageEdit = function (id) {
   )
 
   updateTimestamp()
+}
+
+function check_form_rights (def, rights) {
+  for (var k in def) {
+    if (k === 'id') {
+    }
+    else if (rights.sub_tables && k in rights.sub_tables) {
+      check_form_rights(def[k].def.def, rights.sub_tables[k])
+    }
+    else if (rights.may_update.indexOf(k) === -1) {
+      def[k].type = 'label'
+      def[k].include_data = false
+    }
+  }
 }
 
 window.pageOverview = function () {
