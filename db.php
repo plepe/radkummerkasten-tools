@@ -30,6 +30,7 @@ function load_entry ($id, $anonym=true) {
     unset($result['email']);
     unset($result['phone']);
     unset($result['website']);
+    unset($result['ip']);
   }
 
   // attachments
@@ -53,6 +54,7 @@ function load_entry ($id, $anonym=true) {
       unset($elem['phone']);
       unset($elem['website']);
       unset($elem['gender']);
+      unset($elem['ip']);
       $elem['name'] = mb_substr($elem['name'], 0, 1) . '.';
     }
 
