@@ -151,6 +151,38 @@ function load_overview ($options, $anonym=true) {
   return $res->fetchAll();
 }
 
+/*
+ * @return [string] queries
+ */
+function update_data_struct ($entries, $struct) {
+  global $db;
+  $queries = array();
+
+  foreach ($entries as $entry) {
+    $set = array();
+
+    if (!array_key_exists('id', $entry)) {
+      return false;
+    }
+
+    foreach ($entry as $k => $d) {
+      if ($k === 'id') {
+        continue;
+      }
+
+      if (!in_array($k, $struct['may_update'])) {
+        return false;
+      }
+
+      $set[] = $db->quoteIdent($k) . '=' . $db->quote($d);
+    }
+
+    $queries[] = "update {$struct['table']} set " . implode(', ', $set) . ' where id=' . $db->quote($entry['id']);
+  }
+
+  return $queries;
+}
+
 function update_data ($id, $data) {
   global $db;
   $queries = array();
@@ -162,27 +194,16 @@ function update_data ($id, $data) {
   // check if we are allowed to update data
   foreach ($data as $k => $d) {
     if ($k === 'comments') {
-      foreach ($d as $comment) {
-        $set1 = array();
+      $q = update_data_struct($d, array(
+        'table' => 'map_comments',
+        'may_update' => $may_update_comment,
+      ));
 
-        if (!array_key_exists('id', $comment)) {
-          return false;
-        }
-
-        foreach ($comment as $k1 => $d1) {
-          if ($k1 === 'id') {
-            continue;
-          }
-
-          if (!in_array($k1, $may_update_comment)) {
-            return false;
-          }
-
-          $set1[] = $db->quoteIdent($k1) . '=' . $db->quote($d1);
-        }
-
-        $queries[] = 'update map_comments set ' . implode(', ', $set1) . ' where id=' . $db->quote($comment['id']);
+      if (!is_array($q)) {
+        return $q;
       }
+
+      $queries = array_merge($queries, $q);
 
       continue;
     }
