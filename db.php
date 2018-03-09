@@ -198,17 +198,9 @@ function update_data_struct ($entries, $struct) {
 
 function update_data ($data) {
   global $db;
+  global $rights;
 
-  $queries = update_data_struct($data, array(
-    'may_update' => array('survey', 'postcode', 'status', 'visible'),
-    'table' => 'map_markers',
-    'sub_tables' => array(
-      'comments' => array(
-        'table' => 'map_comments',
-        'may_update' => array('message'),
-      ),
-    ),
-  ));
+  $queries = update_data_struct($data, $rights['marker_rights']);
 
   if (!is_array($queries)) {
     return $queries;

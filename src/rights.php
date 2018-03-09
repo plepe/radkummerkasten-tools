@@ -8,5 +8,15 @@ function rights ($auth) {
 
   return array(
     'anonym' => true,
+    'marker_rights' => array(
+      'table' => 'map_markers',
+      'may_update' => array('survey', 'postcode', 'status', 'visible'),
+      'sub_tables' => array(
+        'comments' => array(
+          'table' => 'map_comments',
+          'may_update' => array('message', 'visible'),
+        ),
+      ),
+    ),
   );
 }
