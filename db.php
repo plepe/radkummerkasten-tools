@@ -20,6 +20,12 @@ function load_entry ($id, $anonym=true) {
     return null;
   }
 
+  $result['visible'] = (boolean)$result['visible'];
+  $result['lat'] = (float)$result['lat'];
+  $result['lng'] = (float)$result['lng'];
+  $result['likes'] = (float)$result['likes'];
+  $result['mail_verified'] = (int)$result['mail_verified'];
+
   if ($anonym) {
     unset($result['email']);
     unset($result['phone']);
@@ -34,6 +40,12 @@ function load_entry ($id, $anonym=true) {
   $res = $db->query('select * from map_comments where marker=' . $db->quote($id));
   $result['comments'] = array();
   while ($elem = $res->fetch()) {
+    $elem['visible'] = (boolean)$elem['visible'];
+    $elem['newsletter'] = (boolean)$elem['newsletter'];
+    $elem['main'] = (boolean)$elem['main'];
+    $elem['likes'] = (float)$elem['likes'];
+    $elem['notify'] = (int)$elem['notify'];
+    $elem['mail_verified'] = (int)$elem['mail_verified'];
     $elem['attachments'] = array();
 
     if ($anonym) {
@@ -46,6 +58,10 @@ function load_entry ($id, $anonym=true) {
 
     foreach ($images as $image) {
       if ($elem['id'] === $image['context']) {
+        $image['type'] = (int)$image['type'];
+        $image['width'] = (int)$image['width'];
+        $image['height'] = (int)$image['height'];
+
         $elem['attachments'][] = $image;
       }
     }
