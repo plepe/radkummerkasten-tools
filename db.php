@@ -170,8 +170,21 @@ function update_data_struct ($entries, $struct) {
         continue;
       }
 
+      if (array_key_exists('sub_tables', $struct) &&
+          array_key_exists($k, $struct['sub_tables'])) {
+        $q = update_data_struct($d, $struct['sub_tables'][$k]);
+
+        if (!is_array($q)) {
+          return $q;
+        }
+
+        $queries = array_merge($queries, $q);
+
+        continue;
+      }
+
       if (!in_array($k, $struct['may_update'])) {
-        return false;
+        return "may not update {$k}";
       }
 
       $set[] = $db->quoteIdent($k) . '=' . $db->quote($d);
@@ -185,37 +198,22 @@ function update_data_struct ($entries, $struct) {
 
 function update_data ($id, $data) {
   global $db;
-  $queries = array();
 
-  $may_update = array('survey', 'postcode', 'status', 'visible');
-  $may_update_comment = array('message');
-  $set = array();
-
-  // check if we are allowed to update data
-  foreach ($data as $k => $d) {
-    if ($k === 'comments') {
-      $q = update_data_struct($d, array(
+  $data['id'] = $id;
+  $queries = update_data_struct(array($data), array(
+    'may_update' => array('survey', 'postcode', 'status', 'visible'),
+    'table' => 'map_markers',
+    'sub_tables' => array(
+      'comments' => array(
         'table' => 'map_comments',
-        'may_update' => $may_update_comment,
-      ));
+        'may_update' => array('message'),
+      ),
+    ),
+  ));
 
-      if (!is_array($q)) {
-        return $q;
-      }
-
-      $queries = array_merge($queries, $q);
-
-      continue;
-    }
-
-    if (!in_array($k, $may_update)) {
-      return false;
-    }
-
-    $set[] = $db->quoteIdent($k) . '=' . $db->quote($d);
+  if (!is_array($queries)) {
+    return $queries;
   }
-
-  $queries[] = 'update map_markers set ' . implode(', ', $set) . ' where id=' . $db->quote($id);
 
   $db->beginTransaction();
   foreach ($queries as $query) {
@@ -223,7 +221,7 @@ function update_data ($id, $data) {
   }
   $db->commit();
 
-  return true;
+  return $queries;
 }
 
 $rights = rights($auth);
