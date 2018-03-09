@@ -15,6 +15,12 @@ function rights ($auth) {
         'comments' => array(
           'table' => 'map_comments',
           'may_update' => array('message', 'visible'),
+          'sub_tables' => array(
+            'attachments' => array(
+              'table' => 'images',
+              'may_update' => array(),
+            ),
+          ),
         ),
       ),
     ),
