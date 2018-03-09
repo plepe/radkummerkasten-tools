@@ -238,7 +238,7 @@ window.onload = function () {
           }
         },
         {
-          'type': 'filters',
+          'type': 'form_chooser',
           'button:add_element': 'Filter hinzufügen / Sortierung ändern',
           'order': false
         }

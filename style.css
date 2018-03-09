@@ -3,6 +3,9 @@ body {
   background-repeat: no-repeat;
   background-position: right top;
 }
+form#filterOverview > span.form_element_form_chooser {
+  border: none;
+}
 div.entry img {
   max-width: 200px;
   max-height: 200px;
