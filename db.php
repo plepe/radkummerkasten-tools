@@ -153,6 +153,7 @@ function load_overview ($options, $anonym=true) {
 
 function update_data ($id, $data) {
   global $db;
+  $queries = array();
 
   $may_update = array('survey', 'postcode', 'status', 'visible');
   $set = array();
@@ -166,7 +167,13 @@ function update_data ($id, $data) {
     $set[] = $db->quoteIdent($k) . '=' . $db->quote($d);
   }
 
-  $db->query('update map_markers set ' . implode(', ', $set) . ' where id=' . $db->quote($id));
+  $queries[] = 'update map_markers set ' . implode(', ', $set) . ' where id=' . $db->quote($id);
+
+  $db->beginTransaction();
+  foreach ($queries as $query) {
+    $db->query($query);
+  }
+  $db->commit();
 
   return true;
 }
