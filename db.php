@@ -156,10 +156,37 @@ function update_data ($id, $data) {
   $queries = array();
 
   $may_update = array('survey', 'postcode', 'status', 'visible');
+  $may_update_comment = array('message');
   $set = array();
 
   // check if we are allowed to update data
   foreach ($data as $k => $d) {
+    if ($k === 'comments') {
+      foreach ($d as $comment) {
+        $set1 = array();
+
+        if (!array_key_exists('id', $comment)) {
+          return false;
+        }
+
+        foreach ($comment as $k1 => $d1) {
+          if ($k1 === 'id') {
+            continue;
+          }
+
+          if (!in_array($k1, $may_update_comment)) {
+            return false;
+          }
+
+          $set1[] = $db->quoteIdent($k1) . '=' . $db->quote($d1);
+        }
+
+        $queries[] = 'update map_comments set ' . implode(', ', $set1) . ' where id=' . $db->quote($comment['id']);
+      }
+
+      continue;
+    }
+
     if (!in_array($k, $may_update)) {
       return false;
     }

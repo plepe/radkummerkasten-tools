@@ -652,13 +652,31 @@ window.pageEdit = function (id) {
             'type': 'select',
             'name': 'Kategorie',
             'values': surveyValues
+          },
+          'comments': {
+            'type': 'array',
+            'name': 'Kommentare',
+            'order': false,
+            'def': {
+              'type': 'form',
+              'def': {
+                'id': {
+                  'name': 'ID',
+                  'type': 'hidden',
+                },
+                'message': {
+                  'name': 'Message',
+                  'type': 'textarea',
+                }
+              }
+            }
           }
         }
       )
 
+      formEdit.show(formNode)
       formEdit.set_data(entry.properties)
 
-      formEdit.show(formNode)
       let submit = document.createElement('input')
       submit.type = 'submit'
       submit.value = 'Speichern'
