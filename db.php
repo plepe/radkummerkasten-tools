@@ -208,7 +208,9 @@ function update_data_struct ($entries, $struct) {
       $set[] = $db->quoteIdent($k) . '=' . $db->quote($d);
     }
 
-    $queries[] = "update {$struct['table']} set " . implode(', ', $set) . ' where id=' . $db->quote($entry['id']);
+    if (sizeof($set)) {
+      $queries[] = "update {$struct['table']} set " . implode(', ', $set) . ' where id=' . $db->quote($entry['id']);
+    }
   }
 
   return $queries;
