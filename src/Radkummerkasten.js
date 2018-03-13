@@ -144,8 +144,10 @@ Radkummerkasten.getEntries = function (options, featureCallback, finalCallback) 
     return this.getEntriesById(options.id, options, featureCallback, finalCallback)
   }
 
+  options.table = 'markers'
+
   httpGetJSON(
-    'GET', 'db.php?' + queryString.stringify(options), null,
+    'GET', 'api.php?' + JSON.stringify([options]), null,
     function (err, data) {
       this._getEntriesHandleResult(options, featureCallback, finalCallback, err, data)
     }.bind(this)
@@ -170,31 +172,13 @@ Radkummerkasten.getEntriesById = function (ids, options, featureCallback, finalC
   }
 
   if (toLoad.length) {
-    httpGetJSON('GET', 'db.php?id=' + toLoad.join(','), null,
+    var options = [{
+        table: 'markers',
+        query: [ [ 'id', 'in', toLoad ] ]
+    }]
+    httpGetJSON('GET', 'api.php?' + JSON.stringify(options), null,
       function (err, data) {
-        for (var k in data) {
-
-          // check bezirk
-          for (var i = 0; i < this.postcodes.length; i++) {
-            var r = turf.inside({
-              type: 'Feature',
-              geometry: {
-                type: 'Point',
-                coordinates: [ parseFloat(data[k].lng), parseFloat(data[k].lat) ]
-              }
-            }, this.postcodes[i])
-
-            if (r) {
-              data[k].postcodeCoordinate = this.postcodes[i].id
-            }
-          }
-
-          var ob = new RadkummerkastenEntry(data[k])
-          ob.master = this
-          this.cacheEntries[data[k].id] = ob
-        }
-
-        this._getEntriesDone(ids, options, featureCallback, finalCallback)
+        this._getEntriesHandleResult(options, featureCallback, finalCallback, err, data)
       }.bind(this)
     )
 
@@ -212,27 +196,29 @@ Radkummerkasten._getEntriesHandleResult = function (options, featureCallback, fi
     return finalCallback(error)
   }
 
-  for (var i = 0; i < result.length; i++) {
-    var id = result[i].id
-    ids.push(id)
+  for (var i = 0; i < result[0].length; i++) {
+    var data = result[0][i]
+    ids.push(data.id)
     var ob
 
-    if (!(id in this.cacheEntries)) {
-//        (this.cacheEntries[id].properties.ts !== result.rows[i].doc.ts)) {
-      toLoad.push(id)
-    } else {
-      ob = this.cacheEntries[id]
-    }
-  }
+    // check bezirk
+    for (var j = 0; j < this.postcodes.length; j++) {
+      var r = turf.inside({
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [ parseFloat(data.lng), parseFloat(data.lat) ]
+        }
+      }, this.postcodes[j])
 
-  if (toLoad.length) {
-    this.getEntriesById(toLoad, options,
-      function () {},
-      function () {
-        this._getEntriesDone(ids, options, featureCallback, finalCallback)
-      }.bind(this)
-    )
-    return
+      if (r) {
+        data.postcodeCoordinate = this.postcodes[j].id
+      }
+    }
+
+    var ob = new RadkummerkastenEntry(data)
+    ob.master = this
+    this.cacheEntries[data.id] = ob
   }
 
   this._getEntriesDone(ids, options, featureCallback, finalCallback)
