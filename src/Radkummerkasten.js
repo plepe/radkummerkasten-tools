@@ -413,8 +413,14 @@ RadkummerkastenEntry.prototype.toGeoJSON = function () {
 RadkummerkastenEntry.prototype.save = function (data, callback) {
   data.id = this.id
 
+  var actions = [{
+    table: 'markers',
+    type: 'insert-update',
+    data: [ data ]
+  }]
+
   httpGetJSON(
-    'POST', 'db.php?id=' + encodeURIComponent(this.id), JSON.stringify([data]),
+    'POST', 'api.php', JSON.stringify(actions),
     function (err, result) {
       if (!err) {
         delete this.master.cacheEntries[this.id]

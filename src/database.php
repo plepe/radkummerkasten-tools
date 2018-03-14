@@ -123,6 +123,7 @@ $table_markers = array(
     ),
     'status' => array(
       'type' => 'int',
+      'write' => true,
     ),
     'address' => array(
       'type' => 'text',
