@@ -26,6 +26,10 @@ function loadForms2 (div, entry, emitter, err, def) {
       element.name = span.getAttribute('name')
 
       if (element.name in def) {
+        if (!def[element.name].may_write) {
+          return
+        }
+
         _.forEach(def[element.name].values, function (value, key) {
           var option = document.createElement('option')
           option.value = key
