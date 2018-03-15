@@ -3,11 +3,18 @@ register_hook('init', function () {
   global $api;
   global $dbconf;
   global $db;
+  global $auth;
 
   $dbconf[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES utf8";
   $db = new PDOext($dbconf);
   $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
   $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+
+  $anonym = true;
+
+  if ($auth->current_user->is_logged_in()) {
+    $anonym = false;
+  }
 
   $table_markers = array(
     'id' => 'markers',
@@ -59,15 +66,19 @@ register_hook('init', function () {
           ),
           'firstname' => array(
             'type' => 'text',
+            'read' => true,
           ),
           'name' => array(
             'type' => 'text',
+            'select' => $anonym ? "concat(substr(name, 1, 1), '.')" : "name",
           ),
           'email' => array(
             'type' => 'text',
+            'read' => !$anonym,
           ),
           'gender' => array(
             'type' => 'int',
+            'read' => !$anonym,
           ),
           'newsletter' => array(
             'type' => 'int',
