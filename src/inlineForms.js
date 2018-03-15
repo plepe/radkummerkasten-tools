@@ -2,6 +2,12 @@ var loadingIndicator = require('simple-loading-indicator')
 var EventEmitter = require('events')
 var _ = require('lodash')
 
+/**
+ * Examples:
+ * <span class='inlineForm' field='status' value="{{ status }}">{{ status|parameter('states').name }}</span>
+ * <span class='inlineForm' field='date' path="comments.{{ comment.id }}" value="{{ comment.date }}">{{ comment.date }}</span>
+ */
+
 function inlineForms (div, entry, fieldValues) {
   var emitter = new EventEmitter()
 
@@ -76,6 +82,7 @@ function inlineForms2 (div, entry, emitter, err, def) {
         }
 
         d[fieldId] = f.get_data()
+        console.log(data)
 
         entry.save(data,
           function (err) {
