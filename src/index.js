@@ -38,7 +38,7 @@ var surveyValues = {}
 var states = {}
 var statusValues = {}
 
-var loadForms = require('./loadForms')
+var inlineForms = require('./inlineForms')
 
 function showEntry(entry, div, callback) {
   var data = JSON.parse(JSON.stringify(entry.properties))
@@ -46,7 +46,7 @@ function showEntry(entry, div, callback) {
 
   div.innerHTML = teaserTemplate.render(data)
 
-  var formEmitter = loadForms(div, entry, {
+  var formEmitter = inlineForms(div, entry, {
     "status": statusValues
   })
   formEmitter.on('save', function () {
@@ -578,7 +578,7 @@ window.pageShow = function (id) {
         page,
         entryOptions,
         function (err, page) {
-          var formEmitter = loadForms(page, entry, {
+          var formEmitter = inlineForms(page, entry, {
             "status": statusValues
           })
 
