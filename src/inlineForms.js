@@ -14,42 +14,34 @@ function inlineForms2 (div, entry, emitter, err, def) {
   var spans = div.getElementsByTagName('span')
 
   _.forEach(spans, function (span) {
-    var element = null
-
     if (!span) {
       // how can this happen?
       return
     }
 
-    if (span.className == 'form-select') {
-      var element = document.createElement('select')
-      element.name = span.getAttribute('name')
-
-      if (element.name in def) {
-        if (!def[element.name].may_write) {
-          return
-        }
-
-        _.forEach(def[element.name].values, function (value, key) {
-          var option = document.createElement('option')
-          option.value = key
-          option.appendChild(document.createTextNode(value))
-          option.selected = span.getAttribute('value') == key
-
-          element.appendChild(option)
-        })
+    if (span.className == 'inlineForm') {
+      var fieldId = span.getAttribute('field')
+      if (!(fieldId in def)) {
+        return
       }
-    }
 
-    if (element) {
-      span.parentNode.insertBefore(element, span)
-      span.parentNode.removeChild(span)
+      var fieldDef = def[fieldId]
+      if (!fieldDef.may_write) {
+        return
+      }
 
-      element.onchange = function () {
+      while (span.firstChild) {
+        span.removeChild(span.firstChild)
+      }
+
+      var f = new form('inline-' + entry.id + '-' + fieldId, {}, fieldDef)
+      f.set_data(span.getAttribute('value'))
+      f.show(span)
+
+      f.onchange = function () {
         var data = {}
-        data[this.name] = this.value
+        data[fieldId] = f.get_data()
 
-        var k = this.name
         entry.save(data,
           function (err) {
             if (err) {
@@ -59,8 +51,7 @@ function inlineForms2 (div, entry, emitter, err, def) {
             emitter.emit('save')
           }
         )
-
-      }.bind(element)
+      }
     }
   })
 

@@ -69,6 +69,10 @@ img#logo {
   float: right;
 }
 
+span.inlineForm {
+  display: inline-block;
+}
+
 @media screen and (max-width: 600px) {
   body {
     margin: 0 2px;
