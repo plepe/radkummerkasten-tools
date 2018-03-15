@@ -636,159 +636,18 @@ window.pageEdit = function (id) {
         }
       )
 
-      var def = {
-          'survey': {
-            'type': 'select',
-            'name': 'Kategorie',
-            'values': surveyValues
-          },
-          'address': {
-            'name': 'Adresse',
-            'type': 'text'
-          },
-          'status': {
-            'type': 'select',
-            'name': 'Status',
-            'values': statusValues
-          },
-          'visible': {
-            'name': 'Sichtbar',
-            'type': 'boolean'
-          },
-          'lat': {
-            'name': 'Latitude',
-            'type': 'float'
-          },
-          'lng': {
-            'name': 'Longitude',
-            'type': 'float'
-          },
-          'street': {
-            'name': 'Straße',
-            'type': 'text'
-          },
-          'housenumber': {
-            'name': 'Hausnummer',
-            'type': 'text'
-          },
-          'postcode': {
-            'type': 'select',
-            'name': 'Postcode',
-            'values': postcodeValues
-          },
-          'city': {
-            'name': 'Ort',
-            'type': 'text'
-          },
-          'date': {
-            'name': 'Datum',
-            'type': 'text'
-          },
-          'likes': {
-            'name': 'Likes',
-            'type': 'integer'
-          },
-          'email': {
-            'name': 'email',
-            'type': 'integer'
-          },
-          'comments': {
-            'type': 'array',
-            'name': 'Kommentare',
-            'order': false,
-            'def': {
-              'type': 'form',
-              'def': {
-                'id': {
-                  'name': 'ID',
-                  'type': 'hidden'
-                },
-                'message': {
-                  'name': 'Message',
-                  'type': 'textarea'
-                },
-                'visible': {
-                  'name': 'Sichtbar',
-                  'type': 'boolean'
-                },
-                'firstname': {
-                  'name': 'Vorname',
-                  'type': 'text'
-                },
-                'name': {
-                  'name': 'Nachname',
-                  'type': 'text'
-                },
-                'email': {
-                  'name': 'E-Mail',
-                  'type': 'text'
-                },
-                'gender': {
-                  'name': 'Gender',
-                  'type': 'radio',
-                  'values': {
-                    0: 'unbekannt',
-                    1: 'Herr',
-                    2: 'Frau'
-                  }
-                },
-                'date': {
-                  'name': 'Datum',
-                  'type': 'text'
-                },
-                'attachments': {
-                  'name': 'Anhänge',
-                  'type': 'array',
-                  'order': 'false',
-                  'def': {
-                    'type': 'form',
-                    'def': {
-                      'id': {
-                        'type': 'hidden'
-                      },
-                      'type': {
-                        'name': 'Type',
-                        'type': 'integer'
-                      },
-                      'date': {
-                        'name': 'Datum',
-                        'type': 'text',
-                      },
-                      'file': {
-                        'name': 'Dateiname',
-                        'type': 'text'
-                      },
-                      'width': {
-                        'name': 'Breite',
-                        'type': 'integer'
-                      },
-                      'height': {
-                        'name': 'Höhe',
-                        'type': 'integer'
-                      },
-                      'text': {
-                        'name': 'Text',
-                        'type': 'textarea'
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+      var formEdit
+      entry.formDef({}, function (err, def) {
+        formEdit = new form('edit', def)
 
-      check_form_rights(def, rights.markers)
+        formEdit.show(formNode)
+        formEdit.set_data(entry.properties)
 
-      var formEdit = new form('edit', def)
-
-      formEdit.show(formNode)
-      formEdit.set_data(entry.properties)
-
-      let submit = document.createElement('input')
-      submit.type = 'submit'
-      submit.value = 'Speichern'
-      formNode.appendChild(submit)
+        let submit = document.createElement('input')
+        submit.type = 'submit'
+        submit.value = 'Speichern'
+        formNode.appendChild(submit)
+      })
 
       formNode.onsubmit = function () {
         entry.save(formEdit.get_data(), function (err, result) {
@@ -808,23 +667,6 @@ window.pageEdit = function (id) {
   )
 
   updateTimestamp()
-}
-
-function check_form_rights (def, rights) {
-  for (var k in def) {
-    if (k === 'id') {
-    }
-    else if (!(k in rights.fields)) {
-      delete def[k]
-    }
-    else if (rights.fields[k].type === 'sub_table') {
-      check_form_rights(def[k].def.def, rights.fields[k])
-    }
-    else if (rights.fields[k].write !== true) {
-      def[k].type = 'label'
-      def[k].include_data = false
-    }
-  }
 }
 
 window.pageOverview = function () {

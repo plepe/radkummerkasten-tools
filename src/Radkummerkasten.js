@@ -12,6 +12,7 @@ var turf = {
 }
 var mapLayers = require('./mapLayers')
 var httpGetJSON = require('./httpGetJSON')
+var checkFormRights = require('./checkFormRights')
 
 /**
  * The interface to Radkummerkasten
@@ -430,6 +431,185 @@ RadkummerkastenEntry.prototype.save = function (data, callback) {
     }.bind(this)
   )
 }
+
+RadkummerkastenEntry.prototype.formDef = function (options, callback) {
+  let surveyValues = {}
+  let postcodeValues = {}
+  let statusValues = {}
+
+  async.parallel(
+    [
+      done => {
+        this.master.loadPostcodes((err, result) => {
+          result.forEach(v => postcodeValues[v.id] =
+            v.properties.NAMEK_NUM)
+          done()
+        })
+      },
+      done => {
+        this.master.getParameter('survey', (err, result) => {
+          result.forEach(v => surveyValues[v.id] = v.name)
+          done()
+        })
+      },
+      done => {
+        this.master.getParameter('states', (err, result) => {
+          result.forEach(v => statusValues[v.id] = v.name)
+          done()
+        })
+      }
+    ],
+    function () {
+      var def =
+      {
+        'survey': {
+          'type': 'select',
+          'name': 'Kategorie',
+          'values': surveyValues
+        },
+        'address': {
+          'name': 'Adresse',
+          'type': 'text'
+        },
+        'status': {
+          'type': 'select',
+          'name': 'Status',
+          'values': statusValues
+        },
+        'visible': {
+          'name': 'Sichtbar',
+          'type': 'boolean'
+        },
+        'lat': {
+          'name': 'Latitude',
+          'type': 'float'
+        },
+        'lng': {
+          'name': 'Longitude',
+          'type': 'float'
+        },
+        'street': {
+          'name': 'Straße',
+          'type': 'text'
+        },
+        'housenumber': {
+          'name': 'Hausnummer',
+          'type': 'text'
+        },
+        'postcode': {
+          'type': 'select',
+          'name': 'Postcode',
+          'values': postcodeValues
+        },
+        'city': {
+          'name': 'Ort',
+          'type': 'text'
+        },
+        'date': {
+          'name': 'Datum',
+          'type': 'text'
+        },
+        'likes': {
+          'name': 'Likes',
+          'type': 'integer'
+        },
+        'email': {
+          'name': 'email',
+          'type': 'integer'
+        },
+        'comments': {
+          'type': 'array',
+          'name': 'Kommentare',
+          'order': false,
+          'def': {
+            'type': 'form',
+            'def': {
+              'id': {
+                'name': 'ID',
+                'type': 'hidden'
+              },
+              'message': {
+                'name': 'Message',
+                'type': 'textarea'
+              },
+              'visible': {
+                'name': 'Sichtbar',
+                'type': 'boolean'
+              },
+              'firstname': {
+                'name': 'Vorname',
+                'type': 'text'
+              },
+              'name': {
+                'name': 'Nachname',
+                'type': 'text'
+              },
+              'email': {
+                'name': 'E-Mail',
+                'type': 'text'
+              },
+              'gender': {
+                'name': 'Gender',
+                'type': 'radio',
+                'values': {
+                  0: 'unbekannt',
+                  1: 'Herr',
+                  2: 'Frau'
+                }
+              },
+              'date': {
+                'name': 'Datum',
+                'type': 'text'
+              },
+              'attachments': {
+                'name': 'Anhänge',
+                'type': 'array',
+                'order': 'false',
+                'def': {
+                  'type': 'form',
+                  'def': {
+                    'id': {
+                      'type': 'hidden'
+                    },
+                    'type': {
+                      'name': 'Type',
+                      'type': 'integer'
+                    },
+                    'date': {
+                      'name': 'Datum',
+                      'type': 'text',
+                    },
+                    'file': {
+                      'name': 'Dateiname',
+                      'type': 'text'
+                    },
+                    'width': {
+                      'name': 'Breite',
+                      'type': 'integer'
+                    },
+                    'height': {
+                      'name': 'Höhe',
+                      'type': 'integer'
+                    },
+                    'text': {
+                      'name': 'Text',
+                      'type': 'textarea'
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      checkFormRights(def, rights.markers)
+
+      callback(null, def)
+    }
+  )
+}
+
 
 /**
  * show object
