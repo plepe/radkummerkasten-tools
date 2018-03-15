@@ -259,12 +259,12 @@ Radkummerkasten.getParameter = function (id, callback) {
     return
   }
 
-  httpGetJSON('GET', 'parameter.php?table=' + id, null, function (err, result) {
+  httpGetJSON('POST', 'api.php', JSON.stringify([{ table: id }]), function (err, result) {
     if (err) {
       return callback(err)
     }
 
-    this.parameter[id] = result
+    this.parameter[id] = result[0]
     callback(null, this.parameter[id])
   }.bind(this))
 }

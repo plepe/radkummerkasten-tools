@@ -153,7 +153,7 @@ register_hook('init', function () {
   );
 
   $table_surveys = array(
-    'id' => 'surveys',
+    'id' => 'survey',
     'table' => 'map_surveys',
     'fields' => array(
       'id' => array(
@@ -203,7 +203,7 @@ register_hook('init', function () {
 
   html_export_var(array('rights' => array(
     'markers' => $table_markers,
-    'surveys' => $table_surveys,
+    'survey' => $table_surveys,
     'states' => $table_states,
   )));
 });
