@@ -11,9 +11,13 @@ function inlineForms (div, entry, fieldValues) {
 }
 
 function inlineForms2 (div, entry, emitter, err, def) {
-  var spans = div.getElementsByTagName('span')
+  var spans = []
 
-  _.forEach(spans, function (span) {
+  _.forEach(div.getElementsByTagName('span'), function (span) {
+    spans.push(span)
+  })
+
+  spans.forEach(function (span) {
     if (!span) {
       // how can this happen?
       return
