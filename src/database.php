@@ -200,4 +200,10 @@ register_hook('init', function () {
   $api->addTable($table_markers);
   $api->addTable($table_surveys);
   $api->addTable($table_states);
+
+  html_export_var(array('rights' => array(
+    'markers' => $table_markers,
+    'surveys' => $table_surveys,
+    'states' => $table_states,
+  )));
 });

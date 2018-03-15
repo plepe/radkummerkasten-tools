@@ -778,7 +778,7 @@ window.pageEdit = function (id) {
           }
         }
 
-      check_form_rights(def, rights.marker_rights)
+      check_form_rights(def, rights.markers)
 
       var formEdit = new form('edit', def)
 
@@ -814,10 +814,13 @@ function check_form_rights (def, rights) {
   for (var k in def) {
     if (k === 'id') {
     }
-    else if (rights.sub_tables && k in rights.sub_tables) {
-      check_form_rights(def[k].def.def, rights.sub_tables[k])
+    else if (!(k in rights.fields)) {
+      delete def[k]
     }
-    else if (rights.may_update.indexOf(k) === -1) {
+    else if (rights.fields[k].type === 'sub_table') {
+      check_form_rights(def[k].def.def, rights.fields[k])
+    }
+    else if (rights.fields[k].write !== true) {
       def[k].type = 'label'
       def[k].include_data = false
     }

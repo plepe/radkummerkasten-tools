@@ -5,7 +5,6 @@ $depend = array("modulekit-form", "PDOext", "modulekit-auth", "auth-user-menu", 
 $include = array(
   'php' => array(
     'src/database.php',
-    'src/rights.php',
   ),
 );
 $version = "0.6.3";

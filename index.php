@@ -3,10 +3,6 @@
 <?php session_start(); ?>
 <?php call_hooks("init"); /* initialize submodules */ ?>
 <?php $auth = new Auth(); ?>
-<?php
-html_export_var(array('rights' => rights($auth)));
-?>
-<!DOCTYPE HTML>
 <html>
 <head>
   <meta charset="utf-8">
