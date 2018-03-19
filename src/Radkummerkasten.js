@@ -416,7 +416,7 @@ RadkummerkastenEntry.prototype.save = function (data, callback) {
 
   var actions = [{
     table: 'markers',
-    type: 'insert-update',
+    action: 'insert-update',
     data: [ data ]
   }]
 
