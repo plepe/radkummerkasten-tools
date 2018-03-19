@@ -227,9 +227,9 @@ window.onload = function () {
           'order': {
             'type': 'select',
             'name': 'Sortierung',
-            'default': 'lastComment',
+            'default': 'lastCommentDate',
             'values': {
-              'lastComment': 'Neueste Kommentare bzw. Einträge zuerst',
+              'lastCommentDate': 'Neueste Kommentare bzw. Einträge zuerst',
               'id': 'Neueste Einträge zuerst',
               'likes': 'Einträge mit den meisten Unterstützungen zuerst',
               'commentsCount': 'Einträge mit den meisten Kommentaren zuerst',
@@ -301,7 +301,7 @@ function buildFilter () {
   }
 
   if (!('order' in r)) {
-    r.order = 'lastComment'
+    r.order = 'lastCommentDate'
   }
 
   return r
@@ -363,14 +363,24 @@ function overviewShowEntries (filter, start, callback) {
     content = document.getElementById('pageOverview')
   }
 
-  filter.limit = step + 1
-  filter.offset = start
+  var param = {
+    limit: step + 1,
+    offset: start,
+    query: []
+  }
+  for (var k in filter) {
+    if (k === 'order') {
+      param.order = [ '-' + filter.order ]
+    } else if (filter[k] !== null) {
+      param.query.push([ k, '=', filter[k] ])
+    }
+  }
 
   var count = 0
   loadingIndicator.setActive()
 
   Radkummerkasten.getEntries(
-    filter,
+    param,
     function (err, entry) {
       loadingIndicator.setValue(count / step)
 
