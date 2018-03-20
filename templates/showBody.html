@@ -12,9 +12,11 @@ Koordinaten: {{ lat|number_format(5) }}, {{ lng|number_format(5) }}
   {% endfor %}
 {% endfor %}
 </div>
-<a target="radkummerkasten" href="{{ options.baseUrl }}/#marker-{{ id }}">Öffne im Radkummerkasten</a> |
-<a href="#{{ id }}/edit">Bearbeiten</a>
-<br/>
+
+<ul class='menu'>
+  <li><a target="radkummerkasten" href="{{ options.baseUrl }}/#marker-{{ id }}">Öffne im Radkummerkasten</a></li>
+  <li><a href="#{{ id }}/edit">Bearbeiten</a></li>
+</ul>
 
 <p>
 Status: <span class='inlineForm' field='status' value="{{ status }}">{{ status|parameter('states').name }}</span><br/>

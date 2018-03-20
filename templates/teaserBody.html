@@ -11,8 +11,10 @@
 <i>{{ comments[0].firstname }} {{ comments[0].name }} schrieb am {{ date }}:</i><br/>
 {% if comments[0].message|length > 200 %}{{ comments[0].message|slice(0, 200)|nl2br }}...{% else %}{{ comments[0].message|nl2br }}{% endif %}<br/>
 
-<p>
-<a target="radkummerkasten" href="{{ options.baseUrl }}/#marker-{{ id }}">Öffne im Radkummerkasten</a><br/>
+<ul class='menu'>
+  <li><a target="radkummerkasten" href="{{ options.baseUrl }}/#marker-{{ id }}">Öffne im Radkummerkasten</a></li>
+</ul>
+
 <span class='inlineForm' field='status' value="{{ status }}">{{ status|parameter('states').name }}</span>, {{ likes }} Unterstützung(en), {{ comments|length - 1 }} Kommentar(e)
 {% if postcodeCoordinate and postcode != postcodeCoordinate %}
 <br/><span class='error'>

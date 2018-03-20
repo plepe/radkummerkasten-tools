@@ -69,6 +69,20 @@ img#logo {
   float: right;
 }
 
+ul.menu {
+  padding-left: 0;
+}
+ul.menu > li {
+  display: inline-block;
+  list-style: none;
+}
+ul.menu > li:before {
+  content: '| ';
+}
+ul.menu > li:first-of-type:before {
+  content: '';
+}
+
 span.inlineForm {
   display: inline-block;
 }

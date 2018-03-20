@@ -43,8 +43,10 @@
 </form>
 </div>
 
-<a href='javascript:openDownload()'>Exportieren</a> |
-<a href='javascript:update(true, false)'>Neu laden</a> (Stand: <span id='timestamp'></span>)
+<ul id='menu-top' class='menu'>
+  <li><a href='javascript:openDownload()'>Exportieren</a></li>
+  <li><a href='javascript:update(true, false)'>Neu laden</a> (Stand: <span id='timestamp'></span>)</li>
+</ul>
 
 <form id='downloadOptions' onSubmit='return submitDownloadForm()'>
   <div class='downloadOption'>
