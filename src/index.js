@@ -3,6 +3,7 @@ var createCsv = require('../src/createCsv')
 var createGeoJson = require('../src/createGeoJson')
 var createHTML = require('../src/createHTML')
 var getTemplate = require('../src/getTemplate')
+var Selection = require('./Selection')
 var httpGetJSON = require('./httpGetJSON')
 
 var csvWriter = require('csv-write-stream')
@@ -69,6 +70,9 @@ function restoreScroll() {
 
 window.onload = function () {
   document.getElementById('version').appendChild(document.createTextNode(Radkummerkasten.version))
+
+  // initalize modules
+  new Selection()
 
   window.addEventListener('popstate', function (event) {
     if (event.state && 'scrollTop' in event.state) {
