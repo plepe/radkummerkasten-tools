@@ -656,6 +656,7 @@ RadkummerkastenEntry.prototype._showHTML = function (dom, options, showTemplate,
   data.map = options.mapData
 
   dom.innerHTML = showTemplate.render(data)
+  call_hooks('render-show', dom, data)
 
   var todo = []
   if (options.embedImgs) {

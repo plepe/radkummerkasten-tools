@@ -45,6 +45,7 @@ function showEntry(entry, div, callback) {
   data.options = Radkummerkasten.options
 
   div.innerHTML = teaserTemplate.render(data)
+  call_hooks('render-teaser', div, data)
 
   var formEmitter = inlineForms(div, entry, {
     "status": statusValues
