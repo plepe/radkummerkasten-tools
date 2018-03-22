@@ -306,6 +306,9 @@ window.update = function (force, pushState) {
 
 function buildFilter () {
   var r = filterOverview.get_data()
+  var param = {
+    query: []
+  }
 
   if (r === null) {
     r = {}
@@ -315,7 +318,17 @@ function buildFilter () {
     r.order = 'lastCommentDate'
   }
 
-  return r
+  call_hooks('filter-to-param', r, param)
+
+  for (var k in r) {
+    if (k === 'order') {
+      param.order = [ '-' + r.order ]
+    } else if (r[k] !== null) {
+      param.query.push([ k, '=', r[k] ])
+    }
+  }
+
+  return param
 }
 
 function buildUrl () {
@@ -377,27 +390,14 @@ function overviewShowEntries (filter, start, callback) {
     content = document.getElementById('pageOverview')
   }
 
-  var param = {
-    limit: step + 1,
-    offset: start,
-    query: []
-  }
-
-  call_hooks('filter-to-param', filter, param)
-
-  for (var k in filter) {
-    if (k === 'order') {
-      param.order = [ '-' + filter.order ]
-    } else if (filter[k] !== null) {
-      param.query.push([ k, '=', filter[k] ])
-    }
-  }
+  filter.limit = step + 1
+  filter.offset = start
 
   var count = 0
   loadingIndicator.setActive()
 
   Radkummerkasten.getEntries(
-    param,
+    filter,
     function (err, entry) {
       loadingIndicator.setValue(count / step)
 
