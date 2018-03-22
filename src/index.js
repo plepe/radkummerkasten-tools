@@ -291,6 +291,7 @@ function updateFormFromUrl () {
   if (location.hash.match(/^#/)) {
     var url = querystring.parse(location.hash.substr(1))
 
+    call_hooks('url-receive', url)
     filterOverview.set_data(url)
   }
 }
@@ -321,8 +322,10 @@ function buildUrl () {
   var r = filterOverview.get_data()
 
   if (r === null) {
-    return {}
+    r = {}
   }
+
+  call_hooks('url-build', r)
 
   return r
 }
@@ -346,6 +349,7 @@ function _update (force, pushState) {
 
   var url = buildUrl()
   url = '#' + querystring.stringify(url)
+  url = url.replace(/%2C/g, ',')
   if (pushState) {
     history.pushState({ scrollTop: document.body.scrollTop }, '', url)
   } else {
