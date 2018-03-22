@@ -38,6 +38,18 @@ class Selection {
         delete filter.selected
       }
     })
+    register_hook('url-receive', url => {
+      if ('selection' in url) {
+        this.list = url.selection.split(/,/)
+        this.updateStatus()
+        delete url.selection
+      }
+    })
+    register_hook('url-build', url => {
+      if (this.list.length) {
+        url.selection = this.list.join(',')
+      }
+    })
   }
 
   updateStatus () {
@@ -67,6 +79,7 @@ class Selection {
         a.innerHTML = ''
         a.appendChild(document.createTextNode('Aus Auswahl entfernen'))
       }
+      update()
       this.updateStatus()
       return false
     }
