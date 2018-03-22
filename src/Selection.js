@@ -66,21 +66,27 @@ class Selection {
 
     let li = document.createElement('li')
 
+    function updateEntryStatus (inSelection) {
+      a.innerHTML = ''
+      if (inSelection) {
+        a.appendChild(document.createTextNode('Aus Auswahl entfernen'))
+      } else {
+        a.appendChild(document.createTextNode('Füge zu Auswahl hinzu'))
+      }
+    }
+
     let a = document.createElement('a')
-    a.appendChild(document.createTextNode('Füge zu Auswahl hinzu'))
     a.href = '#'
+    updateEntryStatus(this.inList(data.id))
     a.onclick = () => {
       if (this.inList(data.id)) {
         this.del(data.id)
-        a.innerHTML = ''
-        a.appendChild(document.createTextNode('Füge zu Auswahl hinzu'))
       } else {
         this.add(data.id)
-        a.innerHTML = ''
-        a.appendChild(document.createTextNode('Aus Auswahl entfernen'))
       }
       update()
       this.updateStatus()
+      updateEntryStatus(this.inList(data.id))
       return false
     }
     li.appendChild(a)
