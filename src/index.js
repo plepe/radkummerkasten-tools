@@ -182,8 +182,7 @@ window.onload = function () {
     function (callback) {
       loadingIndicator.setInactive()
 
-      filterOverview = new form(
-        null,
+      filterFormDef =
         {
           'postcode': {
             'type': 'select',
@@ -241,7 +240,13 @@ window.onload = function () {
               'lastUpdate': 'Einträge sortiert nach letzter Änderung'
             }
           }
-        },
+        }
+
+      call_hooks('filter-formdef', filterFormDef)
+
+      filterOverview = new form(
+        null,
+        filterFormDef,
         {
           'type': 'form_chooser',
           'button:add_element': 'Filter hinzufügen / Sortierung ändern',
@@ -373,6 +378,9 @@ function overviewShowEntries (filter, start, callback) {
     offset: start,
     query: []
   }
+
+  call_hooks('filter-to-param', filter, param)
+
   for (var k in filter) {
     if (k === 'order') {
       param.order = [ '-' + filter.order ]
