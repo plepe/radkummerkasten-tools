@@ -5,6 +5,7 @@ var createHTML = require('../src/createHTML')
 var getTemplate = require('../src/getTemplate')
 var Selection = require('./Selection')
 var httpGetJSON = require('./httpGetJSON')
+var mapLayers = require('./mapLayers')
 
 var csvWriter = require('csv-write-stream')
 var concat = require('concat-stream')
@@ -639,6 +640,10 @@ window.pageEdit = function (id) {
   var pageTop = document.createElement('div')
   page.appendChild(pageTop)
 
+  var divMap = document.createElement('div')
+  divMap.id = 'pageEditMap'
+  page.appendChild(divMap)
+
   var formNode = document.createElement('form')
   page.appendChild(formNode)
 
@@ -674,6 +679,22 @@ window.pageEdit = function (id) {
         submit.type = 'submit'
         submit.value = 'Speichern'
         formNode.appendChild(submit)
+
+        var layers = mapLayers({})
+
+        var map = L.map('pageEditMap', {
+          layers: layers[Object.keys(layers)[0]]
+        }).setView([ entry.properties.lat, entry.properties.lng ], 17)
+        L.control.layers(layers).addTo(map)
+
+        var marker = L.marker([ entry.properties.lat, entry.properties.lng ],
+        {
+          draggable: !(def.lat.include_data === false)
+        }).addTo(map)
+        marker.on('dragend', function (e) {
+          var pos = marker.getLatLng()
+          formEdit.set_data({ lat: pos.lat.toFixed(6), lng: pos.lng.toFixed(6) })
+        })
       })
 
       formNode.onsubmit = function () {
