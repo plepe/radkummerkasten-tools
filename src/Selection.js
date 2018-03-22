@@ -7,11 +7,7 @@ class Selection {
       let li = document.createElement('li')
 
       let a = document.createElement('a')
-      a.href = '#'
-      a.onclick = () => {
-        alert(JSON.stringify(this.list))
-        return false
-      }
+      a.href = '#selected=1'
       a.appendChild(document.createTextNode('Auswahl: '))
       li.appendChild(a)
 
@@ -24,6 +20,24 @@ class Selection {
 
     register_hook('render-teaser', this.renderHook.bind(this))
     register_hook('render-show', this.renderHook.bind(this))
+    register_hook('filter-formdef', formDef => {
+      formDef.selected = {
+        'type': 'select',
+        'name': 'Auswahl',
+        'values': {
+          '1': 'nur ausgewählte'
+        }
+      }
+    })
+    register_hook('filter-to-param', (filter, param) => {
+      if ('selected' in filter) {
+        if (filter.selected === '1') {
+          param.query.push([ 'id', 'in', this.list ])
+        }
+
+        delete filter.selected
+      }
+    })
   }
 
   updateStatus () {
