@@ -12,7 +12,10 @@ $auth_config=array(
     'radkummerkasten'=>array(
       'type'    => "wordpress",
       'name'    => 'Radkummerkasten',
-      'path'    => '/var/www/html',
+      'dsn'     => 'mysql:dbname=radkummerkasten',
+      'username'=> 'username',
+      'password'=> 'password',
+      'prefix'  => 'wp_',
     ),
   ),
   'groups'=>array(
