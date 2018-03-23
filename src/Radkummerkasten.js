@@ -197,6 +197,10 @@ Radkummerkasten._getEntriesHandleResult = function (options, featureCallback, fi
     return finalCallback(error)
   }
 
+  if (result.error) {
+    return finalCallback(result.error)
+  }
+
   for (var i = 0; i < result[0].length; i++) {
     var data = result[0][i]
     ids.push(data.id)
