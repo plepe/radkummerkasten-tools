@@ -47,6 +47,11 @@ register_hook('init', function () {
       'date' => array(
         'type' => 'text',
       ),
+      'day' => array(
+        'type' => 'text',
+        'select' => 'substr(date, 1, 10)',
+        'include' => false,
+      ),
       'likes' => array(
         'type' => 'int',
       ),
@@ -72,6 +77,11 @@ register_hook('init', function () {
             'type' => 'text',
             'select' => $anonym ? "concat(substr(name, 1, 1), '.')" : "name",
           ),
+          'name' => array(
+            'type' => 'text',
+            'select' => $anonym ? "concat(firstname, ' ', substr(name, 1, 1), '.')" : "concat(firstname, ' ', name)",
+            'include' => false,
+          ),
           'email' => array(
             'type' => 'text',
             'read' => !$anonym,
@@ -85,6 +95,11 @@ register_hook('init', function () {
           ),
           'date' => array(
             'type' => 'text',
+          ),
+          'day' => array(
+            'type' => 'text',
+            'select' => 'substr(date, 1, 10)',
+            'include' => false,
           ),
           'ip' => array(
             'type' => 'text',
@@ -138,6 +153,11 @@ register_hook('init', function () {
       'lastCommentDate' => array(
         'type' => 'text',
         'select' => 'select date from map_comments where map_comments.marker=map_markers.id order by date desc limit 1'
+      ),
+      'lastCommentDay' => array(
+        'type' => 'text',
+        'select' => 'select substr(date, 1, 10) from map_comments where map_comments.marker=map_markers.id order by date desc limit 1',
+        'include' => false,
       ),
       'visible' => array(
         'type' => 'boolean',

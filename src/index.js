@@ -200,32 +200,31 @@ window.onload = function () {
             'name': 'Kategorie',
             'values': surveyValues
           },
-          'user': {
+          'comments.name:strsearch': {
             'type': 'text',
             'name': 'Autor',
-            'desc': 'Eintrag oder Kommentar; verwende ganzen sichtbaren Namen, z.B. "Max M."'
           },
-          'dateStart': {
+          'day:>=': {
             'type': 'date',
             'name': 'Erstellungsdatum ab',
           },
-          'dateEnd': {
+          'day:<=': {
             'type': 'date',
             'name': 'Erstellungsdatum bis',
           },
-          'lastCommentDateStart': {
+          'lastCommentDay:>=': {
             'type': 'date',
             'name': 'Zuletzt kommentiert ab',
           },
-          'lastCommentDateEnd': {
+          'lastCommentDay:<=': {
             'type': 'date',
             'name': 'Zuletzt kommentiert bis',
           },
-          'lastUpdateStart': {
+          'lastUpdate:>=': {
             'type': 'date',
             'name': 'Letzte Änderung ab',
           },
-          'lastUpdateEnd': {
+          'lastUpdate:<=': {
             'type': 'date',
             'name': 'Letzte Änderung bis',
           },
@@ -322,10 +321,23 @@ function buildFilter () {
   call_hooks('filter-to-param', r, param)
 
   for (var k in r) {
+    var v = r[k]
+
     if (k === 'order') {
       param.order = [ '-' + r.order ]
     } else if (r[k] !== null) {
-      param.query.push([ k, '=', r[k] ])
+      let op = '='
+      let m = k.match(/^(.*):(.*)$/)
+      if (m) {
+        k = m[1]
+        op = m[2]
+      }
+
+      if (k.match(/\./)) {
+        k = k.split(/\./)
+      }
+
+      param.query.push([ k, op, v ])
     }
   }
 
