@@ -68,7 +68,7 @@ register_hook('init', function () {
             'type' => 'text',
             'read' => true,
           ),
-          'name' => array(
+          'lastname' => array(
             'type' => 'text',
             'select' => $anonym ? "concat(substr(name, 1, 1), '.')" : "name",
           ),

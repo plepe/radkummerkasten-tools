@@ -544,7 +544,7 @@ RadkummerkastenEntry.prototype.formDef = function (options, callback) {
                 'name': 'Vorname',
                 'type': 'text'
               },
-              'name': {
+              'lastname': {
                 'name': 'Nachname',
                 'type': 'text'
               },

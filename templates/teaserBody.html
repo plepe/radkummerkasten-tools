@@ -8,7 +8,7 @@
 {% endfor %}
 
 <p>
-<i>{{ comments[0].firstname }} {{ comments[0].name }} schrieb am {{ date }}:</i><br/>
+<i>{{ comments[0].firstname }} {{ comments[0].lastname }} schrieb am {{ date }}:</i><br/>
 {% if comments[0].message|length > 200 %}{{ comments[0].message|slice(0, 200)|nl2br }}...{% else %}{{ comments[0].message|nl2br }}{% endif %}<br/>
 
 <ul class='menu'>

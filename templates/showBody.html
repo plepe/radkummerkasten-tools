@@ -7,7 +7,7 @@ Koordinaten: {{ lat|number_format(5) }}, {{ lng|number_format(5) }}
   {% for attachment in comment.attachments %}
     <div class='image'>
       <img class='attachment' src="{{ options.attachmentBaseUrl}}/{{ attachment.file }}"><br/>
-      Bereitgestellt von {{ comment.firstname }} {{ comment.name }} am {{ comment.date }}
+      Bereitgestellt von {{ comment.firstname }} {{ comment.lastname }} am {{ comment.date }}
     </div>
   {% endfor %}
 {% endfor %}
@@ -37,6 +37,6 @@ PLZ: {{ postcode }} {{ city }}
 
 {% for comment in comments %}
 <p>
-<i>{{ comment.firstname }} {{ comment.name }} schrieb am {{ comment.date }}:</i><br/>
+<i>{{ comment.firstname }} {{ comment.lastname }} schrieb am {{ comment.date }}:</i><br/>
 {{ comment.message|nl2br }}
 {% endfor %}
