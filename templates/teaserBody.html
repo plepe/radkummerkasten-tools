@@ -1,6 +1,6 @@
-<h3><a href='#{{ id }}'>#{{ id }} {{ survey|parameter('survey').name }}: {{ address }} ({{ postcode}} {{ city }})</a></h3>
+<h3><a href='#{{ entry.id }}'>#{{ entry.id }} {{ entry.survey|parameter('survey').name }}: {{ entry.address }} ({{ entry.postcode}} {{ entry.city }})</a></h3>
 {% set attachmentDone = false %}
-{% for comment in comments if attachmentDone == false %}
+{% for comment in entry.comments if attachmentDone == false %}
   {% if comment.attachments|length > 0 %}
     <img src="{{ options.attachmentBaseUrl}}/{{ comment.attachments[0].file }}">
     {% set attachmentDone = true %}
@@ -8,20 +8,20 @@
 {% endfor %}
 
 <p>
-<i>{{ comments[0].firstname }} {{ comments[0].lastname }} schrieb am {{ date }}:</i><br/>
-{% if comments[0].message|length > 200 %}{{ comments[0].message|slice(0, 200)|nl2br }}...{% else %}{{ comments[0].message|nl2br }}{% endif %}<br/>
+<i>{{ entry.comments[0].firstname }} {{ entry.comments[0].name }} schrieb am {{ entry.date }}:</i><br/>
+{% if entry.comments[0].message|length > 200 %}{{ entry.comments[0].message|slice(0, 200)|nl2br }}...{% else %}{{ entry.comments[0].message|nl2br }}{% endif %}<br/>
 
 <ul class='menu'>
   <li><a target="radkummerkasten" href="{{ options.baseUrl }}/#marker-{{ id }}">Öffne im Radkummerkasten</a></li>
 </ul>
 
-<span class='inlineForm' field='status' value="{{ status }}">{{ status|parameter('states').name }}</span>, {{ likes }} Unterstützung(en), {{ comments|length - 1 }} Kommentar(e)
-{% if postcodeCoordinate and postcode != postcodeCoordinate %}
+<span class='inlineForm' field='status' value="{{ entry.status }}">{{ entry.status|parameter('states').name }}</span>, {{ entry.likes }} Unterstützung(en), {{ entry.comments|length - 1 }} Kommentar(e)
+{% if entry.postcodeCoordinate and entry.postcode != entry.postcodeCoordinate %}
 <br/><span class='error'>
-Möglicher Fehler: Koordinate liegt im Bereich {{ postcodeCoordinate }}.
+Möglicher Fehler: Koordinate liegt im Bereich {{ entry.postcodeCoordinate }}.
 </span>
 {% endif %}
-{% for error in errors %}
-<br/><span class='error'>Fehler: {{ error }}</span>
+{% for error in entry.errors %}
+<br/><span class='error'>Fehler: {{ entry.error }}</span>
 {% endfor %}
 </p>

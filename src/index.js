@@ -42,6 +42,9 @@ var statusValues = {}
 
 var inlineForms = require('./inlineForms')
 
+const DBApi = require('db-api')
+var api = new DBApi('api.php')
+
 function showEntry(entry, div, callback) {
   var data = JSON.parse(JSON.stringify(entry.properties))
   data.options = Radkummerkasten.options
@@ -403,81 +406,24 @@ function overviewShowEntries (filter, start, callback) {
     content = document.getElementById('pageOverview')
   }
 
-  filter.limit = step + 1
+  filter.table = 'markers'
+  filter.limit = step
   filter.offset = start
 
   var count = 0
   loadingIndicator.setActive()
 
-  Radkummerkasten.getEntries(
-    filter,
-    function (err, entry) {
-      loadingIndicator.setValue(count / step)
-
-      if (err) {
-        alert(err)
-        restoreScroll()
-        loadingIndicator.setInactive()
-        return
-      }
-
-      count++
-
-      if (count > step) {
-        // load more
-        var divLoadMore = document.createElement('div')
-        divLoadMore.className = 'loadMore'
-
-        var a = document.createElement('a')
-        a.appendChild(document.createTextNode('lade mehr Einträge'))
-        a.href = '#'
-        a.onclick = function () {
-          overviewShowEntries(filter, start + step, function () {
-            divLoadMore.parentNode.removeChild(divLoadMore)
-          })
-
-          return false
-        }
-
-        divLoadMore.appendChild(a)
-        content.appendChild(divLoadMore)
-      } else {
-        var div
-
-        if (entry.id in oldList) {
-          div = oldList[entry.id]
-          div.innerHTML = ''
-        } else {
-          div = document.createElement('div')
-          div.className = 'entry'
-        }
-
-        content.appendChild(div)
-        content.entryDivList[entry.id] = div
-
-        showEntry(entry, div, function (err, result) {
-        })
-      }
-    },
-    function (err) {
-      if (err) {
-        alert(err)
-      }
-
-      if (start === 0) {
-        oldContent.parentNode.removeChild(oldContent)
-      }
-
+  getTemplate('teaserBody', function (err, result) {
+    view = api.createView('Twig', result, { twig: Twig, split: step })
+    view.set_query(filter)
+    view.on('loadend', () => {
       loadingIndicator.setValue(1)
       loadingIndicator.setInactive()
-      filterOverview.set_orig_data(filter)
-      restoreScroll()
+    })
+    view.show(content)
+  })
 
-      if (callback) {
-        callback()
-      }
-    }
-  )
+  oldContent.parentNode.removeChild(oldContent)
 }
 
 window.openDownload = function () {
