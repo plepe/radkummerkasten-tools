@@ -1,4 +1,4 @@
-<h3><a href='#{{ entry.id }}'>#{{ entry.id }} {{ entry.survey|parameter('survey').name }}: {{ entry.address }} ({{ entry.postcode}} {{ entry.city }})</a></h3>
+<h3><a href='#{{ entry.id }}'>#{{ entry.id }} {{ entry.survey|dbApiGet('survey').name }}: {{ entry.address }} ({{ entry.postcode}} {{ entry.city }})</a></h3>
 {% set attachmentDone = false %}
 {% for comment in entry.comments if attachmentDone == false %}
   {% if comment.attachments|length > 0 %}
@@ -15,7 +15,7 @@
   <li><a target="radkummerkasten" href="{{ options.baseUrl }}/#marker-{{ id }}">Öffne im Radkummerkasten</a></li>
 </ul>
 
-<span class='inlineForm' field='status' value="{{ entry.status }}">{{ entry.status|parameter('states').name }}</span>, {{ entry.likes }} Unterstützung(en), {{ entry.comments|length - 1 }} Kommentar(e)
+<span class='inlineForm' field='status' value="{{ entry.status }}">{{ entry.status|dbApiGet('states').name }}</span>, {{ entry.likes }} Unterstützung(en), {{ entry.comments|length - 1 }} Kommentar(e)
 {% if entry.postcodeCoordinate and entry.postcode != entry.postcodeCoordinate %}
 <br/><span class='error'>
 Möglicher Fehler: Koordinate liegt im Bereich {{ entry.postcodeCoordinate }}.
