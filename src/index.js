@@ -415,6 +415,7 @@ function overviewShowEntries (filter, start, callback) {
 
   getTemplate('teaserBody', function (err, result) {
     view = api.createView('Twig', result, { twig: Twig, split: step })
+    view.extend('Leaflet', { latitudeField: 'lat', longitudeField: 'lng' })
     view.set_query(filter)
     view.on('loadend', () => {
       loadingIndicator.setValue(1)
