@@ -553,36 +553,25 @@ window.pageShow = function (id) {
 
   loadingIndicator.setActive()
 
-  Radkummerkasten.getEntries(
-    {
-      id: [ '' + id ]
-    },
-    function (err, entry) {
+  getTemplate('showBody', function (err, result) {
+    view = api.createView('Twig', result, { twig: Twig, split: step })
+    view.extend('Leaflet', {
+      latitudeField: 'lat',
+      longitudeField: 'lng',
+      //zoom: 15,
+      layers: mapLayers()
+    })
+    view.set_query({
+      table: 'markers',
+      query: id
+    })
+    view.on('loadend', () => {
+      loadingIndicator.setValue(1)
       loadingIndicator.setInactive()
-
-      if (err) {
-        alert(err)
-        return
-      }
-
-      entry.showHTML(
-        page,
-        entryOptions,
-        function (err, page) {
-          var formEmitter = inlineForms(page, entry, {
-            "status": statusValues
-          })
-
-          formEmitter.on('save', function () {
-            update(false, true)
-          })
-        }
-      )
-    },
-    function (err) {
-      restoreScroll()
-    }
-  )
+    })
+    view.show(page)
+    restoreScroll()
+  })
 
   updateTimestamp()
 }
