@@ -110,9 +110,9 @@ window.onload = function () {
 
   async.series([
     function (callback) {
-      getTemplate('teaserBody', function (err, result) {
+      httpGetJSON('GET', 'templates/index.json', null, function (err, result) {
         if (err) {
-          alert('Kann Template "teaser" nicht laden! ' + err)
+          alert('Kann Template "index" nicht laden! ' + err)
           return
         }
 
@@ -413,9 +413,10 @@ function overviewShowEntries (filter, start, callback) {
   var count = 0
   loadingIndicator.setActive()
 
-  getTemplate('teaserBody', function (err, result) {
-    view = api.createView('Twig', result, { twig: Twig, split: step })
-    view.extend('Leaflet', {
+  httpGetJSON('GET', 'templates/index.json', null, function (err, result) {
+    view = api.createView(result, { twig: Twig, split: step })
+    view.extend({
+      type: 'Leaflet',
       latitudeField: 'lat',
       longitudeField: 'lng',
       layers: mapLayers()
@@ -553,12 +554,12 @@ window.pageShow = function (id) {
 
   loadingIndicator.setActive()
 
-  getTemplate('showBody', function (err, result) {
-    view = api.createView('Twig', result, { twig: Twig, split: step })
-    view.extend('Leaflet', {
+  httpGetJSON('GET', 'templates/show.json', null, function (err, result) {
+    view = api.createView(result, { twig: Twig, split: step })
+    view.extend({
+      type: 'Leaflet',
       latitudeField: 'lat',
       longitudeField: 'lng',
-      //zoom: 15,
       layers: mapLayers()
     })
     view.set_query({
