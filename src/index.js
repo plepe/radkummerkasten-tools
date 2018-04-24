@@ -266,12 +266,10 @@ window.onload = function () {
       newLoc(location.hash)
 
       function newLoc (loc) {
-        let m
+        let m = loc.match(/^#([0-9]+)(?:\/([a-z]+))?$/)
 
-        if (loc.match(/^#[0-9]+$/)) {
-          pageShow(loc.substr(1))
-        } else if (m = loc.match(/^#([0-9]+)\/edit$/)) {
-          pageEdit(m[1])
+        if (m) {
+          pageShow(m[1], m[2] || 'show')
         } else {
           var scroll = popScrollTop
           pageOverview()
@@ -535,7 +533,7 @@ window.submitDownloadForm = function () {
   return false
 }
 
-window.pageShow = function (id) {
+window.pageShow = function (id, viewId='show') {
   currentPage = 'Show'
   document.getElementById('menuOverview').style.display = 'none'
   document.getElementById('pageOverview').style.display = 'none'
@@ -548,7 +546,7 @@ window.pageShow = function (id) {
 
   loadingIndicator.setActive()
 
-  httpGetJSON('GET', 'templates/show.json', null, function (err, result) {
+  httpGetJSON('GET', 'templates/' + viewId + '.json', null, function (err, result) {
     view = api.createView(result, { twig: Twig, split: step })
     view.extend({
       type: 'Leaflet',
