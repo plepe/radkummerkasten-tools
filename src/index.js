@@ -262,7 +262,10 @@ window.onload = function () {
         return update(false, true)
       }
 
-      hash(function (loc) {
+      hash(newLoc)
+      newLoc(location.hash)
+
+      function newLoc (loc) {
         let m
 
         if (loc.match(/^#[0-9]+$/)) {
@@ -276,15 +279,6 @@ window.onload = function () {
           popScrollTop = scroll
           update()
         }
-      })
-
-      if (location.hash.match(/^#[0-9]+$/)) {
-        pageShow(location.hash.substr(1))
-      } else if (m = location.hash.match(/^#([0-9]+)\/edit$/)) {
-        pageEdit(m[1])
-      } else {
-        updateFormFromUrl()
-        update()
       }
     }
   ])
