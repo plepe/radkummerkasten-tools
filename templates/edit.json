@@ -4,19 +4,11 @@
         "survey": {
             "type": "select",
             "name": "Kategorie",
-            "values": {
-                "1": "Gefahrenstelle",
-                "2": "Lückenschluss",
-                "3": "Einbahn öffnen",
-                "4": "Radabstellanlage",
-                "5": "Zustand Oberfläche",
-                "6": "Bodenmarkierung",
-                "7": "Ampelschaltung",
-                "8": "Beschilderung",
-                "9": "Hindernisse",
-                "10": "Anderes",
-                "11": "Leihradprobleme"
-            }
+            "values_query": {
+                "table": "survey"
+            },
+            "values_mode": "property",
+            "values_property": "id"
         },
         "address": {
             "name": "Adresse",
@@ -25,14 +17,11 @@
         "status": {
             "type": "select",
             "name": "Status",
-            "values": {
-                "1": "Neu",
-                "2": "Geschlossen (Duplikat)",
-                "3": "Geschlossen (behoben)",
-                "4": "Abgelehnt",
-                "5": "In Arbeit",
-                "6": "Lösung angekündigt"
-            }
+            "values_query": {
+                "table": "states"
+            },
+            "values_mode": "property",
+            "values_property": "id"
         },
         "visible": {
             "name": "Sichtbar",
