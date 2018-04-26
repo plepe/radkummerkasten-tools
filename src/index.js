@@ -547,6 +547,15 @@ window.pageShow = function (id, viewId='show') {
   loadingIndicator.setActive()
 
   httpGetJSON('GET', 'templates/' + viewId + '.json', null, function (err, result) {
+    if (err) {
+      loadingIndicator.setInactive()
+
+      if (err.status === 404) {
+        return alert("No such view '" + viewId + "'")
+      }
+      return alert("An error occured: " + err)
+    }
+
     view = api.createView(result, { twig: Twig, split: step })
     view.extend({
       type: 'Leaflet',

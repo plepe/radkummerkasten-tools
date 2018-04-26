@@ -6,7 +6,8 @@ function httpGetJSON (method, url, data, callback) {
     if (xhr.status === 200) {
       data = JSON.parse(xhr.response)
     } else {
-      err = 'Status ' + xhr.status
+      err = new Error('Status ' + xhr.status)
+      err.status = xhr.status
     }
 
     callback(err, data)
