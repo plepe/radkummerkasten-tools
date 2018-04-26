@@ -1,0 +1,187 @@
+{
+    "type": "ModulekitForm",
+    "def": {
+        "survey": {
+            "type": "select",
+            "name": "Kategorie",
+            "values": {
+                "1": "Gefahrenstelle",
+                "2": "Lückenschluss",
+                "3": "Einbahn öffnen",
+                "4": "Radabstellanlage",
+                "5": "Zustand Oberfläche",
+                "6": "Bodenmarkierung",
+                "7": "Ampelschaltung",
+                "8": "Beschilderung",
+                "9": "Hindernisse",
+                "10": "Anderes",
+                "11": "Leihradprobleme"
+            }
+        },
+        "address": {
+            "name": "Adresse",
+            "type": "text"
+        },
+        "status": {
+            "type": "select",
+            "name": "Status",
+            "values": {
+                "1": "Neu",
+                "2": "Geschlossen (Duplikat)",
+                "3": "Geschlossen (behoben)",
+                "4": "Abgelehnt",
+                "5": "In Arbeit",
+                "6": "Lösung angekündigt"
+            }
+        },
+        "visible": {
+            "name": "Sichtbar",
+            "type": "boolean"
+        },
+        "lat": {
+            "name": "Latitude",
+            "type": "float"
+        },
+        "lng": {
+            "name": "Longitude",
+            "type": "float"
+        },
+        "street": {
+            "name": "Straße",
+            "type": "text"
+        },
+        "housenumber": {
+            "name": "Hausnummer",
+            "type": "text"
+        },
+        "postcode": {
+            "type": "select",
+            "name": "Postcode",
+            "values": {
+                "1010": "1., Innere Stadt",
+                "1020": "2., Leopoldstadt",
+                "1030": "3., Landstraße",
+                "1040": "4., Wieden",
+                "1050": "5., Margareten",
+                "1060": "6., Mariahilf",
+                "1070": "7., Neubau",
+                "1080": "8., Josefstadt",
+                "1090": "9., Alsergrund",
+                "1100": "10., Favoriten",
+                "1110": "11., Simmering",
+                "1120": "12., Meidling",
+                "1130": "13., Hietzing",
+                "1140": "14., Penzing",
+                "1150": "15., Rudolfsheim-Fünfhaus",
+                "1160": "16., Ottakring",
+                "1170": "17., Hernals",
+                "1180": "18., Währing",
+                "1190": "19., Döbling",
+                "1200": "20., Brigittenau",
+                "1210": "21., Floridsdorf",
+                "1220": "22., Donaustadt",
+                "1230": "23., Liesing"
+            }
+        },
+        "city": {
+            "name": "Ort",
+            "type": "text"
+        },
+        "date": {
+            "name": "Datum",
+            "type": "text"
+        },
+        "likes": {
+            "name": "Likes",
+            "type": "integer"
+        },
+        "email": {
+            "name": "email",
+            "type": "integer"
+        },
+        "comments": {
+            "type": "array",
+            "name": "Kommentare",
+            "order": false,
+            "def": {
+                "type": "form",
+                "def": {
+                    "id": {
+                        "name": "ID",
+                        "type": "hidden"
+                    },
+                    "message": {
+                        "name": "Message",
+                        "type": "textarea"
+                    },
+                    "visible": {
+                        "name": "Sichtbar",
+                        "type": "boolean"
+                    },
+                    "firstname": {
+                        "name": "Vorname",
+                        "type": "text"
+                    },
+                    "lastname": {
+                        "name": "Nachname",
+                        "type": "text"
+                    },
+                    "email": {
+                        "name": "E-Mail",
+                        "type": "text"
+                    },
+                    "gender": {
+                        "name": "Gender",
+                        "type": "radio",
+                        "values": {
+                            "0": "unbekannt",
+                            "1": "Herr",
+                            "2": "Frau"
+                        }
+                    },
+                    "date": {
+                        "name": "Datum",
+                        "type": "text"
+                    },
+                    "attachments": {
+                        "name": "Anhänge",
+                        "type": "array",
+                        "order": "false",
+                        "def": {
+                            "type": "form",
+                            "def": {
+                                "id": {
+                                    "type": "hidden"
+                                },
+                                "type": {
+                                    "name": "Type",
+                                    "type": "integer"
+                                },
+                                "date": {
+                                    "name": "Datum",
+                                    "type": "text"
+                                },
+                                "file": {
+                                    "name": "Dateiname",
+                                    "type": "text"
+                                },
+                                "width": {
+                                    "name": "Breite",
+                                    "type": "integer"
+                                },
+                                "height": {
+                                    "name": "Höhe",
+                                    "type": "integer"
+                                },
+                                "text": {
+                                    "name": "Text",
+                                    "type": "textarea"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
