@@ -275,7 +275,6 @@ window.onload = function () {
           pageOverview()
           updateFormFromUrl()
           popScrollTop = scroll
-          update()
         }
       }
     }
