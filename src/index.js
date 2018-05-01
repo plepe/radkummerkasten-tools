@@ -38,6 +38,7 @@ var surveys = {}
 var surveyValues = {}
 var states = {}
 var statusValues = {}
+var view
 
 var inlineForms = require('./inlineForms')
 
@@ -409,108 +410,19 @@ function overviewShowEntries (filter, start, callback) {
 window.openDownload = function () {
   var formDownload = document.getElementById('downloadOptions')
   formDownload.style.display = 'block'
-  updateDownloadForm()
-}
+  //updateDownloadForm()
 
-window.openShowDownload = function () {
-  var formDownload = document.getElementById('showDownloadOptions')
-  formDownload.style.display = 'block'
 }
 
 function createDownload (downloadDom, fileType, data) {
-  downloadDom.innerHTML = ''
-
-  var contentType
-  var extension
-
-  if (fileType === 'csv') {
-    contentType = 'text/csv'
-    extension = 'csv'
-  } else if (fileType === 'geojson') {
-    contentType = 'application/vnd.geo+json'
-    extension = 'geojson'
-  } else if (fileType === 'html') {
-    contentType = 'text/html'
-    extension = 'html'
-  } else if (fileType === 'office') {
-    contentType = 'text/html'
-    extension = 'html'
-  }
-
-  var blob = new Blob([ data ], { type: contentType + ";charset=utf-8" })
-  FileSaver.saveAs(blob, 'radkummerkasten.' + extension)
-  document.getElementById('downloadOptions').style.display = 'none'
-}
-
-window.updateDownloadForm = function () {
-  var formDownload = document.getElementById('downloadOptions')
-  var fileType = formDownload.elements.fileType.value
-
-  var divs = formDownload.getElementsByClassName('downloadOption')
-  for (var i = 0; i < divs.length; i++) {
-    var div = divs[i]
-
-    var t = div.getAttribute('downloadTypes')
-    if (t) {
-      t = t.split(',')
-      if (t.indexOf(fileType) === -1) {
-        div.style.display = 'none'
-      } else {
-        div.style.display = 'block'
-      }
-    }
-  }
 }
 
 window.submitDownloadForm = function () {
-  var filter = {}
-  var downloadDom = document.getElementById('download')
-
-  var formDownload = document.getElementById('downloadOptions')
-  var formFilter = document.getElementById('filter' + currentPage)
-
-  if ('filterId' in formFilter.elements) {
-    filter.id = formFilter.elements.filterId.value
-  } else {
-    filter = buildFilter()
-  }
-
-  if (formDownload.elements.includeDetails.checked) {
-    filter.includeDetails = true
-  }
-  if (formDownload.elements.embedImgs.checked) {
-    filter.embedImgs = true
-  }
-  if (formDownload.elements.noMap.checked) {
-    filter.noMap = true
-  }
-
-  downloadDom.innerHTML = 'Daten werden geladen, bitte warten ...'
-
-  var fileType = formDownload.elements.fileType.value
-  if (fileType === 'csv') {
-    createCsv(filter, concat(createDownload.bind(this, downloadDom, fileType)))
-  } else if (fileType === 'geojson') {
-    var downloadStream = concat(createDownload.bind(this, downloadDom, fileType))
-
-    createGeoJson(filter, downloadStream, function () {
-      downloadStream.end()
-    })
-  } else if (fileType === 'html') {
-    var downloadStream = concat(createDownload.bind(this, downloadDom, fileType))
-
-    // filter.embedImgs = true
-    createHTML(filter, downloadStream, function () {
-      downloadStream.end()
-    })
-  } else if (fileType === 'office') {
-    var downloadStream = concat(createDownload.bind(this, downloadDom, fileType))
-
-    filter.template = 'office'
-    createHTML(filter, downloadStream, function () {
-      downloadStream.end()
-    })
-  }
+  view.export({}, function (err, result, contentType, extension) {
+    var blob = new Blob([ result ], { type: contentType + ";charset=utf-8" })
+    FileSaver.saveAs(blob, 'radkummerkasten.' + extension)
+    document.getElementById('downloadOptions').style.display = 'none'
+  })
 
   return false
 }
