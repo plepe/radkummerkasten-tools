@@ -405,7 +405,7 @@ function overviewShowEntries (filter, start, callback) {
   loadingIndicator.setActive()
 
   httpGetJSON('GET', 'templates/index.json', null, function (err, result) {
-    view = api.createView(result, { twig: Twig, split: step })
+    view = api.createView(result, { twig: Twig, split: step, leafletLayers: mapLayers() })
     view.extend({
       type: 'Leaflet',
       latitudeField: 'lat',
@@ -555,7 +555,7 @@ window.pageShow = function (id, viewId='show') {
       return alert("An error occured: " + err)
     }
 
-    view = api.createView(result, { twig: Twig, split: step })
+    view = api.createView(result, { twig: Twig, split: step, leafletLayers: mapLayers() })
     view.extend({
       type: 'Leaflet',
       latitudeField: 'lat',

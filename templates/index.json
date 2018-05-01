@@ -3,7 +3,6 @@
     "each": [
         "<h3><a href='#{{ entry.id }}'>#{{ entry.id }} {{ entry.survey|dbApiGet('survey').name }}: {{ entry.address }} ({{ entry.postcode}} {{ entry.city }})</a></h3>",
         "<map style='width: 400px; height: 200px; float: right;' options='{\"layer\":\"Basemap\",\"zoom\":17}'></map>",
-        "<map style='width: 400px; height: 200px; float: right;' options='{\"layer\":\"Basemap Orthophoto\",\"zoom\":18}'></map>",
         "{% set attachmentDone = false %}",
         "{% for comment in entry.comments if attachmentDone == false %}",
         "  {% if comment.attachments|length > 0 %}",

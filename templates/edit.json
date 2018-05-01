@@ -172,5 +172,12 @@
                 }
             }
         }
-    }
+    },
+    "extensions": [
+        {
+            "type": "ModulekitFormLeaflet",
+            "latitudeField": "lat",
+            "longitudeField": "lng"
+        }
+    ]
 }
