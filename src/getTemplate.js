@@ -1,4 +1,4 @@
-var request = require('request-xmlhttprequest')
+var httpGetJSON = require('./httpGetJSON')
 var templates = {}
 
 function getTemplate (id, callback) {
@@ -6,18 +6,13 @@ function getTemplate (id, callback) {
     return callback(null, templates[id])
   }
 
-  var prefix = 'file:'
-  if (typeof location !== 'undefined') {
-    prefix = location.origin + location.pathname
-  }
-  request.get(prefix + 'templates/' + id + '.html',
-    function (error, response, body) {
-      if (!error && response.statusCode === 200) {
-        templates[id] = body
-        callback(null, body)
-      } else {
-        callback(error, null)
+  httpGetJSON('GET', 'templates/' + id + '.json', null, function (error, result) {
+      if (error) {
+        return callback(error, null)
       }
+
+      templates[id] = result
+      callback(null, result)
     }
   )
 }

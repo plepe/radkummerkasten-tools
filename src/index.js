@@ -4,7 +4,6 @@ var createGeoJson = require('../src/createGeoJson')
 var createHTML = require('../src/createHTML')
 var getTemplate = require('../src/getTemplate')
 var Selection = require('./Selection')
-var httpGetJSON = require('./httpGetJSON')
 var mapLayers = require('./mapLayers')
 
 var csvWriter = require('csv-write-stream')
@@ -109,22 +108,6 @@ window.onload = function () {
   })
 
   async.series([
-    function (callback) {
-      httpGetJSON('GET', 'templates/index.json', null, function (err, result) {
-        if (err) {
-          alert('Kann Template "index" nicht laden! ' + err)
-          return
-        }
-
-        loadingIndicator.setValue(0.2)
-
-        teaserTemplate = Twig.twig({
-          data: result
-        })
-
-        callback()
-      })
-    },
     function (callback) {
       Radkummerkasten.loadPostcodes(function (err, result) {
         if (err) {
@@ -404,7 +387,7 @@ function overviewShowEntries (filter, start, callback) {
   var count = 0
   loadingIndicator.setActive()
 
-  httpGetJSON('GET', 'templates/index.json', null, function (err, result) {
+  getTemplate('index', function (err, result) {
     view = api.createView(result, { twig: Twig, split: step, leafletLayers: mapLayers() })
     view.extend({
       type: 'Leaflet',
@@ -545,7 +528,7 @@ window.pageShow = function (id, viewId='show') {
 
   loadingIndicator.setActive()
 
-  httpGetJSON('GET', 'templates/' + viewId + '.json', null, function (err, result) {
+  getTemplate(viewId, function (err, result) {
     if (err) {
       loadingIndicator.setInactive()
 
