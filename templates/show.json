@@ -23,7 +23,7 @@
         "</ul>",
         "",
         "<p>",
-        "Status: <span class='inlineForm' field='status' value=\"{{ entry.status }}\">{{ entry.status|dbApiGet('states').name }}</span><br/>",
+        "Status: <span class='inlineForm' field='status' options='{\"type\":\"select\",\"values_query\":{\"table\": \"states\"}}' value=\"{{ entry.status }}\">{{ entry.status|dbApiGet('states').name }}</span><br/>",
         "{{ entry.likes }} Unterstützung(en)<br/>",
         "{{ entry.comments|length - 1 }} Kommentar(e)<br/>",
         "Adresse: {{ entry.street }} {{ entry.housenumber }}<br/>",
@@ -44,5 +44,10 @@
         "<i>{{ comment.firstname }} {{ comment.lastname }} schrieb am {{ comment.date }}:</i><br/>",
         "{{ comment.message|nl2br }}",
         "{% endfor %}"
+    ],
+    "extensions": [
+        {
+            "type": "InlineForm"
+        }
     ]
 }

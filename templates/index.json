@@ -19,7 +19,7 @@
         "  <li><a target=\"radkummerkasten\" href=\"{{ options.baseUrl }}/#marker-{{ id }}\">Öffne im Radkummerkasten</a></li>",
         "</ul>",
         "",
-        "<span class='inlineForm' field='status' value=\"{{ entry.status }}\">{{ entry.status|dbApiGet('states').name }}</span>, {{ entry.likes }} Unterstützung(en), {{ entry.comments|length - 1 }} Kommentar(e)",
+        "<span class='inlineForm' field='status' options='{\"type\":\"select\",\"values_query\":{\"table\": \"states\"}}' value=\"{{ entry.status }}\">{{ entry.status|dbApiGet('states').name }}</span>, {{ entry.likes }} Unterstützung(en), {{ entry.comments|length - 1 }} Kommentar(e)",
         "{% if entry.postcodeCoordinate and entry.postcode != entry.postcodeCoordinate %}",
         "<br/><span class='error'>",
         "Möglicher Fehler: Koordinate liegt im Bereich {{ entry.postcodeCoordinate }}.",
@@ -30,5 +30,10 @@
         "{% endfor %}",
         "</p>",
         "<div style='clear: right'></div>"
+    ],
+    "extensions": [
+        {
+            "type": "InlineForm"
+        }
     ]
 }
