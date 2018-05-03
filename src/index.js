@@ -468,7 +468,7 @@ window.pageShow = function (id, viewId='show') {
     })
     view.set_query({
       table: 'markers',
-      query: id
+      id
     })
     view.on('loadend', () => {
       loadingIndicator.setValue(1)
