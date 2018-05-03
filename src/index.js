@@ -43,7 +43,7 @@ var view
 var inlineForms = require('./inlineForms')
 
 const DBApi = require('db-api')
-var api = new DBApi('api.php')
+var api
 
 function showEntry(entry, div, callback) {
   var data = JSON.parse(JSON.stringify(entry.properties))
@@ -109,6 +109,15 @@ window.onload = function () {
   })
 
   async.series([
+    function (callback) {
+      api = new DBApi('api.php', {}, (err) => {
+        if (err) {
+          return alert(err)
+        }
+        loadingIndicator.setValue(0.2)
+        callback()
+      })
+    },
     function (callback) {
       Radkummerkasten.loadPostcodes(function (err, result) {
         if (err) {
