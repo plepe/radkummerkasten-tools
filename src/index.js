@@ -410,6 +410,17 @@ function overviewShowEntries (filter, start, callback) {
       loadingIndicator.setValue(1)
       loadingIndicator.setInactive()
     })
+    view.on('savestart', () => {
+      loadingIndicator.setActive()
+    })
+    view.on('save', (ev) => {
+      if (ev.error) {
+        alert(ev.error)
+      }
+
+      loadingIndicator.setValue(1)
+      loadingIndicator.setInactive()
+    })
     view.show(content)
   })
 
@@ -471,6 +482,17 @@ window.pageShow = function (id, viewId='show') {
       id
     })
     view.on('loadend', () => {
+      loadingIndicator.setValue(1)
+      loadingIndicator.setInactive()
+    })
+    view.on('savestart', () => {
+      loadingIndicator.setActive()
+    })
+    view.on('save', (ev) => {
+      if (ev.error) {
+        alert(ev.error)
+      }
+
       loadingIndicator.setValue(1)
       loadingIndicator.setInactive()
     })
