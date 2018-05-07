@@ -17,6 +17,9 @@ var FileSaver = require('file-saver');
 var querystring = require('querystring')
 var moment = require('moment')
 var scrollingElement = require('scrollingelement')
+var turf = {
+  inside: require('@turf/inside')
+}
 require('moment/locale/de')
 
 var config = require('../src/loadConfig')
@@ -115,6 +118,7 @@ window.onload = function () {
           return alert(err)
         }
         loadingIndicator.setValue(0.2)
+
         callback()
       })
     },
@@ -175,6 +179,9 @@ window.onload = function () {
         loadingIndicator.setValue(1)
         callback()
       })
+    },
+    function (callback) {
+      Radkummerkasten.initNew(api, callback)
     },
     function (callback) {
       loadingIndicator.setInactive()

@@ -30,6 +30,35 @@ function Radkummerkasten () {
 
 Radkummerkasten.version = '__GIT_MY_VERSION__'
 
+Radkummerkasten.initNew = function (api, callback) {
+  this.api = api
+
+  this.loadPostcodes((err, result) => {
+    let markers = this.api.getTable('markers')
+    markers.addField({
+      id: 'postcodeCoordinate',
+      type: 'fun',
+      fun: (entry) => {
+        for (var j = 0; j < this.postcodes.length; j++) {
+          var r = turf.inside({
+            type: 'Feature',
+            geometry: {
+              type: 'Point',
+              coordinates: [ parseFloat(entry.lng), parseFloat(entry.lat) ]
+            }
+          }, this.postcodes[j])
+
+          if (r) {
+            return this.postcodes[j].id
+          }
+        }
+      }
+    })
+
+    callback()
+  })
+}
+
 Radkummerkasten.init = function () {
   if (typeof this.isInit !== 'undefined') {
     return
