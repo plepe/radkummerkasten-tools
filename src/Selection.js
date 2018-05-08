@@ -94,11 +94,11 @@ class Selection {
   }
 
   add (id) {
-    this.list.push(id)
+    this.list.push(id.toString())
   }
 
   del (id) {
-    let p = this.list.indexOf(id)
+    let p = this.list.indexOf(id.toString())
 
     if (p !== -1) {
       this.list.splice(p, 1)
@@ -106,7 +106,7 @@ class Selection {
   }
 
   inList (id) {
-    return this.list.indexOf(id) !== -1
+    return this.list.indexOf(id.toString()) !== -1
   }
 
   getList () {
