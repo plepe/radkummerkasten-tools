@@ -272,8 +272,8 @@ window.onload = function () {
           pageShow(m[1], m[2] || 'show')
         } else {
           var scroll = popScrollTop
-          pageOverview()
           updateFormFromUrl()
+          pageOverview()
           popScrollTop = scroll
         }
       }
