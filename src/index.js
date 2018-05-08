@@ -273,6 +273,7 @@ window.onload = function () {
         } else {
           var scroll = popScrollTop
           updateFormFromUrl()
+          update()
           pageOverview()
           popScrollTop = scroll
         }
@@ -292,10 +293,10 @@ function updateFormFromUrl () {
 
 window.update = function (force, pushState) {
   if (force) {
-    Radkummerkasten.checkUpdate(_update.bind(this, force, pushState))
-  } else {
-    _update(force, pushState)
+    api.clearCache()
   }
+
+  _update(force, pushState)
 }
 
 function buildFilter () {
