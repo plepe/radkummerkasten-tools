@@ -18,8 +18,7 @@ class Selection {
       menuTop.appendChild(li)
     }
 
-    register_hook('render-teaser', this.renderHook.bind(this))
-    register_hook('render-show', this.renderHook.bind(this))
+    register_hook('render-entry', this.renderHook.bind(this))
     register_hook('filter-formdef', formDef => {
       formDef.selected = {
         'type': 'select',

@@ -428,6 +428,9 @@ function overviewShowEntries (filter, start, callback) {
       loadingIndicator.setValue(1)
       loadingIndicator.setInactive()
     })
+    view.on('showEntry', (ev) => {
+      call_hooks('render-entry', ev.dom, ev.entry)
+    })
     view.show(content)
   })
 
