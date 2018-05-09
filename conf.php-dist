@@ -6,6 +6,12 @@ $dbconf = array(
   'password' => 'password',
 );
 
+$twigGlobal = array(
+  'urlBezirksgrenzen' => 'https://www.radkummerkasten.at/wp-content/plugins/radkummerkasten/js/data.wien.gv.at_bezirksgrenzen.json',
+  'attachmentBaseUrl' => 'https://www.radkummerkasten.at/images/uploads/comments/2048',
+  'baseUrl' => 'http://www.radkummerkasten.at',
+);
+
 $auth_config=array(
   'domains'=>array(
     // specify your domains here. These are just examples.

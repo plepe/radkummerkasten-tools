@@ -432,7 +432,9 @@ function overviewShowEntries (filter, start, callback) {
     view.on('showEntry', (ev) => {
       call_hooks('render-entry', ev.dom, ev.entry)
     })
-    view.show(content)
+    view.show(content, {
+      global: twigGlobal
+    })
   })
 
   oldContent.parentNode.removeChild(oldContent)
@@ -507,7 +509,9 @@ window.pageShow = function (id, viewId='show') {
       loadingIndicator.setValue(1)
       loadingIndicator.setInactive()
     })
-    view.show(page)
+    view.show(page, {
+      global: twigGlobal
+    })
     restoreScroll()
   })
 
