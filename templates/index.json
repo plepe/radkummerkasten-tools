@@ -2,11 +2,10 @@
     "type": "Twig",
     "each": [
         "<h3><a href='#{{ entry.id }}'>#{{ entry.id }} {{ entry.survey|dbApiGet('survey').name }}: {{ entry.address }} ({{ entry.postcode}} {{ entry.city }})</a></h3>",
-        "<map style='width: 400px; height: 200px; float: right;' options='{\"layer\":\"Basemap\",\"zoom\":17}'></map>",
         "{% set attachmentDone = false %}",
         "{% for comment in entry.comments if attachmentDone == false %}",
         "  {% if comment.attachments|length > 0 %}",
-        "    <img src=\"{{ global.attachmentBaseUrl}}/{{ comment.attachments[0].file }}\">",
+        "    <img class='attachment' src=\"{{ global.attachmentBaseUrl}}/{{ comment.attachments[0].file }}\">",
         "    {% set attachmentDone = true %}",
         "  {% endif %}",
         "{% endfor %}",

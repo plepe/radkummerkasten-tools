@@ -6,15 +6,6 @@ body {
 form#filterOverview > span.form_element_form_chooser {
   border: none;
 }
-div.entry img {
-  max-width: 200px;
-  max-height: 200px;
-  float: right;
-  margin-bottom: 0.5em;
-}
-div.entry {
-  clear: right;
-}
 .error {
   color: #7f0000;
 }
@@ -62,6 +53,20 @@ div.template-show .attachments img.attachment {
 }
 div.template-show .attachments map {
   width: 400px;
+  height: 200px;
+  margin-top: 1em;
+}
+div.template-show .attachments map:first-of-type {
+  margin-top: 0;
+}
+div.template-index div.entry img.attachment {
+  max-width: 200px;
+  max-height: 200px;
+  float: right;
+  margin-bottom: 0.5em;
+}
+div.template-index div.entry {
+  clear: right;
 }
 
 img#logo {
