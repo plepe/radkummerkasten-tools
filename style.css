@@ -68,6 +68,14 @@ div.template-index div.entry img.attachment {
 div.template-index div.entry {
   clear: right;
 }
+div.template-index-map .attachments {
+  display: block;
+}
+div.template-index-map .attachments img {
+  display: inline-block;
+  max-width: 200px;
+  max-height: 150px;
+}
 
 img#logo {
   float: right;

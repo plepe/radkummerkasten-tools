@@ -1,0 +1,39 @@
+{
+    "type": "Twig",
+    "each": [
+        "<h3><a href='#{{ entry.id }}'>#{{ entry.id }} {{ entry.survey|dbApiGet('survey').name }}: {{ entry.address }} ({{ entry.postcode}} {{ entry.city }})</a></h3>",
+        "<map style='width: 400px; height: 200px; float: right;' options='{\"layer\":\"Basemap\",\"zoom\":17}'></map>",
+        "",
+        "<p>",
+        "<i>{{ entry.comments[0].firstname }} {{ entry.comments[0].name }} schrieb am {{ entry.date }}:</i><br/>",
+        "{% if entry.comments[0].message|length > 200 %}{{ entry.comments[0].message|slice(0, 200)|nl2br }}...{% else %}{{ entry.comments[0].message|nl2br }}{% endif %}<br/>",
+        "",
+        "<ul class='menu'>",
+        "  <li><a target=\"radkummerkasten\" href=\"{{ global.baseUrl }}/#marker-{{ id }}\">Öffne im Radkummerkasten</a></li>",
+        "</ul>",
+        "",
+        "<span class='inlineForm' field='status' options='{\"type\":\"select\",\"values_query\":{\"table\": \"states\"}}' value=\"{{ entry.status }}\">{{ entry.status|dbApiGet('states').name }}</span>, {{ entry.likes }} Unterstützung(en), {{ entry.comments|length - 1 }} Kommentar(e)",
+        "{% if entry.postcodeCoordinate and entry.postcode != entry.postcodeCoordinate %}",
+        "<br/><span class='error'>",
+        "Möglicher Fehler: Koordinate liegt im Bereich {{ entry.postcodeCoordinate }}.",
+        "</span>",
+        "{% endif %}",
+        "{% for error in entry.errors %}",
+        "<br/><span class='error'>Fehler: {{ entry.error }}</span>",
+        "{% endfor %}",
+        "</p>",
+        "<div class='attachments'>",
+        "{% for comment in entry.comments %}",
+        "  {% for attachment in comment.attachments %}",
+        "    <img src=\"{{ global.attachmentBaseUrl}}/{{ attachment.file }}\">",
+        "  {% endfor %}",
+        "{% endfor %}",
+        "</div>",
+        "<div style='clear: right'></div>"
+    ],
+    "extensions": [
+        {
+            "type": "InlineForm"
+        }
+    ]
+}
