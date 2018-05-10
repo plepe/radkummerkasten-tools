@@ -451,10 +451,29 @@ function createDownload (downloadDom, fileType, data) {
 }
 
 window.submitDownloadForm = function () {
-  view.export({}, function (err, result, contentType, extension) {
-    var blob = new Blob([ result ], { type: contentType + ";charset=utf-8" })
-    FileSaver.saveAs(blob, 'radkummerkasten.' + extension)
-    document.getElementById('downloadOptions').style.display = 'none'
+  var filter = buildFilter()
+  filter.table = 'markers'
+
+  getTemplate('office', function (err, result) {
+    view = api.createView(result, { twig: Twig, split: step, leafletLayers: mapLayers() })
+    view.extend({
+      type: 'Leaflet',
+      latitudeField: 'lat',
+      longitudeField: 'lng',
+      layers: mapLayers()
+    })
+
+    view.set_query(filter)
+    view.export(
+      {
+        global: twigGlobal
+      },
+      function (err, result, contentType, extension) {
+        var blob = new Blob([ result ], { type: contentType + ";charset=utf-8" })
+        FileSaver.saveAs(blob, 'radkummerkasten.' + extension)
+        document.getElementById('downloadOptions').style.display = 'none'
+      }
+    )
   })
 
   return false
