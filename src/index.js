@@ -470,6 +470,7 @@ window.pageShow = function (id, viewId='show') {
   page.style.display = 'block'
   page.innerHTML = ''
   document.getElementById('filterShow').elements.filterId.value = id
+  page.className = 'template-' + viewId
 
   loadingIndicator.setActive()
 
@@ -521,6 +522,7 @@ window.pageShow = function (id, viewId='show') {
 window.pageOverview = function () {
   currentPage = 'Overview'
   document.getElementById('pageOverview').style.display = 'block'
+  document.getElementById('pageOverview').className = 'template-index'
   document.getElementById('menuOverview').style.display = 'block'
   document.getElementById('pageShow').style.display = 'none'
   document.getElementById('menuShow').style.display = 'none'

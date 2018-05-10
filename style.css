@@ -46,23 +46,22 @@ div#menuShow {
   display: none;
   clear: both;
 }
-div#pageShow {
+div.template-show {
   display: none;
   clear: both;
 }
-div#pageShow .attachments {
+div.template-show .attachments {
   float: right;
   width: 400px;
 }
-div#pageShow .attachments img.attachment {
+div.template-show .attachments img.attachment {
   margin-top: 1em;
   max-width: 100%;
   max-height: 100%;
   display: block;
 }
-div#pageShow .attachments div.map {
+div.template-show .attachments map {
   width: 400px;
-  height: 300px;
 }
 
 img#logo {
@@ -97,12 +96,12 @@ div#pageEditMap {
     margin: 0 2px;
   }
 
-  div#pageShow .attachments {
+  div.template-show .attachments {
     float: none;
     width: auto;
   }
 
-  div#pageShow .attachments img.attachment {
+  div.template-show .attachments img.attachment {
     margin-top: 1em;
     max-width: 400px;
     max-height: 100%;
@@ -110,11 +109,11 @@ div#pageEditMap {
 }
 
 @media screen and (max-width: 400px) {
-  div#pageShow .attachments img.attachment {
+  div.template-show .attachments img.attachment {
     max-width: 100%;
   }
 
-  div#pageShow .attachments div.map {
+  div.template-show .attachments div.map {
     max-width: 100%;
   }
 }
