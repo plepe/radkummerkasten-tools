@@ -52,22 +52,6 @@
 
 <form id='downloadOptions' onSubmit='return submitDownloadForm()'>
   <div class='downloadOption'>
-    Dateityp:
-    <select name='fileType' onChange='updateDownloadForm()'>
-      <option value='csv'>CSV (Comma Separated Value, e.g. Excel)</option>
-      <option value='geojson'>GeoJSON (GIS-Applications, e.g. qGIS)</option>
-      <option value='html'>HTML</option>
-      <option value='office'>Office (HTML, optimiert für den Import in LibreOffice/OpenOffice)</option>
-    </select>
-  </div>
-  <div class='downloadOption' downloadTypes='csv'>
-    <input name='includeDetails' type='checkbox' />Inkludiere Details für Einträge
-  </div>
-  <div class='downloadOption' downloadTypes='html,office'>
-    <input name='embedImgs' type='checkbox' />Bilder einbetten
-  </div>
-  <div class='downloadOption' downloadTypes='html,office'>
-    <input name='noMap' type='checkbox' />Keine Karte inkludieren
   </div>
   <input type='submit' value='Generiere Datei' />
   <span id='download'></span>
