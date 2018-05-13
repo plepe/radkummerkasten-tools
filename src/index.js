@@ -250,25 +250,46 @@ window.onload = function () {
         let m = loc.match(/^#([0-9]+)(?:\/([a-z]+))?$/)
 
         if (m) {
-          pageShow(m[1], m[2] || 'show')
+          pageShow(
+            m[1],
+            {
+              viewId: m[2] || 'show',
+              scroll: popScrollTop
+            },
+            (err) => {
+              if (err) {
+                alert(err)
+              }
+            }
+          )
         } else {
-          var scroll = popScrollTop
-          updateFormFromUrl()
-          pageOverview()
-          popScrollTop = scroll
+          let param = {}
+
+          if (location.hash.match(/^#/)) {
+            param = querystring.parse(location.hash.substr(1))
+          }
+          updateFormFromUrl(param)
+          pageOverview(
+            buildFilter(),
+            {
+              viewId: 'index',
+              scroll: popScrollTop
+            },
+            (err) => {
+              if (err) {
+                alert(err)
+              }
+            }
+          )
         }
       }
     }
   ])
 }
 
-function updateFormFromUrl () {
-  if (location.hash.match(/^#/)) {
-    var url = querystring.parse(location.hash.substr(1))
-
-    call_hooks('url-receive', url)
-    filterOverview.set_data(url)
-  }
+function updateFormFromUrl (param) {
+  call_hooks('url-receive', param)
+  filterOverview.set_data(param)
 }
 
 window.update = function (force, pushState) {
@@ -343,67 +364,18 @@ function _update (force, pushState) {
     history.replaceState({ scrollTop: document.body.scrollTop }, '', url)
   }
 
-  var filter = buildFilter()
-  overviewShowEntries(filter, 0)
-}
-
-function overviewShowEntries (filter, start, callback) {
-  var oldContent, content
-  var viewId = 'index'
-
-  if (start === 0) {
-    oldContent = document.getElementById('pageOverview')
-    content = document.createElement('div')
-    oldContent.parentNode.insertBefore(content, oldContent)
-    content.id = 'pageOverview'
-    content.className = 'template-' + viewId
-    oldList = oldContent.entryDivList || {}
-    content.entryDivList = {}
-  } else {
-    oldList = {}
-    content = document.getElementById('pageOverview')
-  }
-
-  filter.table = 'markers'
-  filter.limit = step
-  filter.offset = start
-
-  var count = 0
-  loadingIndicator.setActive()
-
-  getTemplate(viewId, function (err, result) {
-    view = api.createView(result, { twig: Twig, split: step, leafletLayers: mapLayers() })
-    view.extend({
-      type: 'Leaflet',
-      latitudeField: 'lat',
-      longitudeField: 'lng',
-      layers: mapLayers()
-    })
-    view.set_query(filter)
-    view.on('loadend', () => {
-      loadingIndicator.setValue(1)
-      loadingIndicator.setInactive()
-    })
-    view.on('savestart', () => {
-      loadingIndicator.setActive()
-    })
-    view.on('save', (ev) => {
-      if (ev.error) {
-        alert(ev.error)
+  pageOverview(
+    buildFilter(),
+    {
+      viewId: 'index',
+      scroll: popScrollTop
+    },
+    (err) => {
+      if (err) {
+        alert(err)
       }
-
-      loadingIndicator.setValue(1)
-      loadingIndicator.setInactive()
-    })
-    view.on('showEntry', (ev) => {
-      call_hooks('render-entry', ev.dom, ev.entry)
-    })
-    view.show(content, {
-      global: twigGlobal
-    })
-  })
-
-  oldContent.parentNode.removeChild(oldContent)
+    }
+  )
 }
 
 window.openDownload = function () {
@@ -445,7 +417,11 @@ window.submitDownloadForm = function () {
   return false
 }
 
-window.pageShow = function (id, viewId='show') {
+window.pageShow = function (id, options, callback) {
+  if (!('viewId' in options)) {
+    options.viewId = 'show'
+  }
+
   currentPage = 'Show'
   document.getElementById('menuOverview').style.display = 'none'
   document.getElementById('pageOverview').style.display = 'none'
@@ -455,16 +431,16 @@ window.pageShow = function (id, viewId='show') {
   page.style.display = 'block'
   page.innerHTML = ''
   document.getElementById('filterShow').elements.filterId.value = id
-  page.className = 'template-' + viewId
+  page.className = 'template-' + options.viewId
 
   loadingIndicator.setActive()
 
-  getTemplate(viewId, function (err, result) {
+  getTemplate(options.viewId, function (err, result) {
     if (err) {
       loadingIndicator.setInactive()
 
       if (err.status === 404) {
-        return alert("No such view '" + viewId + "'")
+        return alert("No such view '" + options.viewId + "'")
       }
       return alert("An error occured: " + err)
     }
@@ -497,22 +473,65 @@ window.pageShow = function (id, viewId='show') {
     })
     view.show(page, {
       global: twigGlobal
+    }, (err) => {
+      restoreScroll(options.scroll)
+      callback(err)
     })
-    restoreScroll()
   })
 }
 
-window.pageOverview = function (callback) {
+window.pageOverview = function (filter, options, callback) {
   currentPage = 'Overview'
   document.getElementById('pageOverview').style.display = 'block'
-  document.getElementById('pageOverview').className = 'template-index'
+  document.getElementById('pageOverview').className = 'template-' + options.viewId
   document.getElementById('menuOverview').style.display = 'block'
   document.getElementById('pageShow').style.display = 'none'
   document.getElementById('menuShow').style.display = 'none'
 
-  if (!pageOverviewLoaded) {
-    update()
-  } else {
-    restoreScroll()
-  }
+  var oldContent, content
+
+  oldContent = document.getElementById('pageOverview')
+  content = document.createElement('div')
+  oldContent.parentNode.insertBefore(content, oldContent)
+  content.id = 'pageOverview'
+  content.className = 'template-' + options.viewId
+
+  filter.table = 'markers'
+  filter.offset = 0
+
+  loadingIndicator.setActive()
+
+  getTemplate(options.viewId, function (err, result) {
+    view = api.createView(result, { twig: Twig, split: step, leafletLayers: mapLayers() })
+    view.extend({
+      type: 'Leaflet',
+      latitudeField: 'lat',
+      longitudeField: 'lng',
+      layers: mapLayers()
+    })
+    view.set_query(filter)
+    view.on('loadend', () => {
+      loadingIndicator.setValue(1)
+      loadingIndicator.setInactive()
+    })
+    view.on('savestart', () => {
+      loadingIndicator.setActive()
+    })
+    view.on('save', (ev) => {
+      if (ev.error) {
+        alert(ev.error)
+      }
+
+      loadingIndicator.setValue(1)
+      loadingIndicator.setInactive()
+    })
+    view.on('showEntry', (ev) => {
+      call_hooks('render-entry', ev.dom, ev.entry)
+    })
+    view.show(content, {
+      global: twigGlobal
+    })
+  })
+
+  oldContent.parentNode.removeChild(oldContent)
 }
