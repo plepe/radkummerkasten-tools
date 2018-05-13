@@ -48,25 +48,6 @@ var inlineForms = require('./inlineForms')
 const DBApi = require('db-api')
 var api
 
-function showEntry(entry, div, callback) {
-  var data = JSON.parse(JSON.stringify(entry.properties))
-  data.options = Radkummerkasten.options
-
-  div.innerHTML = teaserTemplate.render(data)
-  call_hooks('render-teaser', div, data)
-
-  var formEmitter = inlineForms(div, entry, {
-    "status": statusValues
-  })
-  formEmitter.on('save', function () {
-    update(false, true)
-  })
-
-  if (callback) {
-    callback()
-  }
-}
-
 function restoreScroll() {
   if (popScrollTop !== null) {
     document.scrollingElement.scrollTop = popScrollTop
@@ -273,7 +254,6 @@ window.onload = function () {
         } else {
           var scroll = popScrollTop
           updateFormFromUrl()
-          update()
           pageOverview()
           popScrollTop = scroll
         }
@@ -351,20 +331,6 @@ function buildUrl () {
   return r
 }
 
-function updateTimestamp () {
-  return
-  // Update timestamp
-  Radkummerkasten.dbConfig.get('status', function (err, result) {
-    if (err) {
-      return
-    }
-
-    var domTs = document.getElementById('timestamp')
-    var ts = moment(result.timestamp)
-    domTs.innerHTML = ts.format().substr(0, 16).replace('T', ' ')
-  })
-}
-
 function _update (force, pushState) {
   pageOverviewLoaded = true
 
@@ -379,8 +345,6 @@ function _update (force, pushState) {
 
   var filter = buildFilter()
   overviewShowEntries(filter, 0)
-
-  updateTimestamp()
 }
 
 function overviewShowEntries (filter, start, callback) {
@@ -536,11 +500,9 @@ window.pageShow = function (id, viewId='show') {
     })
     restoreScroll()
   })
-
-  updateTimestamp()
 }
 
-window.pageOverview = function () {
+window.pageOverview = function (callback) {
   currentPage = 'Overview'
   document.getElementById('pageOverview').style.display = 'block'
   document.getElementById('pageOverview').className = 'template-index'
