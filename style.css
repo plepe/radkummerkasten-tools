@@ -3,6 +3,9 @@ body {
   background-repeat: no-repeat;
   background-position: right top;
 }
+map {
+  display: block;
+}
 form#filterOverview > span.form_element_form_chooser {
   border: none;
 }
