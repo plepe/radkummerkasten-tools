@@ -385,12 +385,14 @@ function _update (force, pushState) {
 
 function overviewShowEntries (filter, start, callback) {
   var oldContent, content
+  var viewId = 'index'
 
   if (start === 0) {
     oldContent = document.getElementById('pageOverview')
     content = document.createElement('div')
     oldContent.parentNode.insertBefore(content, oldContent)
     content.id = 'pageOverview'
+    content.className = 'template-' + viewId
     oldList = oldContent.entryDivList || {}
     content.entryDivList = {}
   } else {
@@ -405,7 +407,7 @@ function overviewShowEntries (filter, start, callback) {
   var count = 0
   loadingIndicator.setActive()
 
-  getTemplate('index', function (err, result) {
+  getTemplate(viewId, function (err, result) {
     view = api.createView(result, { twig: Twig, split: step, leafletLayers: mapLayers() })
     view.extend({
       type: 'Leaflet',
