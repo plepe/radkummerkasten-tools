@@ -12,6 +12,10 @@ $twigGlobal = array(
   'baseUrl' => 'http://www.radkummerkasten.at',
 );
 
+$history = array(
+  'path' => 'data/',
+);
+
 $auth_config=array(
   'domains'=>array(
     // specify your domains here. These are just examples.

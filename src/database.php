@@ -4,6 +4,7 @@ register_hook('init', function () {
   global $dbconf;
   global $db;
   global $auth;
+  global $history;
 
   $dbconf[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES utf8";
   $db = new PDOext($dbconf);
@@ -244,6 +245,10 @@ register_hook('init', function () {
   $api->addTable($table_markers);
   $api->addTable($table_surveys);
   $api->addTable($table_states);
+
+  if (isset($history)) {
+    new DBApiHistory($api, $history);
+  }
 
   html_export_var(array('rights' => array(
     'markers' => $table_markers,
