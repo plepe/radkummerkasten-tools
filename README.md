@@ -27,8 +27,8 @@ cd radkummerkasten-tools
 npm install
 git submodule init
 git submodule update
-cp config.yml-dist config.yml
-nano config.yml # change configuration according to your needs
+cp conf.php-dist conf.php
+nano conf.php # change configuration according to your needs
 sudo npm link # mache cli tools systemweit verfügbar (optional)
 npm run build # generiere JS für die Webseite
 npm run doc # generiere documentation im verzeichnis doc/ (optional)

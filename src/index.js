@@ -22,9 +22,6 @@ var turf = {
 }
 require('moment/locale/de')
 
-var config = require('../src/loadConfig')
-Radkummerkasten.setConfig(config)
-
 var teaserTemplate
 var pageOverviewLoaded = false
 var popScrollTop = null
