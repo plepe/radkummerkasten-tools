@@ -36,6 +36,7 @@
     "brfs": "^1.4.3",
     "concat-stream": "^1.5.2",
     "csv-write-stream": "^2.0.0",
+    "db-api": "https://github.com/plepe/db-api.git",
     "entities": "^1.1.1",
     "events": "^2.0.0",
     "file-saver": "^1.3.3",
