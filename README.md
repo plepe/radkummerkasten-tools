@@ -24,7 +24,9 @@ Um die Webseite zu verwenden, braucht man (derzeit) auch PHP.
 ```sh
 git clone https://github.com/plepe/radkummerkasten-tools.git
 cd radkummerkasten-tools
+sudo apt install libjpeg-dev g++ libcairo-dev
 npm install
+composer install
 git submodule init
 git submodule update
 cp conf.php-dist conf.php
