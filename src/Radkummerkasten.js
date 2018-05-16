@@ -327,7 +327,7 @@ Radkummerkasten.loadPostcodes = function (callback) {
     return
   }
 
-  httpGetJSON('GET', this.options.urlBezirksgrenzen, null, function (err, result) {
+  httpGetJSON('GET', twigGlobal.urlBezirksgrenzen, null, function (err, result) {
     this.postcodes = []
     for (var k in result.features) {
       let feature = result.features[k]
