@@ -10,7 +10,6 @@
 <?php session_start(); ?>
 <?php
 call_hooks("ajax_start");
-$auth = new Auth();
 
 function error($msg) {
   /// Do something with this error
