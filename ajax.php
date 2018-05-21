@@ -9,6 +9,7 @@
 <?php include "modulekit/loader.php"; /* loads all php-includes */ ?>
 <?php session_start(); ?>
 <?php
+call_hooks("init");
 call_hooks("ajax_start");
 
 function error($msg) {
