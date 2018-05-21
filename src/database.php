@@ -9,6 +9,7 @@ function database_markers ($options) {
   $table_markers = array(
     'id' => 'markers',
     'table' => 'map_markers',
+    'delete' => $options['is_admin'],
     'fields' => array(
       'id' => array(
         'type' => 'int',
@@ -57,6 +58,7 @@ function database_markers ($options) {
         'type' => 'sub_table',
         'id' => 'map_comments',
         'parent_field' => 'marker',
+        'delete' => $options['is_admin'],
         'fields' => array(
           'id' => array(
             'type' => 'int',
@@ -117,6 +119,7 @@ function database_markers ($options) {
             'type' => 'sub_table',
             'id' => 'images',
             'parent_field' => 'context',
+            'delete' => $options['is_admin'],
             'fields' => array(
               'id' => array(
                 'type' => 'int',
