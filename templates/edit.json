@@ -95,10 +95,6 @@
             "def": {
                 "type": "form",
                 "def": {
-                    "id": {
-                        "name": "ID",
-                        "type": "hidden"
-                    },
                     "message": {
                         "name": "Message",
                         "type": "textarea"
@@ -139,9 +135,6 @@
                         "def": {
                             "type": "form",
                             "def": {
-                                "id": {
-                                    "type": "hidden"
-                                },
                                 "type": {
                                     "name": "Type",
                                     "type": "integer"
