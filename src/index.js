@@ -45,8 +45,10 @@ var inlineForms = require('./inlineForms')
 const DBApi = require('db-api')
 var api
 
-function restoreScroll() {
-  if (popScrollTop !== null) {
+function restoreScroll(scroll) {
+  if (scroll) {
+    document.scrollingElement.scrollTop = scroll
+  } else if (popScrollTop !== null) {
     document.scrollingElement.scrollTop = popScrollTop
   }
 
@@ -527,6 +529,9 @@ window.pageOverview = function (filter, options, callback) {
     })
     view.show(content, {
       global: twigGlobal
+    }, (err) => {
+      restoreScroll(options.scroll)
+      callback(err)
     })
   })
 
