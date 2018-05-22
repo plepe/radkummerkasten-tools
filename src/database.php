@@ -62,6 +62,7 @@ function database_markers ($options) {
         'fields' => array(
           'id' => array(
             'type' => 'int',
+            'write' => $options['is_admin'],
           ),
           'marker' => array(
             'type' => 'int',
@@ -80,6 +81,7 @@ function database_markers ($options) {
             'type' => 'text',
             'select' => $anonym ? "concat(substr(name, 1, 1), '.')" : "name",
             'write' => $options['is_admin'],
+            'column' => 'name',
           ),
           'name' => array(
             'type' => 'text',
