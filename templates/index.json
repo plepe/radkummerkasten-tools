@@ -11,7 +11,7 @@
         "{% endfor %}",
         "",
         "<p>",
-        "<i>{{ entry.comments[0].firstname }} {{ entry.comments[0].name }} schrieb am {{ entry.date }}:</i><br/>",
+        "<i>{{ entry.comments[0].firstname }} {{ entry.comments[0].lastname }} schrieb am {{ entry.date }}:</i><br/>",
         "{% if entry.comments[0].message|length > 200 %}{{ entry.comments[0].message|slice(0, 200)|nl2br }}...{% else %}{{ entry.comments[0].message|nl2br }}{% endif %}<br/>",
         "",
         "<ul class='menu'>",
