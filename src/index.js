@@ -28,6 +28,7 @@ var popScrollTop = null
 var preferredLayer = null
 var entryOptions = {}
 var currentPage = 'Overview'
+var currentUrl = {}
 var filterOverview = null
 window.knownEntries = {}
 const step = 20
@@ -239,6 +240,7 @@ window.onload = function () {
 
       filterOverview.show(document.getElementById('filterOverview'))
       filterOverview.onchange = function () {
+        currentUrl = filterOverview.get_data()
         return update(false, true)
       }
 
@@ -246,41 +248,28 @@ window.onload = function () {
       newLoc(location.hash)
 
       function newLoc (loc) {
-        let m = loc.match(/^#([0-9]+)(?:\/([a-z]+))?$/)
+        let m = loc.match(/^#([0-9]+)(?:\/([a-z]+))?(?:\?(.*))?$/)
 
         if (m) {
-          pageShow(
-            m[1],
-            {
-              viewId: m[2] || 'show',
-              scroll: popScrollTop
-            },
-            (err) => {
-              if (err) {
-                alert(err)
-              }
-            }
-          )
+          currentUrl = {}
+          if (m[3]) {
+            currentUrl = querystring.parse(m[3])
+          }
+
+          currentUrl.id = m[1]
+          currentUrl.view = m[2] || 'show'
+
+          call_hooks('url-receive', currentUrl)
         } else {
-          let param = {}
+          currentUrl = {}
 
           if (location.hash.match(/^#/)) {
-            param = querystring.parse(location.hash.substr(1))
+            currentUrl = querystring.parse(location.hash.substr(1))
           }
-          updateFormFromUrl(param)
-          pageOverview(
-            buildFilter(),
-            {
-              viewId: 'index',
-              scroll: popScrollTop
-            },
-            (err) => {
-              if (err) {
-                alert(err)
-              }
-            }
-          )
+          updateFormFromUrl(currentUrl)
         }
+
+        _update()
       }
     }
   ])
@@ -340,7 +329,7 @@ function buildFilter () {
 }
 
 function buildUrl () {
-  var r = filterOverview.get_data()
+  var r = currentUrl
 
   if (r === null) {
     r = {}
@@ -351,11 +340,27 @@ function buildUrl () {
   return r
 }
 
-function _update (force, pushState) {
-  pageOverviewLoaded = true
+function updateUrl (pushState) {
+  var ret = buildUrl()
+  var param = JSON.parse(JSON.stringify(ret))
+  var url = '#'
 
-  var url = buildUrl()
-  url = '#' + querystring.stringify(url)
+  if ('id' in param) {
+    url += param.id
+
+    if ('view' in param && param.view !== 'show') {
+      url += '/' + param.view
+    }
+
+    delete param.id
+    delete param.view
+
+    if (Object.keys(param).length) {
+      url += '?'
+    }
+  }
+
+  url += querystring.stringify(param)
   url = url.replace(/%2C/g, ',')
   if (pushState) {
     history.pushState({ scrollTop: document.body.scrollTop }, '', url)
@@ -363,18 +368,41 @@ function _update (force, pushState) {
     history.replaceState({ scrollTop: document.body.scrollTop }, '', url)
   }
 
-  pageOverview(
-    buildFilter(),
-    {
-      viewId: 'index',
-      scroll: popScrollTop
-    },
-    (err) => {
-      if (err) {
-        alert(err)
+  return ret
+}
+
+function _update (force, pushState) {
+  pageOverviewLoaded = true
+
+  var param = updateUrl(pushState)
+
+  if (param.id) {
+    pageShow(
+      param.id,
+      {
+        viewId: param.view || 'show',
+        scroll: popScrollTop
+      },
+      (err) => {
+        if (err) {
+          alert(err)
+        }
       }
-    }
-  )
+    )
+  } else {
+    pageOverview(
+      buildFilter(),
+      {
+        viewId: param.view || 'index',
+        scroll: popScrollTop
+      },
+      (err) => {
+        if (err) {
+          alert(err)
+        }
+      }
+    )
+  }
 }
 
 window.openDownload = function () {
