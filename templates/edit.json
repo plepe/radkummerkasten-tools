@@ -96,7 +96,8 @@
                 "def": {
                     "message": {
                         "name": "Message",
-                        "type": "textarea"
+                        "type": "textarea",
+                        "req": true
                     },
                     "visible": {
                         "name": "Sichtbar",
@@ -121,7 +122,8 @@
                             "0": "unbekannt",
                             "1": "Herr",
                             "2": "Frau"
-                        }
+                        },
+                        "default": 0
                     },
                     "date": {
                         "name": "Datum",

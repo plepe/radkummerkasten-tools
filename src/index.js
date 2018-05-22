@@ -462,6 +462,9 @@ window.pageShow = function (id, options, callback) {
     view.on('savestart', () => {
       loadingIndicator.setActive()
     })
+    view.on('showEntry', (ev) => {
+      call_hooks('render-entry', ev.dom, ev.entry)
+    })
     view.on('save', (ev) => {
       if (ev.error) {
         alert(ev.error)

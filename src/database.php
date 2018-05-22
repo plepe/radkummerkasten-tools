@@ -99,11 +99,20 @@ function database_markers ($options) {
             'write' => $options['is_admin'],
           ),
           'newsletter' => array(
-            'type' => 'int',
+            'type' => 'boolean',
+            'read' => $options['is_admin'],
+            'write' => $options['is_admin'],
+            'create_value' => 0,
+          ),
+          'newslettertest' => array(
+            'type' => 'boolean',
+            'read' => false,
+            'create_value' => false,
           ),
           'date' => array(
             'type' => 'text',
             'write' => $options['is_admin'],
+            'create_value' => date('Y-m-d H:i:s'),
           ),
           'day' => array(
             'type' => 'text',
@@ -111,7 +120,10 @@ function database_markers ($options) {
             'include' => false,
           ),
           'ip' => array(
-            'type' => 'text',
+            'type' => 'int',
+            'read' => false,
+            'write' => false,
+            'create_value' => '0'
           ),
           'visible' => array(
             'type' => 'boolean',
