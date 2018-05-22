@@ -91,7 +91,6 @@
         "comments": {
             "type": "array",
             "name": "Kommentare",
-            "order": false,
             "def": {
                 "type": "form",
                 "def": {
@@ -131,7 +130,6 @@
                     "attachments": {
                         "name": "Anhänge",
                         "type": "array",
-                        "order": "false",
                         "def": {
                             "type": "form",
                             "def": {
