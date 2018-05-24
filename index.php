@@ -7,7 +7,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>radkummerkasten-tools</title>
+  <title>Radkummerkasten Backend</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css?<?=$modulekit['version']?>" />
   <link rel="stylesheet" href="node_modules/leaflet/dist/leaflet.css"/>
@@ -30,7 +30,7 @@
 <body>
 <?php print auth_user_menu() ?>
 
-<h1><a href='#'>Radkummerkasten</a></h1>
+<h1><a href='#'>Radkummerkasten Backend</a></h1>
 
 <div id='menu'>
 <div id='menuOverview'>
@@ -68,10 +68,9 @@
 
 <hr/>
 <p>
-Diese Webseite ist nicht Teil des offiziellen <a href='http://www.radkummerkasten.at'>Radkummerkastens</a>, sondern verwendet nur die Daten aus diesem.</p>
-<p>Die <a href='https://github.com/plepe/radkummerkasten-tools'>radkummerkasten-tools</a> werden von Stephan Bösch-Plepelits entwickelt.
-Diese sind Open Source und werden auf Github entwickelt. Kommentare, Bug
+<p>Das <a href='https://github.com/plepe/radkummerkasten-backend'>Radkummerkasten Backend</a> wird von Stephan Bösch-Plepelits entwickelt.
+Es ist Open Source und wird auf Github entwickelt. Kommentare, Bug
 Reports und Erweiterungen sind herzlich willkommen.</p>
-<p>Version: <a target='_blank' id='version' href='https://github.com/plepe/radkummerkasten-tools/blob/master/CHANGELOG.md'></a></p>
+<p>Version: <a target='_blank' id='version' href='https://github.com/plepe/radkummerkasten-backend/blob/master/CHANGELOG.md'></a></p>
 </body>
 </html>
